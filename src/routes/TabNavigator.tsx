@@ -9,6 +9,7 @@ import {colors} from '@/constants/colors';
 import {Home2, Notification, Pet, User} from 'iconsax-react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {TextComponent} from '@/components';
+import { BreedIcon } from '@/assets/svgs';
 const TabNavigator = () => {
   const Tab = createBottomTabNavigator();
   return (
@@ -33,6 +34,7 @@ const TabNavigator = () => {
           switch (route.name) {
             case 'BreedTab':
               icon = <Pet variant='Bold' size={size} color={color} />;
+              // icon = <BreedIcon />;
               name = "Phối giống"
               break;
             case 'NotificationTab':
