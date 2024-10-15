@@ -6,10 +6,10 @@ import BreedNavigator from './BreedNavigator';
 import NotificationNavigator from './NotificationNavigator';
 import ProfileNavigator from './ProfileNavigator';
 import {colors} from '@/constants/colors';
-import {Home2, Notification, Pet, User} from 'iconsax-react-native';
+import {Notification, Pet, User} from 'iconsax-react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {TextComponent} from '@/components';
-import { BreedIcon } from '@/assets/svgs';
+
 const TabNavigator = () => {
   const Tab = createBottomTabNavigator();
   return (

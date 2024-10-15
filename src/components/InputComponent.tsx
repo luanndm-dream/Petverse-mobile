@@ -52,11 +52,13 @@ const InputComponent = (props: Props) => {
       />
       {iconRight && iconRight}
       <TouchableOpacity
-        onPress={
-          isShowPassword
-            ? () => setIsShowPassword(!isShowPassword)
-            : () => onChange('')
-        }>
+        onPress={() => {
+          if (isPassword) {
+            setIsShowPassword(!isShowPassword); // Chỉ thay đổi hiển thị mật khẩu
+          } else if (allowClear && value.length > 0) {
+            onChange(''); // Xóa nội dung nếu có cho phép và input không rỗng
+          }
+        }}>
             {isPassword? (
                  <FontAwesome
                  name={isShowPassword ? 'eye-slash' : 'eye'}

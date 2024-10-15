@@ -74,6 +74,7 @@ const ButtonComponent = (props: Props) => {
             flex={0}
             text={text}
             color={type === 'link' ? colors.primary : colors.text}
+            styles={textStyles}
           />
         </TouchableOpacity>
       );
