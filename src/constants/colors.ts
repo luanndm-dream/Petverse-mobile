@@ -7,6 +7,7 @@ export const colors = {
     title: '#34385A',
     grey: '#727272',
     grey2: '#eeeeee',
+    grey3: '#E4DFDF',
     greyWhite: '#8F8F8F',
     white: '#ffffff',
     dark: '#000000'

@@ -68,7 +68,7 @@ const TabNavigator = () => {
               </View>
 
               {focused && <TextComponent text={name} 
-              style={{paddingHorizontal: 6, fontSize: 11, fontFamily: 'Roboto-Medium'}}
+              styles={{paddingHorizontal: 6, fontSize: 11, fontFamily: 'Roboto-Medium'}}
               />}
             </View>
           );

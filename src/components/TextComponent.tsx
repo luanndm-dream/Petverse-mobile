@@ -11,11 +11,11 @@ type Props = {
   flex?: number;
   numOfLine?: number;
   color?: string;
-  style?: StyleProp<TextStyle>;
+  styles?: StyleProp<TextStyle>;
   type?: 'bigTitle' | 'title' | 'text' | 'description';
 };
 const TextComponent = (props: Props) => {
-  const {text, size, font, flex, numOfLine, color, style, type} = props;
+  const {text, size, font, flex, numOfLine, color, styles, type} = props;
   let fontSize: number = sizes.text;
   let fontFamily: string = fontFamilies.regular;
   switch (type) {
@@ -45,7 +45,7 @@ const TextComponent = (props: Props) => {
           flex: flex,
           color: color ?? colors.text,
         },
-        style,
+        styles,
       ]}
       numberOfLines={numOfLine}>
       {text}

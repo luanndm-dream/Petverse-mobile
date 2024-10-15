@@ -1,2 +1,7 @@
-export { default as TextComponent } from './TextComponent'
 export { default as Container } from './Container'
+export { default as TextComponent } from './TextComponent'
+export { default as SpaceComponent } from './SpaceComponent'
+export { default as SectionComponent } from './SectionComponent'
+export { default as RowComponent } from './RowComponent'
+export { default as InputComponent } from './InputComponent'
+export { default as ButtonComponent } from './ButtonComponent'
