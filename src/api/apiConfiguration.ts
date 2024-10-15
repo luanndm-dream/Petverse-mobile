@@ -51,18 +51,19 @@ export const axiosInstance = axios.create({
   
   publicAxios.interceptors.request.use(
       function (config){
+        console.log('config API Request', config)
           return config
           
       },
       function (error){
-          console.log('loi request')
+        console.log('ERROR config API Request', error)
           return Promise.reject(error)
       }
   );
   
   publicAxios.interceptors.response.use(
       function (response) {
-        
+        console.log('config API Response', response)
           const responseObj = {
               ...response.data,
               statusCode: response.status,
@@ -70,7 +71,7 @@ export const axiosInstance = axios.create({
           return responseObj;
       },
       function (error) {
-  
+        console.log('ERROR config API Response', error)
           const statusCode = error.response.data
           if (error.response && error.response.status === 400) {
              

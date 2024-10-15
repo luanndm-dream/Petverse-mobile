@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
+  TextInputProps,
 } from 'react-native';
 import React, {ReactNode, useState} from 'react';
 import {colors} from '@/constants/colors';
@@ -20,6 +21,7 @@ interface Props {
   isPassword?: boolean;
   allowClear?: boolean;
   type?: KeyboardType;
+  onBlur?: (blur:any)=>void
   onEnd?: () => void;
 }
 
@@ -34,6 +36,7 @@ const InputComponent = (props: Props) => {
     onEnd,
     placeholder,
     type,
+    onBlur
   } = props;
   const [isShowPassword, setIsShowPassword] = useState(isPassword ?? false);
   return (
@@ -49,6 +52,7 @@ const InputComponent = (props: Props) => {
         keyboardType={type ?? 'default'}
         autoCapitalize={'none'}
         onEndEditing={onEnd}
+        onBlur={onBlur}
       />
       {iconRight && iconRight}
       <TouchableOpacity
