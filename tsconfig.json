@@ -8,6 +8,7 @@
     "paths": {
       "@/*": ["./src/*"],
       "@/components/*": ["./src/components/*"],
+      "@/redux": ["./src/redux"],
       // "@/services": ["./src/services"],
       // "@/redux": ["./src/redux"],
       // "@/navigation": ["./src/navigation"],

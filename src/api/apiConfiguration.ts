@@ -63,7 +63,7 @@ export const axiosInstance = axios.create({
   
   publicAxios.interceptors.response.use(
       function (response) {
-        console.log('config API Response', response)
+        // console.log('config API Response', response)
           const responseObj = {
               ...response.data,
               statusCode: response.status,

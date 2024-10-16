@@ -3,13 +3,14 @@ import React from 'react';
 import MainNavigator from './MainNavigator';
 import AuthNavigator from './AuthNavigator';
 import { useSelector } from 'react-redux';
-import { useAppDispatch, useAppSelector } from '@/redux/store';
+import { useAppDispatch, useAppSelector } from '@/redux';
+
 
 
 const AppNavigator = () => {
-    const auth = useAppSelector((state)=>state.auth.authData)
+    const auth = useAppSelector((state)=>state.auth)
     const dispatch = useAppDispatch();
-    console.log(auth)
+    // console.log(auth)
     
     // const checkLogin = async () =>{
     //     const res = await 

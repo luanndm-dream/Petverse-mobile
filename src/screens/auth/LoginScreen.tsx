@@ -17,9 +17,11 @@ import {apiLogin} from '@/api/apiLogin';
 
 import { STACK_NAVIGATOR_SCREENS } from '@/constants/screens';
 import { useCustomNavigation } from '@/utils/navigation';
+import useLoading from '@/hook/useLoading';
 
 const LoginScreen = () => {
   const { navigate } = useCustomNavigation()
+  const {showLoading, hideLoading} = useLoading()
   const initialValues = {
     email: '',
     password: '',

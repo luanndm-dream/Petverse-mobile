@@ -18,6 +18,7 @@ module.exports = {
         alias: {
           '@': './src',
           '@/components': './src/components',
+          '@/redux': './src/redux',
           // '@/redux': './src/redux',
           // '@/navigation': './src/navigation',
           // '@/screens': './src/screens/',

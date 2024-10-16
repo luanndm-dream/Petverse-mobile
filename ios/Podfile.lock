@@ -486,6 +486,9 @@ PODS:
     - React-jsi (= 0.72.0)
     - React-logger (= 0.72.0)
     - React-perflogger (= 0.72.0)
+  - RNGestureHandler (2.20.0):
+    - RCT-Folly (= 2021.07.22.00)
+    - React-Core
   - RNScreens (3.34.0):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
@@ -561,6 +564,7 @@ DEPENDENCIES:
   - React-runtimescheduler (from `../node_modules/react-native/ReactCommon/react/renderer/runtimescheduler`)
   - React-utils (from `../node_modules/react-native/ReactCommon/react/utils`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
+  - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
@@ -662,6 +666,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/react/utils"
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
+  RNGestureHandler:
+    :path: "../node_modules/react-native-gesture-handler"
   RNScreens:
     :path: "../node_modules/react-native-screens"
   RNSVG:
@@ -721,6 +727,7 @@ SPEC CHECKSUMS:
   React-runtimescheduler: 24614bcd31643eacb06c78c0b9101b453d6aac47
   React-utils: c12d2e75c8bbc727939ddc4319ed95493395ed5a
   ReactCommon: 517b45ed311ba9146aa8b55a8ef6617425f7448e
+  RNGestureHandler: 74c531dc20aa37fb3a8d3d8514447a0d129ddb7d
   RNScreens: 80369e822c4f123c3f076c9ea4141991c17770f9
   RNSVG: 4590aa95758149fa27c5c83e54a6a466349a1688
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
