@@ -16,6 +16,7 @@ import * as Yup from 'yup';
 import { useCustomNavigation } from '@/utils/navigation';
 import { apiSignUp } from '@/api/apiSignUp';
 import useLoading from '@/hook/useLoading';
+import Toast from 'react-native-toast-message';
 const SignUpScreen = () => {
   const {navigate, goBack} = useCustomNavigation()
   const {showLoading, hideLoading} = useLoading()
@@ -41,8 +42,25 @@ const SignUpScreen = () => {
   });
   const handleSignUp = (fullname: string, email: string, password: string, phoneNumber: string) => {
     showLoading()
-    apiSignUp(fullname, email,password,phoneNumber).then((res)=>{
-      
+    apiSignUp(fullname, email,password,phoneNumber).then((res:any)=>{
+      console.log(res)
+      if(res.statusCode === 200) {
+        hideLoading()
+        Toast.show({
+          type: "success",
+          text1: 'Đăng kí thành công',
+          text2: 'Petverse chúc bạn thật nhiều sức khoẻ!'
+        })
+        goBack()
+      }
+      else{
+        hideLoading()
+        Toast.show({
+          type: "error",
+          text1: 'Đăng kí thất bại',
+          text2: `Xảy ra lỗi khi đăng kí ${res.message}`
+        })
+      }
     })
   }
   const handleBack = () =>{

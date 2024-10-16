@@ -1,4 +1,5 @@
 export const STACK_NAVIGATOR_SCREENS = {
     LOGINSCREEN: 'LoginScreen',
-    SIGNUPSCREEN: 'SignUpScreen'
+    SIGNUPSCREEN: 'SignUpScreen',
+    FORGOTPASSWORDSCREEN: 'ForgotPasswordScreen'
 }

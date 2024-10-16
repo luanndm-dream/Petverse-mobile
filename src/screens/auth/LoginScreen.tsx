@@ -1,5 +1,5 @@
-import {Image, StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import {Image, StyleSheet, Switch, Text, View} from 'react-native';
+import React, {useState} from 'react';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
 import {
@@ -14,14 +14,20 @@ import {
 import {colors} from '@/constants/colors';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {apiLogin} from '@/api/apiLogin';
-
-import { STACK_NAVIGATOR_SCREENS } from '@/constants/screens';
-import { useCustomNavigation } from '@/utils/navigation';
+import {STACK_NAVIGATOR_SCREENS} from '@/constants/screens';
+import {useCustomNavigation} from '@/utils/navigation';
 import useLoading from '@/hook/useLoading';
+import Toast from 'react-native-toast-message';
+import {useAppDispatch} from '@/redux';
+import {addAuth} from '@/redux/reducers';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginScreen = () => {
-  const { navigate } = useCustomNavigation()
-  const {showLoading, hideLoading} = useLoading()
+  const {navigate} = useCustomNavigation();
+  const {showLoading, hideLoading} = useLoading();
+  const dispatch = useAppDispatch();
+  const [isRemember, setIsRemember] = useState(true);
+
   const initialValues = {
     email: '',
     password: '',
@@ -36,20 +42,51 @@ const LoginScreen = () => {
       .required('Mật khẩu là bắt buộc'),
   });
 
-  const handleLogin = (email:string, password:string) => {
-    apiLogin(email, password)
-      .then((res) => {
-        console.log(res);
-        console.log('hello', email,password);
-      })
-      .catch((error) => {
-        console.error('Đăng nhập thất bại:');
+  const handleLogin = async (email: string, password: string) => {
+    try {
+      showLoading();
+
+      const res: any = await apiLogin(email, password);
+
+      if (res.statusCode === 200) {
+        dispatch(addAuth(res.data));
+
+        await AsyncStorage.setItem(
+          'auth',
+          isRemember ? JSON.stringify(res.data) : '',
+        );
+
+        hideLoading();
+        Toast.show({
+          type: 'success',
+          text1: 'Đăng nhập thành công',
+          text2: 'Petverse chúc bạn thật nhiều sức khoẻ!',
+        });
+      } else {
+        hideLoading();
+        Toast.show({
+          type: 'error',
+          text1: 'Đăng nhập thất bại',
+          text2: `Xảy ra lỗi: ${res.message}`,
+        });
+      }
+    } catch (error) {
+      hideLoading();
+      Toast.show({
+        type: 'error',
+        text1: 'Đăng nhập thất bại',
+        text2: 'Có lỗi xảy ra trong quá trình đăng nhập.',
       });
+      console.error('Lỗi đăng nhập:', error);
+    }
   };
-  
+
   const signUpHandle = () => {
-    navigate(STACK_NAVIGATOR_SCREENS.SIGNUPSCREEN)
-  }
+    navigate(STACK_NAVIGATOR_SCREENS.SIGNUPSCREEN);
+  };
+  const forgotPasswordHandle = () => {
+    navigate(STACK_NAVIGATOR_SCREENS.FORGOTPASSWORDSCREEN);
+  } 
 
   return (
     <Container>
@@ -75,11 +112,17 @@ const LoginScreen = () => {
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
-        onSubmit={(values) => {
+        onSubmit={values => {
           handleLogin(values.email, values.password);
-        }}
-      >
-        {({handleChange, handleBlur, handleSubmit, values, errors, touched}) => (
+        }}>
+        {({
+          handleChange,
+          handleBlur,
+          handleSubmit,
+          values,
+          errors,
+          touched,
+        }) => (
           <>
             <SectionComponent>
               <TextComponent text="Tài khoản" />
@@ -107,15 +150,44 @@ const LoginScreen = () => {
                 <Text style={styles.errorText}>{errors.password}</Text>
               )}
             </SectionComponent>
+            <SectionComponent>
+            <RowComponent
+              justify="space-between"
+              styles={{marginTop: -20}}>
+              <RowComponent onPress={() => setIsRemember(!isRemember)}>
+                <Switch
+                  trackColor={{true: colors.primary}}
+                  thumbColor={colors.white}
+                  value={isRemember}
+                  onChange={() => setIsRemember(!isRemember)}
+                />
+                <SpaceComponent width={4} />
+                <TextComponent text="Remember me" />
+              </RowComponent>
+              <ButtonComponent
+                text="Quên mật khẩu?"
+                onPress={forgotPasswordHandle}
+                type="text"
+              />
+            </RowComponent>
+            </SectionComponent>
+            <ButtonComponent
+              text="Đăng nhập"
+              type="primary"
+              onPress={handleSubmit} 
+            />
 
-            <ButtonComponent text="Đăng nhập" type="primary" onPress={handleSubmit} />
             <RowComponent>
               <TextComponent text="Nếu bạn chưa có tài khoản." />
               <ButtonComponent
                 text=" Đăng kí ngay!"
                 type="text"
                 onPress={signUpHandle}
-                textStyles={{fontSize: 16, color: colors.primary, fontWeight: 'bold'}}
+                textStyles={{
+                  fontSize: 16,
+                  color: colors.primary,
+                  fontWeight: 'bold',
+                }}
               />
             </RowComponent>
           </>

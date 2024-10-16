@@ -7,17 +7,19 @@ import AppNavigator from './src/navigator/AppNavigator';
 import {useAppSelector} from './src/redux/index';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {ActivityIndicator} from 'react-native';
-
+import Toast from 'react-native-toast-message';
 const RootApp = () => {
   const isLoading = useAppSelector(state => state.app.loading);
   console.log(isLoading);
   return (
     <SafeAreaProvider>
       <NavigationContainer>
+        
         <AppNavigator />
+        <Toast />
         {isLoading && (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color='#3D4ED9' />
+            <ActivityIndicator size="large" color="#3D4ED9" />
           </View>
         )}
       </NavigationContainer>
@@ -54,15 +56,15 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   loadingContainer: {
-    flex: 1, // Chiếm toàn bộ không gian
-    justifyContent: 'center', // Căn giữa theo chiều dọc
-    alignItems: 'center', // Căn giữa theo chiều ngang
-    position: 'absolute', // Để có thể đặt nó ở giữa màn hình
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(255, 255, 255, 0.7)', // Tùy chọn: thêm nền mờ
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
   },
 });
 
