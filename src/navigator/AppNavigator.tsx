@@ -26,8 +26,8 @@ const AppNavigator = () => {
     res && dispatch(addAuth(JSON.parse(res)));
   };
 
-  // return <>{auth.accessToken ? <MainNavigator /> : <AuthNavigator />}</>;
-  return <>{1>2 ? <MainNavigator /> : <AuthNavigator />}</>;
+  return <>{auth.accessToken ? <MainNavigator /> : <AuthNavigator />}</>;
+  // return <>{1>2 ? <MainNavigator /> : <AuthNavigator />}</>;
 };
 
 export default AppNavigator;
