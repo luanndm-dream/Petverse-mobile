@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 28.2.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1"
+	 id="svg8" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg"
+	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512"
+	 style="enable-background:new 0 0 512 512;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#F0900C;}
+	.st1{fill:#FFFACC;}
+	.st2{fill:#3D4ED9;}
+</style>
+<g id="layer6" inkscape:groupmode="layer" inkscape:label="pet">
+	<path id="path3204" inkscape:connector-curvature="0" sodipodi:nodetypes="csscccscc" class="st0" d="M24,392v48
+		c0,27.8,14.6,42.2,28.5,49.1c13.9,7,27.6,6.8,27.6,6.8h352c0,0,13.7,0.1,27.6-6.8c13.9-7,28.4-20.9,28.4-49.1v-48L24,392z"/>
+	<path id="path3222" vector-effect="none" inkscape:connector-curvature="0" sodipodi:nodetypes="ccssscccccscccc" class="st1" d="
+		M80,64c0,0-13.7-0.1-27.6,6.8C38.5,77.8,24,92.3,24,120v272c0,26.7,14.6,42.2,28.5,49.1c13.9,7,27.6,6.8,27.6,6.8h352
+		c0,0,13.7,0.1,27.6-6.8c13.9-7,28.4-22.2,28.4-49.1V120c0-28.1-14.5-42.2-28.4-49.1C445.7,63.9,432,64,432,64h-8H88H80z"/>
+	<path id="path3250" vector-effect="none" inkscape:connector-curvature="0" sodipodi:nodetypes="ccscccscccc" class="st0" d="
+		M80,64c0,0-13.7-0.1-27.6,6.8C38.5,77.8,24,92.3,24,120l0,40c8,0,464,0,464,0l0-40c0-28.1-14.5-42.2-28.4-49.1
+		C445.7,63.9,432,64,432,64h-8H88H80z"/>
+	<g>
+		<path id="path3257" inkscape:connector-curvature="0" class="st0" d="M112,16c-16,0-24.2,8.5-28.1,16.4C80,40.3,80,48,80,48v48
+			c0,0,0,7.6,3.9,15.5c4,7.9,12.1,16.4,28.1,16.4c16,0,24.2-8.5,28.2-16.4S144,96,144,96V48c0,0,0.1-7.7-3.8-15.6
+			C136.2,24.5,128,16,112,16z"/>
+		<path id="path3255" inkscape:connector-curvature="0" class="st0" d="M256,16c-16,0-24.2,8.5-28.1,16.4C224,40.3,224,48,224,48v48
+			c0,0,0,7.6,3.9,15.5c4,7.9,12.1,16.4,28.1,16.4c16,0,24.2-8.5,28.2-16.4S288,96,288,96V48c0,0,0.1-7.7-3.8-15.6
+			C280.2,24.5,272,16,256,16L256,16z"/>
+		<path id="path3210" inkscape:connector-curvature="0" class="st0" d="M400,16c-16,0-24.2,8.5-28.1,16.4c-4,7.9-3.9,15.6-3.9,15.6
+			v48c0,0,0,7.6,3.9,15.5c4,7.9,12.1,16.4,28.1,16.4c16,0,24.2-8.5,28.2-16.4S432,96,432,96V48c0,0,0.1-7.7-3.8-15.6
+			C424.2,24.5,416,16,400,16L400,16z"/>
+	</g>
+	<path id="path10849" inkscape:connector-curvature="0" class="st2" d="M256,176c-22,0-40,18.1-40,40c0,22,18,40,40,40
+		c22,0,40-18,40-40S278,176,256,176L256,176z"/>
+	<path id="path10847" inkscape:connector-curvature="0" class="st2" d="M160,216c-22,0-40,18-40,40s18,40,40,40c22,0,40-18,40-40
+		C200,234,182,216,160,216L160,216z"/>
+	<path id="path10845" inkscape:connector-curvature="0" class="st2" d="M352,216c-22,0-40,18-40,40s18.1,40,40,40c22,0,40-18,40-40
+		S374,216,352,216L352,216z"/>
+	<path id="path10800" inkscape:connector-curvature="0" class="st2" d="M256,264c-44.1,0-80,35.9-80,80c0,35,20.9,54.5,40.8,63.3
+		S256,416,256,416s19.5,0.1,39.3-8.7C315.1,398.5,336,379,336,344C336,299.9,300.1,264,256,264z"/>
+</g>
+</svg>
