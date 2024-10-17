@@ -5,4 +5,5 @@ import ListSitterIcon from './ListSitterIcon.svg'
 import PetBoardingIcon from './PetBoardingIcon.svg'
 import PetGroomingIcon from './PetGroomingIcon.svg'
 import PetScheduleIcon from './PetScheduleIcon.svg'
-export {BreedIcon,RegistrationIcon, ListSitterIcon,MyPetIcon,PetBoardingIcon,PetGroomingIcon,PetScheduleIcon}
+import PetTrainingIcon from './PetTrainingIcon.svg'
+export {BreedIcon,RegistrationIcon, ListSitterIcon,MyPetIcon,PetBoardingIcon,PetGroomingIcon,PetScheduleIcon,PetTrainingIcon,}

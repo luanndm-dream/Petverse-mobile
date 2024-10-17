@@ -7,11 +7,12 @@ interface Props {
     name: string;
     svgIcon: React.ComponentType<any>; // Đảm bảo svgIcon là một component
     screen?: string;
+    onPress?: () => void
 }
 
-const FeatureItem: React.FC<Props> = ({ svgIcon: IconComponent, name, screen }) => {
+const FeatureItem: React.FC<Props> = ({ svgIcon: IconComponent, name, screen, onPress }) => {
     return (
-        <TouchableOpacity style={styles.container}>
+        <TouchableOpacity style={styles.container} onPress={onPress}>
             <IconComponent height={24} width={24} />
             <TextComponent text={name} numOfLine={2} styles={styles.name} color={colors.primary}/>
         </TouchableOpacity>

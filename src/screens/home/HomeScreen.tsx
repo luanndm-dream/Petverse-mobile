@@ -10,8 +10,15 @@ import {
 } from '@/components';
 import {colors} from '@/constants/colors';
 import {homeFeatureData} from '@/data/homeFeature';
+import {serviceData} from '@/data/servicesData';
+import ServiceItem from '@/components/ServiceItem';
+import {useCustomNavigation} from '@/utils/navigation';
 
 const HomeScreen = () => {
+  const {goBack, navigate} = useCustomNavigation();
+  const onPressFeature = (screen: string) => {
+    navigate(screen);
+  };
   return (
     <Container>
       <SectionComponent>
@@ -38,15 +45,33 @@ const HomeScreen = () => {
           data={homeFeatureData}
           keyExtractor={item => item.id.toString()}
           horizontal
-          contentContainerStyle = {styles.contentContainer}
+          contentContainerStyle={styles.contentContainer}
+          scrollEnabled={false}
           renderItem={({item}) => (
-            <FeatureItem name={item.name} svgIcon={item.svg} />
+            <FeatureItem
+              name={item.name}
+              svgIcon={item.svg}
+              onPress={() => onPressFeature(item.screen)}
+            />
           )}
         />
       </SectionComponent>
       <SectionComponent>
-        <TextComponent text='Dịch vụ nổi bật' type='title'/>
-        
+        <TextComponent text="Dịch vụ nổi bật" type="title" />
+        <FlatList
+          scrollEnabled={false}
+          data={serviceData}
+          keyExtractor={item => item.id.toString()}
+          numColumns={4}
+          columnWrapperStyle={{
+            justifyContent:
+              serviceData.length % 4 === 0 ? 'space-between' : 'flex-start',
+            paddingVertical: 6,
+          }}
+          renderItem={({item}) => (
+            <ServiceItem name={item.name} svg={item.svg} />
+          )}
+        />
       </SectionComponent>
     </Container>
   );
@@ -67,6 +92,6 @@ const styles = StyleSheet.create({
   contentContainer: {
     paddingVertical: 6,
     justifyContent: 'space-between',
-    flex: 1
-  }
+    flex: 1,
+  },
 });

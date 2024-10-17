@@ -1,4 +1,4 @@
-import { PetBoardingIcon, PetGroomingIcon } from "@/assets/svgs";
+import { PetBoardingIcon, PetGroomingIcon, PetTrainingIcon } from "@/assets/svgs";
 
 export const serviceData = [
     {
@@ -14,6 +14,11 @@ export const serviceData = [
     {
         id: 3,
         name: 'Huấn luyện',
-        svg: 
-    }
+        svg: PetTrainingIcon
+    },
+    // {
+    //     id: 4,
+    //     name: 'Huấn luyện',
+    //     svg: PetTrainingIcon
+    // },
 ]
