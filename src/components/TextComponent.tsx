@@ -13,9 +13,10 @@ type Props = {
   color?: string;
   styles?: StyleProp<TextStyle>;
   type?: 'bigTitle' | 'title' | 'text' | 'description';
+  required?: boolean;
 };
 const TextComponent = (props: Props) => {
-  const {text, size, font, flex, numOfLine, color, styles, type} = props;
+  const {text, size, font, flex, numOfLine, color, styles, type, required} = props;
   let fontSize: number = sizes.text;
   let fontFamily: string = fontFamilies.regular;
   switch (type) {
@@ -49,6 +50,7 @@ const TextComponent = (props: Props) => {
       ]}
       numberOfLines={numOfLine}>
       {text}
+      {required && <Text style={{color: colors.red}}> *</Text>}
     </Text>
   );
 };

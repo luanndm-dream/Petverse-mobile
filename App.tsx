@@ -8,13 +8,14 @@ import {useAppSelector} from './src/redux/index';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {ActivityIndicator} from 'react-native';
 import Toast from 'react-native-toast-message';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import {Host, Portal} from 'react-native-portalize';
 const RootApp = () => {
   const isLoading = useAppSelector(state => state.app.loading);
   console.log(isLoading);
   return (
     <SafeAreaProvider>
       <NavigationContainer>
-        
         <AppNavigator />
         <Toast />
         {isLoading && (
@@ -30,10 +31,18 @@ const RootApp = () => {
 const App = () => {
   return (
     <>
-      <StatusBar barStyle={'dark-content'} backgroundColor="transparent" />
-      <Provider store={store}>
-        <RootApp />
-      </Provider>
+      <StatusBar
+        barStyle={'dark-content'}
+        backgroundColor="transparent"
+        translucent
+      />
+      <GestureHandlerRootView style={{flex: 1}}>
+        <Host>
+          <Provider store={store}>
+            <RootApp />
+          </Provider>
+        </Host>
+      </GestureHandlerRootView>
     </>
   );
 };

@@ -1,5 +1,5 @@
-import {FlatList, ImageBackground, StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import {FlatList, ImageBackground, Platform, StyleSheet, Text, View} from 'react-native';
+import React, { useEffect } from 'react';
 import {
   Container,
   FeatureItem,
@@ -13,9 +13,34 @@ import {homeFeatureData} from '@/data/homeFeature';
 import {serviceData} from '@/data/servicesData';
 import ServiceItem from '@/components/ServiceItem';
 import {useCustomNavigation} from '@/utils/navigation';
-
+import { PERMISSIONS, RESULTS, check, request } from "react-native-permissions";
 const HomeScreen = () => {
   const {goBack, navigate} = useCustomNavigation();
+
+  useEffect(() => {
+    const requestCameraPermission = async () => {
+      try {
+        const permission = Platform.OS === 'ios' 
+          ? PERMISSIONS.IOS.CAMERA 
+          : PERMISSIONS.ANDROID.CAMERA;
+        
+        const result = await check(permission);
+        
+        if (result === RESULTS.DENIED) {
+          // Yêu cầu quyền camera
+          const requestResult = await request(permission);
+          if (requestResult !== RESULTS.GRANTED) {
+            // Alert.alert('Quyền truy cập bị từ chối', 'Bạn cần cấp quyền camera để sử dụng tính năng này');
+          }
+        }
+      } catch (error) {
+        console.error('Lỗi khi yêu cầu quyền camera: ', error);
+      }
+    };
+  
+    requestCameraPermission();
+  }, []);
+
   const onPressFeature = (screen: string) => {
     navigate(screen);
   };
