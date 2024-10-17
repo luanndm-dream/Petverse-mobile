@@ -1,0 +1,1 @@
+export const BASE_URL = 'https://petverse-api.azurewebsites.net/Api/V1'
