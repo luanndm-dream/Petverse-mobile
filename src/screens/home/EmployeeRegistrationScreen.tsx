@@ -29,22 +29,32 @@ import {AddCircle, Camera, Gallery} from 'iconsax-react-native';
 import {Host, Portal} from 'react-native-portalize';
 import ImagePicker from 'react-native-image-crop-picker';
 import {PERMISSIONS, RESULTS, check, request} from 'react-native-permissions';
+import {SelectModel} from '@/models/SelectModel';
+import {apiGetPetServices} from '@/api/apiPetServices';
 const EmployeeRegistrationScreen = () => {
   const [isVisibleImage, setIsVisibleImage] = useState(false);
   const [selectedImages, setSelectedImages] = useState<any[]>([]);
   const [selectedImage, setSelectedImage] = useState<any>();
+  const [servicesSelects, setServicesSelects] = useState<SelectModel[]>([]);
   const [avatar, setAvatar] = useState<any>();
   const [type, setType] = useState('certifications');
   const imageModalRef = useRef<Modalize>();
 
-  useEffect(() => {
-    if (isVisibleImage && imageModalRef.current) {
-      imageModalRef.current.open();
-    } else if (imageModalRef.current) {
-      imageModalRef.current.close();
-    }
-  }, [isVisibleImage]);
-
+  const getPetServiceHandle = () => {
+    apiGetPetServices().then((res: any) => {
+      if (res.statusCode === 200) {
+        const items: SelectModel[] = [];
+        res.data.items.forEach((item: any) =>
+          items.push({
+            label: item.name ? item.name : 'Không xác định',
+            value: item.id,
+            description: item.description ? item.description : 'Không xác định',
+          }),
+        );
+        setServicesSelects(items);
+      }
+    });
+  };
   const requestCameraPermission = async () => {
     try {
       const permission =
@@ -122,22 +132,29 @@ const EmployeeRegistrationScreen = () => {
       }
     }
   };
-
   const removeImage = (index: any) => {
     setSelectedImages(prev => prev.filter((_, i) => i !== index));
   };
-
+  useEffect(() => {
+    if (isVisibleImage && imageModalRef.current) {
+      imageModalRef.current.open();
+    } else if (imageModalRef.current) {
+      imageModalRef.current.close();
+    }
+  }, [isVisibleImage]);
   useEffect(() => {
     requestGalleryPermission();
   }, []);
-
+  useEffect(() => {
+    getPetServiceHandle();
+  }, []);
   const initialValues = {
     name: '',
     phoneNumber: '',
     address: '',
     image: '',
     description: '',
-    petServicesId: [],
+    services: [],
   };
   const validationSchema = Yup.object().shape({
     name: Yup.string()
@@ -307,8 +324,13 @@ const EmployeeRegistrationScreen = () => {
               multiline
               allowClear
             />
-             <TextComponent text="Dịch vụ" type="title" required />
-             <DropdownPicker onSelect={(values) => {console.log(values)}} values={[]} selected={undefined} />
+            <TextComponent text="Dịch vụ" type="title" required />
+            <DropdownPicker
+              onSelect={(values: string | string[]) => handleChange('services')}
+              values={servicesSelects}
+              selected={values.services}
+              multible
+            />
           </SectionComponent>
         )}
       </Formik>
