@@ -23,6 +23,7 @@ interface Props {
   type?: KeyboardType;
   onBlur?: (blur:any)=>void
   onEnd?: () => void;
+  multiline?: boolean
 }
 
 const InputComponent = (props: Props) => {
@@ -36,20 +37,22 @@ const InputComponent = (props: Props) => {
     onEnd,
     placeholder,
     type,
-    onBlur
+    onBlur,
+    multiline
   } = props;
   const [isShowPassword, setIsShowPassword] = useState(isPassword ?? false);
   return (
     <View style={[styles.inputContainer]}>
       {iconLeft ?? iconLeft}
       <TextInput
-        style={[styles.input, globalStyles.text]}
+        style={[styles.input, globalStyles.text, multiline&& {paddingVertical: 6}]}
         value={value}
         placeholder={placeholder ?? ''}
         secureTextEntry={isShowPassword}
         onChangeText={val => onChange(val)}
         placeholderTextColor={'#747688'}
         keyboardType={type ?? 'default'}
+        multiline
         autoCapitalize={'none'}
         onEndEditing={onEnd}
         onBlur={onBlur}
@@ -91,6 +94,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     backgroundColor: colors.white,
     marginBottom: 16,
+    paddingVertical: 8,
   },
   input: {
     padding: 0,

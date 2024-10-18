@@ -12,6 +12,7 @@ import {
 import React, {useEffect, useRef, useState} from 'react';
 import {
   Container,
+  DropdownPicker,
   IconButtonComponent,
   ImageZoomingComponent,
   InputComponent,
@@ -24,7 +25,7 @@ import {colors} from '@/constants/colors';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
 import {Modalize} from 'react-native-modalize';
-import {Add, AddCircle, Camera, Gallery} from 'iconsax-react-native';
+import {AddCircle, Camera, Gallery} from 'iconsax-react-native';
 import {Host, Portal} from 'react-native-portalize';
 import ImagePicker from 'react-native-image-crop-picker';
 import {PERMISSIONS, RESULTS, check, request} from 'react-native-permissions';
@@ -32,6 +33,8 @@ const EmployeeRegistrationScreen = () => {
   const [isVisibleImage, setIsVisibleImage] = useState(false);
   const [selectedImages, setSelectedImages] = useState<any[]>([]);
   const [selectedImage, setSelectedImage] = useState<any>();
+  const [avatar, setAvatar] = useState<any>();
+  const [type, setType] = useState('certifications');
   const imageModalRef = useRef<Modalize>();
 
   useEffect(() => {
@@ -95,22 +98,28 @@ const EmployeeRegistrationScreen = () => {
   };
   const openGallaryHandle = () => {
     imageModalRef.current?.close();
-    if (!RESULTS.GRANTED) {
-      requestGalleryPermission();
-    } else {
-      ImagePicker.openPicker({
-        multiple: true,
-      }).then(images => {
-        if (selectedImages.length + images.length <= 4) {
-          setSelectedImages(prev => [...prev, ...images]);
-        } else {
-          Alert.alert(
-            'Giới hạn ảnh',
-            'Bạn chỉ có thể chọn tối đa 4 hình ảnh.',
-            [{text: 'OK'}],
-          );
-        }
+    if (type === 'avatar') {
+      ImagePicker.openPicker({}).then(images => {
+        setAvatar(images.path);
       });
+    } else {
+      if (!RESULTS.GRANTED) {
+        requestGalleryPermission();
+      } else {
+        ImagePicker.openPicker({
+          multiple: true,
+        }).then(images => {
+          if (selectedImages.length + images.length <= 4) {
+            setSelectedImages(prev => [...prev, ...images]);
+          } else {
+            Alert.alert(
+              'Giới hạn ảnh',
+              'Bạn chỉ có thể chọn tối đa 4 hình ảnh.',
+              [{text: 'OK'}],
+            );
+          }
+        });
+      }
     }
   };
 
@@ -172,8 +181,31 @@ const EmployeeRegistrationScreen = () => {
           <SectionComponent>
             <TextComponent text="Hình ảnh" type="title" />
             <RowComponent justify="flex-start" styles={{marginBottom: 16}}>
-              <TouchableOpacity style={styles.imageAvtContainer}>
-                <AddCircle size={12} color={colors.primary} />
+              <TouchableOpacity
+                style={
+                  avatar
+                    ? {
+                        width: 60,
+                        height: 60,
+                        borderRadius: 30,
+                        borderWidth: 0.5,
+                      }
+                    : styles.imageAvtContainer
+                }
+                onPress={() => {
+                  setIsVisibleImage(true), setType('avatar');
+                }}>
+                {avatar ? (
+                  <View>
+                    <Image
+                      source={{uri: avatar}}
+                      style={styles.avatar}
+                      resizeMode="contain"
+                    />
+                  </View>
+                ) : (
+                  <AddCircle size={12} color={colors.primary} />
+                )}
               </TouchableOpacity>
               <TextComponent
                 text="Đây sẽ là ảnh đại diện của của hàng bạn, hãy chọn ảnh sao cho phù hợp nhất!"
@@ -266,6 +298,17 @@ const EmployeeRegistrationScreen = () => {
                 }}
               />
             </View>
+            <TextComponent text="Mô tả" type="title" required />
+            <InputComponent
+              onChange={handleChange('description')}
+              onBlur={handleBlur('description')}
+              placeholder="Mô tả"
+              value={values.description}
+              multiline
+              allowClear
+            />
+             <TextComponent text="Dịch vụ" type="title" required />
+             <DropdownPicker onSelect={(values) => {console.log(values)}} values={[]} selected={undefined} />
           </SectionComponent>
         )}
       </Formik>
@@ -328,6 +371,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: -12,
   },
+
   imageContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -343,6 +387,11 @@ const styles = StyleSheet.create({
     borderColor: colors.primary,
     borderWidth: 1.5,
     borderStyle: 'dashed',
+  },
+  avatar: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
   },
   imageItem: {
     width: 60,
