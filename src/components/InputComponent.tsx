@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 15,
     backgroundColor: colors.white,
-    marginBottom: 19,
+    marginBottom: 16,
   },
   input: {
     padding: 0,

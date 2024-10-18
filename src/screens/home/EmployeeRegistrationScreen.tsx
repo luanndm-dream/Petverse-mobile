@@ -2,6 +2,7 @@ import {
   Alert,
   FlatList,
   Image,
+  Modal,
   Platform,
   StyleSheet,
   Text,
@@ -30,6 +31,7 @@ import {PERMISSIONS, RESULTS, check, request} from 'react-native-permissions';
 const EmployeeRegistrationScreen = () => {
   const [isVisibleImage, setIsVisibleImage] = useState(false);
   const [selectedImages, setSelectedImages] = useState<any[]>([]);
+  const [selectedImage, setSelectedImage] = useState<any>();
   const imageModalRef = useRef<Modalize>();
 
   useEffect(() => {
@@ -102,7 +104,6 @@ const EmployeeRegistrationScreen = () => {
         if (selectedImages.length + images.length <= 4) {
           setSelectedImages(prev => [...prev, ...images]);
         } else {
-          // Alert to notify the user that the limit has been reached
           Alert.alert(
             'Giới hạn ảnh',
             'Bạn chỉ có thể chọn tối đa 4 hình ảnh.',
@@ -169,7 +170,19 @@ const EmployeeRegistrationScreen = () => {
           touched,
         }) => (
           <SectionComponent>
-            <TextComponent text="Họ và tên" type="title" required/>
+            <TextComponent text="Hình ảnh" type="title" />
+            <RowComponent justify="flex-start" styles={{marginBottom: 16}}>
+              <TouchableOpacity style={styles.imageAvtContainer}>
+                <AddCircle size={12} color={colors.primary} />
+              </TouchableOpacity>
+              <TextComponent
+                text="Đây sẽ là ảnh đại diện của của hàng bạn, hãy chọn ảnh sao cho phù hợp nhất!"
+                numOfLine={2}
+                type="description"
+                styles={{paddingLeft: 20, flexWrap: 'wrap', maxWidth: '80%'}}
+              />
+            </RowComponent>
+            <TextComponent text="Họ và tên" type="title" required />
             <InputComponent
               onChange={handleChange('name')}
               onBlur={handleBlur('name')}
@@ -180,7 +193,7 @@ const EmployeeRegistrationScreen = () => {
               <Text style={styles.errorText}>{errors.name}</Text>
             )}
 
-            <TextComponent text="Số điện thoại" type="title" required/>
+            <TextComponent text="Số điện thoại" type="title" required />
             <InputComponent
               onChange={handleChange('phoneNumber')}
               onBlur={handleBlur('phoneNumber')}
@@ -191,7 +204,7 @@ const EmployeeRegistrationScreen = () => {
               <Text style={styles.errorText}>{errors.phoneNumber}</Text>
             )}
 
-            <TextComponent text="Địa chỉ" type="title" required/>
+            <TextComponent text="Địa chỉ" type="title" required />
             <InputComponent
               onChange={handleChange('address')}
               onBlur={handleBlur('address')}
@@ -220,12 +233,17 @@ const EmployeeRegistrationScreen = () => {
                       <AddCircle size={12} color={colors.primary} />
                     </TouchableOpacity>
                   ) : (
-                    <View style={styles.imageWrapper}>
+                    <TouchableOpacity
+                      style={styles.imageWrapper}
+                      onPress={() => {
+                        setSelectedImage(item.path);
+                      }}>
                       <Image
                         source={{uri: item.path}}
                         style={styles.imageThumbnail}
                       />
-                      <View style={{position: 'absolute', top: -10, right: -10}}>
+                      <View
+                        style={{position: 'absolute', top: -10, right: -10}}>
                         <IconButtonComponent
                           name="close-circle"
                           size={18}
@@ -233,7 +251,7 @@ const EmployeeRegistrationScreen = () => {
                           onPress={() => removeImage(index)}
                         />
                       </View>
-                    </View>
+                    </TouchableOpacity>
                   )
                 }
                 keyExtractor={(item, index) =>
@@ -278,6 +296,25 @@ const EmployeeRegistrationScreen = () => {
             </SectionComponent>
           </View>
         </Modalize>
+        <Modal
+          visible={!!selectedImage}
+          transparent={true}
+          onRequestClose={() => {
+            setSelectedImage(null);
+          }}>
+          <View style={styles.fullScreenContainer}>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setSelectedImage(null)}>
+              <MaterialCommunityIcons name="close" size={30} color="white" />
+            </TouchableOpacity>
+            <Image
+              source={{uri: selectedImage}}
+              style={styles.fullScreenImage}
+              resizeMode="contain"
+            />
+          </View>
+        </Modal>
       </Portal>
     </Container>
   );
@@ -295,6 +332,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-start',
+  },
+  imageAvtContainer: {
+    width: 60,
+    height: 60,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 40,
+    backgroundColor: colors.grey4,
+    borderColor: colors.primary,
+    borderWidth: 1.5,
+    borderStyle: 'dashed',
   },
   imageItem: {
     width: 60,
@@ -326,5 +374,21 @@ const styles = StyleSheet.create({
     backgroundColor: 'red', // Choose a color
     borderRadius: 10,
     padding: 4,
+  },
+  fullScreenContainer: {
+    flex: 1,
+    backgroundColor: colors.dark, // Nền màu đen
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  fullScreenImage: {
+    width: '100%',
+    height: '100%',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 40,
+    right: 20,
+    zIndex: 1,
   },
 });
