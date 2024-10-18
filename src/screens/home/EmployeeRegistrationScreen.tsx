@@ -31,6 +31,8 @@ import ImagePicker from 'react-native-image-crop-picker';
 import {PERMISSIONS, RESULTS, check, request} from 'react-native-permissions';
 import {SelectModel} from '@/models/SelectModel';
 import {apiGetPetServices} from '@/api/apiPetServices';
+import { useCustomNavigation } from '@/utils/navigation';
+import useLoading from '@/hook/useLoading';
 const EmployeeRegistrationScreen = () => {
   const [isVisibleImage, setIsVisibleImage] = useState(false);
   const [selectedImages, setSelectedImages] = useState<any[]>([]);
@@ -39,12 +41,15 @@ const EmployeeRegistrationScreen = () => {
   const [avatar, setAvatar] = useState<any>();
   const [type, setType] = useState('certifications');
   const imageModalRef = useRef<Modalize>();
-
+  const {navigate, goBack} = useCustomNavigation()
+  const {showLoading, hideLoading} = useLoading()
   const getPetServiceHandle = () => {
+    showLoading()
     apiGetPetServices().then((res: any) => {
       if (res.statusCode === 200) {
+        
         const items: SelectModel[] = [];
-        res.data.items.forEach((item: any) =>
+        res?.data?.items?.forEach((item: any) =>
           items.push({
             label: item.name ? item.name : 'Không xác định',
             value: item.id,
@@ -52,6 +57,7 @@ const EmployeeRegistrationScreen = () => {
           }),
         );
         setServicesSelects(items);
+        hideLoading()
       }
     });
   };
@@ -177,11 +183,13 @@ const EmployeeRegistrationScreen = () => {
     <Container
       title="Đăng ký nhân viên"
       left={
-        <MaterialCommunityIcons
-          name="chevron-left"
-          size={30}
-          color={colors.dark}
-        />
+        <IconButtonComponent 
+        name="chevron-left"
+        size={30}
+        color={colors.dark}
+        onPress={goBack}
+        /> 
+     
       }>
       <Formik
         initialValues={initialValues}

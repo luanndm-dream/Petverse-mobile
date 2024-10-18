@@ -7,7 +7,7 @@ const TIME_OUT = 60000;
 export const publicAxios = axios.create({
     baseURL: BASE_URL,
     headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "application/json",        
     },
     timeout: TIME_OUT
 })

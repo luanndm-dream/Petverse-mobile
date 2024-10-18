@@ -14,6 +14,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import SpaceComponent from './SpaceComponent';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import IconButtonComponent from './IconButtonComponent';
+import { PetBoardingIcon, PetGroomingIcon, PetTrainingIcon } from '@/assets/svgs';
 interface Props {
   label?: string;
   values: SelectModel[];
@@ -26,6 +27,23 @@ const DropdownPicker = (props: Props) => {
   const [isVisible, setIsVisible] = useState(false);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const modalizeRef = useRef<Modalize>();
+
+  console.log(values)
+  const getIcon = (id: any) => {
+    let width = 30;
+    let height = 30;
+    
+    switch (id) {
+      case 1:
+        return <PetBoardingIcon width={width} height={height} />;
+      case 2:
+        return <PetGroomingIcon width={width} height={height} />;
+      case 3:
+        return <PetTrainingIcon width={width} height={height} />;
+      default:
+        return null; 
+    }
+  };
 
   const selectItemHandel = (id: string) => {
     if (selectedItems.includes(id)) {
@@ -75,6 +93,7 @@ const DropdownPicker = (props: Props) => {
     ): null;
   };
   const renderServiceItem = (item: SelectModel) => {
+    console.log(item.value)
     return (
       <RowComponent
         key={item.value}
@@ -86,6 +105,7 @@ const DropdownPicker = (props: Props) => {
                 onSelect(item.value), modalizeRef.current?.close();
               }
         }>
+          <View style={{marginRight: 20}}>{getIcon(item.value)}</View>
         <TextComponent
           text={item.label}
           flex={1}
@@ -128,9 +148,10 @@ const DropdownPicker = (props: Props) => {
           ref={modalizeRef}
           onClose={() => setIsVisible(false)}
           handlePosition="inside"
+          adjustToContentHeight
           FooterComponent={
             multible && (
-              <View style={{paddingBottom: 30}}>
+              <View style={{paddingBottom: 10}}>
                 <ButtonComponent
                   type="primary"
                   text="Xác nhận"
@@ -141,7 +162,7 @@ const DropdownPicker = (props: Props) => {
               </View>
             )
           }>
-          <View style={{paddingVertical: 30, paddingHorizontal: 20}}>
+          <View style={{paddingTop: 30, marginBottom: 10, paddingHorizontal: 20}}>
             {values.map(item => renderServiceItem(item))}
           </View>
         </Modalize>
