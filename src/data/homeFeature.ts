@@ -12,13 +12,13 @@ export const homeFeatureData = [
         id: 2,
         name: 'Danh sách Sitter',
         svg: ListSitterIcon,
-        screen: STACK_NAVIGATOR_SCREENS.EMPLOYEEREGISTRATIONSCREEN
+        screen: STACK_NAVIGATOR_SCREENS.SITTERSCREEN
     },
     {
         id: 3,
         name: 'Thú cưng của tôi',
         svg: MyPetIcon,
-        screen: STACK_NAVIGATOR_SCREENS.EMPLOYEEREGISTRATIONSCREEN
+        screen: STACK_NAVIGATOR_SCREENS.MYPETSCREEN
     },
     {
         id: 4,
