@@ -6,7 +6,7 @@ const initialState = {
     refreshToken: '',
     refreshTokenExpiryTime: '',
     roleName: '',
-    userId: '991fd400-73d5-410a-7ee3-08dcef4fc4ac',
+    userId: '718cf56e-cc3f-4581-4b92-08dcf0135c72',
 };
 
 const authSlice = createSlice({

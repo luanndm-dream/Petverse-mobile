@@ -135,7 +135,7 @@ const EmployeeRegistrationScreen = () => {
           multiple: true,
         }).then(images => {
           if (selectedCertifications.length + images.length <= 4) {
-            setSelectedCertifications(prev => [...prev, ...images]);
+            setSelectedCertifications( prev => [...prev, ...images]);
           } else {
             Alert.alert(
               'Giới hạn ảnh',
@@ -194,10 +194,16 @@ const EmployeeRegistrationScreen = () => {
         .required('Dịch vụ thú cưng là bắt buộc'),
     }),
     onSubmit: values => {
-      console.log('Submitted values:', values, selectedCertifications);
-      console.log( 'image', imageUpload(values.avatar))
+      
+      const certifications: any[] = [];
+      if (selectedCertifications) {
+        selectedCertifications.forEach(item => {
+          // Gọi imageUpload với đường dẫn thay vì đối tượng
+          certifications.push(imageUpload(item.path)); // Sử dụng item.path
+        });
+      }
+      console.log('certifications',certifications, 'imageUpload(values.avatar) 1', imageUpload(values.avatar) )
       showLoading()
-      if (avatar) {
         apiPostApplication(
           userId,
           values.name,
@@ -206,8 +212,7 @@ const EmployeeRegistrationScreen = () => {
           imageUpload(values.avatar),
           values.description,
           values.services,
-          // imageUpload(values.avatar)
-          // selectedCertifications,
+          certifications
         ).then((res:any) =>{
           console.log('res', res)
           if(res.statusCode === 200){
@@ -231,33 +236,9 @@ const EmployeeRegistrationScreen = () => {
         
       }
     },
-  });
+  );
 
-  // const initialValues = {
-  //   name: '',
-  //   phoneNumber: '',
-  //   address: '',
-  //   avatar: '',
-  //   description: '',
-  //   services: [],
-  // };
-  // const validationSchema = Yup.object().shape({
-  //   name: Yup.string()
-  //     .min(3, 'Tên phải lớn hơn 3 ký tự')
-  //     .required('Tên là bắt buộc'),
-  //   phoneNumber: Yup.string()
-  //     .length(10, 'Số điện thoại bao gồm 10 số')
-  //     .required('Số điện thoại là bắt buộc'),
-  //   address: Yup.string()
-  //     .min(12, 'Địa chỉ phải lớn hơn 12 ký tự')
-  //     .required('Địa chỉ là bắt buộc'),
-  //   // avatar: Yup.string().
-  //   description: Yup.string().min(12,'Mô tả phải trên 12 ký tự').required('Mô tả là bắt buộc'),
-  //   services: Yup.array()
-  //     .of(Yup.string().required('Dịch vụ thú cưng không được để trống'))
-  //     .min(1, 'Ít nhất một dịch vụ thú cưng phải được chọn')
-  //     .required('Dịch vụ thú cưng là bắt buộc'),
-  // });
+ 
   return (
     <Container
       title="Đăng ký nhân viên"
@@ -269,25 +250,6 @@ const EmployeeRegistrationScreen = () => {
           onPress={goBack}
         />
       }>
-      {/* <Formik
-        initialValues={initialValues}
-        validationSchema={validationSchema}
-        onSubmit={values => {
-          if(avatar){
-            console.log('Submitted values:', values);
-          }
-          
-        }}
-        >
-        {({
-          handleChange,
-          handleBlur,
-          handleSubmit,
-          setFieldValue,
-          values,
-          errors,
-          touched,
-        }) => ( */}
       <SectionComponent>
         <TextComponent text="Hình ảnh" type="title" />
         <RowComponent justify="flex-start" styles={{marginBottom: 16}}>

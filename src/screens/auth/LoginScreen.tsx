@@ -49,7 +49,7 @@ const LoginScreen = () => {
       const res: any = await apiLogin(email, password);
 
       if (res.statusCode === 200) {
-        dispatch(addAuth(res.data));
+        // dispatch(addAuth(res.data));
 
         await AsyncStorage.setItem(
           'auth',

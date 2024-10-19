@@ -51,7 +51,7 @@ export const axiosInstance = axios.create({
   
   publicAxios.interceptors.request.use(
       function (config){
-        console.log('config API Request', config.data)
+        // console.log('config API Request', config)
           return config
           
       },

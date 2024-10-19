@@ -8,7 +8,7 @@ export async function apiPostApplication(
   image: any,
   description: string,
   petServiceIds: string[],
-  certifications?: string[],
+  certifications?: any[],
 ) {
   let url = 'Application';
   const formData = new FormData();
@@ -16,13 +16,19 @@ export async function apiPostApplication(
   formData.append('Name', name.toString());
   formData.append('PhoneNumber', phoneNumber.toString());
   formData.append('Address', address.toString());
-  formData.append('Image', image.toString());
+  formData.append('Image', image);
   formData.append('Description', description.toString());
-  formData.append('PetServiceIds', petServiceIds);
-
+  petServiceIds.forEach(id => {
+    console.log(id); // Kiểm tra giá trị của id
+    formData.append('PetServiceIds', id.toString());
+  });
   if (certifications) {
-    formData.append('Certifications', certifications);
+    certifications.forEach(cert => {
+      formData.append('Certifications', cert);
+    });
   }
+
+  console.log('formData', formData)
   return publicAxios.post(url, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
