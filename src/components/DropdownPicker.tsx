@@ -28,7 +28,7 @@ const DropdownPicker = (props: Props) => {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const modalizeRef = useRef<Modalize>();
 
-  console.log(values)
+  // console.log(values)
   const getIcon = (id: any) => {
     let width = 30;
     let height = 30;
@@ -93,7 +93,7 @@ const DropdownPicker = (props: Props) => {
     ): null;
   };
   const renderServiceItem = (item: SelectModel) => {
-    console.log(item.value)
+    // console.log(item.value)
     return (
       <RowComponent
         key={item.value}

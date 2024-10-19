@@ -51,7 +51,7 @@ export const axiosInstance = axios.create({
   
   publicAxios.interceptors.request.use(
       function (config){
-        console.log('config API Request', config)
+        console.log('config API Request', config.data)
           return config
           
       },
@@ -82,7 +82,7 @@ export const axiosInstance = axios.create({
   
   protectedAxios.interceptors.request.use(
       function (config) {
-        const accessToken = store.getState().auth?.authData.accesstoken;
+        const accessToken = store.getState().auth.accessToken;
         
         if (accessToken) {
           config.headers.Authorization = `Bearer ${accessToken}`;
