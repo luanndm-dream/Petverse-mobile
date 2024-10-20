@@ -242,6 +242,7 @@ const EmployeeRegistrationScreen = () => {
   return (
     <Container
       title="Đăng ký nhân viên"
+      isScroll={true}
       left={
         <IconButtonComponent
           name="chevron-left"
