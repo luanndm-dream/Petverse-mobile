@@ -105,11 +105,10 @@ export const axiosInstance = axios.create({
           ...response.data,
           statusCode: response.status,
         };
-        // console.log('vào congif API', responseObj)
         return responseObj;
       },
       function (error): number {
-        // console.log('ERROR config API Response protectedAxios' , error.message)
+        console.log('ERROR config API Response protectedAxios' , error.message, error.data)
           const statusCode = error.response
           if (error.response && error.response.status === 400) {
              

@@ -1,5 +1,5 @@
 export interface SelectModel {
     label: string,
-    value: string | boolean,
+    value: string,
     description?: string
 }

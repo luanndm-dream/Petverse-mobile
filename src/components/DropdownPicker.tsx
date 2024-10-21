@@ -14,17 +14,19 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import SpaceComponent from './SpaceComponent';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import IconButtonComponent from './IconButtonComponent';
-import { PetBoardingIcon, PetGroomingIcon, PetTrainingIcon } from '@/assets/svgs';
+import {PetBoardingIcon, PetGroomingIcon, PetTrainingIcon} from '@/assets/svgs';
 interface Props {
   label?: string;
   values: SelectModel[];
   selected?: string | string[];
   onSelect: (value: string | string[]) => void;
-  placeholder: string
+  placeholder: string;
   multible?: boolean;
+  canPress?: boolean;
 }
 const DropdownPicker = (props: Props) => {
-  const {onSelect, values, label, selected, multible, placeholder} = props;
+  const {onSelect, values, label, selected, multible, placeholder, canPress=true} =
+    props;
   const [isVisible, setIsVisible] = useState(false);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const modalizeRef = useRef<Modalize>();
@@ -33,7 +35,7 @@ const DropdownPicker = (props: Props) => {
   const getIcon = (label: string) => {
     let width = 30;
     let height = 30;
-    
+
     switch (label) {
       case 'Trông thú':
         return <PetBoardingIcon width={width} height={height} />;
@@ -42,7 +44,7 @@ const DropdownPicker = (props: Props) => {
       case 'Huấn luyện':
         return <PetTrainingIcon width={width} height={height} />;
       default:
-        return null; 
+        return null;
     }
   };
 
@@ -79,10 +81,10 @@ const DropdownPicker = (props: Props) => {
   }, [isVisible]);
 
   const renderSelectedItem = (id: string) => {
-    const item = values.find(element => element.value === id)
+    const item = values.find(element => element.value === id);
     return item ? (
       <RowComponent key={id} styles={styles.selectedItem}>
-        <TextComponent text={item.label} color={colors.primary}/>
+        <TextComponent text={item.label} color={colors.primary} />
 
         <IconButtonComponent
           name="close"
@@ -91,7 +93,7 @@ const DropdownPicker = (props: Props) => {
           onPress={() => selectItemHandel(id)}
         />
       </RowComponent>
-    ): null;
+    ) : null;
   };
   const renderServiceItem = (item: SelectModel) => {
     // console.log(item.value)
@@ -107,7 +109,7 @@ const DropdownPicker = (props: Props) => {
                 onSelect(item.value), modalizeRef.current?.close();
               }
         }>
-          <View style={{marginRight: 20}}>{getIcon(item.label)}</View>
+        <View style={{marginRight: 20}}>{getIcon(item.label)}</View>
         <TextComponent
           text={item.label}
           flex={1}
@@ -134,9 +136,12 @@ const DropdownPicker = (props: Props) => {
     <View>
       {label && <TextComponent text={label} styles={{marginBottom: 8}} />}
       <RowComponent
-        styles={[globalStyles.inputContainer, ]}
-        onPress={() => setIsVisible(true)}>
-        <RowComponent styles={{flex: 1, flexWrap: 'wrap', justifyContent: 'flex-start'}}>
+        styles={[globalStyles.inputContainer,{backgroundColor: canPress?colors.white:colors.grey4}]}
+        onPress={() => {
+          canPress && setIsVisible(true);
+        }}>
+        <RowComponent
+          styles={{flex: 1, flexWrap: 'wrap', justifyContent: 'flex-start'}}>
           {selectedItems.length > 0 ? (
             selectedItems.map(item => renderSelectedItem(item))
           ) : (
@@ -164,7 +169,8 @@ const DropdownPicker = (props: Props) => {
               </View>
             )
           }>
-          <View style={{paddingTop: 30, marginBottom: 10, paddingHorizontal: 20}}>
+          <View
+            style={{paddingTop: 30, marginBottom: 10, paddingHorizontal: 20}}>
             {values.map(item => renderServiceItem(item))}
           </View>
         </Modalize>
@@ -185,6 +191,6 @@ const styles = StyleSheet.create({
     padding: 4,
     marginBottom: 8,
     marginRight: 8,
-    borderRadius: 8
-  }
+    borderRadius: 8,
+  },
 });

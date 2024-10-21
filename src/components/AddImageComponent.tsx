@@ -16,10 +16,11 @@ import IconButtonComponent from './IconButtonComponent';
 
 interface Props {
   onSelected: (imagePath: string | string[]) => void;
+  initialImages?: string[];
 }
 
 const AddImageComponent = (props: Props) => {
-  const {onSelected} = props;
+  const {onSelected, initialImages} = props;
   const [selectedImages, setSelectedImages] = useState<any[]>([]);
 
   const requestGalleryPermission = async () => {
@@ -48,8 +49,6 @@ const AddImageComponent = (props: Props) => {
         Platform.OS === 'ios'
           ? PERMISSIONS.IOS.PHOTO_LIBRARY
           : PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE;
-
-      const result = await check(permission);
       if (RESULTS.GRANTED) {
         ImagePicker.openPicker({
           multiple: true,
@@ -59,7 +58,7 @@ const AddImageComponent = (props: Props) => {
               path: image.path,
             }));
             setSelectedImages(prev => [...prev, ...newImages]);
-            onSelected(newImages.map(image => image.path));
+            onSelected([...selectedImages.map(image => image.path), ...newImages.map(image => image.path)]);
           } else {
             Alert.alert(
               'Giới hạn ảnh',
@@ -75,11 +74,13 @@ const AddImageComponent = (props: Props) => {
       console.error('Lỗi khi mở thư viện ảnh: ', error);
     }
   };
-
   const removeImage = (index: number) => {
-    const updatedImages = [...selectedImages];
-    updatedImages.splice(index, 1);
-    setSelectedImages(updatedImages);
+    setSelectedImages(prevImages => {
+      const updatedImages = [...prevImages];
+      updatedImages.splice(index, 1); // Xóa hình ảnh tại vị trí chỉ định
+      onSelected(updatedImages.map(image => image.path)); // Gọi hàm onSelected với ảnh đã cập nhật
+      return updatedImages;
+    });
   };
 
   return (
