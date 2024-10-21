@@ -29,7 +29,7 @@ export async function apiPostApplication(
   }
 
   console.log('formData', formData)
-  return publicAxios.post(url, formData, {
+  return protectedAxios.post(url, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },

@@ -2,11 +2,12 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 
 const initialState = {
-    accessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiIxQGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6ImN1c3RvbWVyIiwiZXhwIjoxNzYxMDQ2NTkyLCJpc3MiOiJiaGVwLWF1dGgtYXBpIiwiYXVkIjoiYmhlcC1jbGllbnQifQ.mfLJj0_6wUvDn4dL_xCP7yEJHaIrg_cphqIsz1bGzKM',
+    accessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiIxMUBnbWFpbC5jb20iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJjdXN0b21lciIsImV4cCI6MTc2MTA2NDgxNSwiaXNzIjoiYmhlcC1hdXRoLWFwaSIsImF1ZCI6ImJoZXAtY2xpZW50In0.-gYG3yZKPGxACvehX6722F2q_tIt3XK4ezNPxh2SGhc',
     refreshToken: '',
     refreshTokenExpiryTime: '',
     roleName: '',
     userId: '718cf56e-cc3f-4581-4b92-08dcf0135c72',
+    // userId: 'eac9c97b-1f5f-40d5-0f82-08dcf1c7e0cd'
 };
 
 const authSlice = createSlice({

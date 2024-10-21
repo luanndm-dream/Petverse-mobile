@@ -83,7 +83,6 @@ const InputComponent = (props: Props) => {
           ))}
         </TouchableOpacity>
       </View>
-      {/* Hiển thị số ký tự đã nhập và số ký tự tối đa còn lại */}
       {maxLength && (
         <Text style={styles.charCount}>
           {value.length}/{maxLength}
@@ -97,7 +96,8 @@ export default InputComponent;
 
 const styles = StyleSheet.create({
   inputContainer: {
-    flexDirection: 'column', // Chuyển thành column để xếp chồng lên nhau
+    flexDirection: 'row',
+    alignItems: 'center', // Chuyển thành column để xếp chồng lên nhau
     borderRadius: 12,
     borderWidth: 1,
     borderColor: colors.grey3,
