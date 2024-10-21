@@ -40,7 +40,7 @@ export const axiosInstance = axios.create({
   },
   function (error) {
     const statusCode = error
-    console.log('error axios instance', error.message)
+    // console.log('error axios instance', error.message)
       // const statusCode = error.response.data
       if (error.response && error.response.status === 400) {
          
@@ -71,7 +71,7 @@ export const axiosInstance = axios.create({
           return responseObj;
       },
       function (error) {
-        console.log('ERROR config API Response', error)
+        console.log('ERROR config API Response', error.message)
           const statusCode = error.response.data
           if (error.response && error.response.status === 400) {
              
@@ -109,16 +109,18 @@ export const axiosInstance = axios.create({
         return responseObj;
       },
       function (error): number {
-        console.log('loi trong function Axios Error', error)
-        // console.log('Status code 400 error:', error.response);
+        // console.log('ERROR config API Response protectedAxios' , error.message)
           const statusCode = error.response
-        if(error?.response?.status == statusCode){
-          // store.dispatch(removeUser());
-          // RootNavigation.navigate(SCREENS.LOGIN)
-        } else if (error.response && error.response.status === 400) {
-          console.log('Status code 400 error:', error.response.data);
-          console.log('Status code 400 error:', error.response.errors);
-      }
+          if (error.response && error.response.status === 400) {
+             
+          }
+      //   if(error?.response?.status == statusCode){
+      //     // store.dispatch(removeUser());
+      //     // RootNavigation.navigate(SCREENS.LOGIN)
+      //   } else if (error.response && error.response.status === 400) {
+      //     // console.log('Status code 400 error:', error.response.data);
+      //     // console.log('Status code 400 error:', error.response.errors);
+      // }
         return statusCode;
       }
     );

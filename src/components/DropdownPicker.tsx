@@ -20,25 +20,26 @@ interface Props {
   values: SelectModel[];
   selected?: string | string[];
   onSelect: (value: string | string[]) => void;
+  placeholder: string
   multible?: boolean;
 }
 const DropdownPicker = (props: Props) => {
-  const {onSelect, values, label, selected, multible} = props;
+  const {onSelect, values, label, selected, multible, placeholder} = props;
   const [isVisible, setIsVisible] = useState(false);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const modalizeRef = useRef<Modalize>();
 
   // console.log(values)
-  const getIcon = (id: any) => {
+  const getIcon = (label: string) => {
     let width = 30;
     let height = 30;
     
-    switch (id) {
-      case 1:
+    switch (label) {
+      case 'Trông thú':
         return <PetBoardingIcon width={width} height={height} />;
-      case 2:
+      case 'Dịch vụ spa':
         return <PetGroomingIcon width={width} height={height} />;
-      case 3:
+      case 'Huấn luyện':
         return <PetTrainingIcon width={width} height={height} />;
       default:
         return null; 
@@ -102,10 +103,11 @@ const DropdownPicker = (props: Props) => {
           multible
             ? () => selectItemHandel(item.value)
             : () => {
+                setSelectedItems([item.value]);
                 onSelect(item.value), modalizeRef.current?.close();
               }
         }>
-          <View style={{marginRight: 20}}>{getIcon(item.value)}</View>
+          <View style={{marginRight: 20}}>{getIcon(item.label)}</View>
         <TextComponent
           text={item.label}
           flex={1}
@@ -138,7 +140,7 @@ const DropdownPicker = (props: Props) => {
           {selectedItems.length > 0 ? (
             selectedItems.map(item => renderSelectedItem(item))
           ) : (
-            <TextComponent text="Dịch vụ" />
+            <TextComponent text={placeholder} />
           )}
         </RowComponent>
         <ArrowDown2 size={22} color={colors.grey} />

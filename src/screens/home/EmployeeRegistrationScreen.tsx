@@ -390,6 +390,7 @@ const EmployeeRegistrationScreen = () => {
         )}
         <TextComponent text="Dịch vụ" type="title" required />
         <DropdownPicker
+        placeholder='Dịch vụ'
           onSelect={(selectedServices: string | string[]) => {
             formik.handleChange('services');
             formik.setFieldValue('services', selectedServices);
