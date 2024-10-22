@@ -58,3 +58,10 @@ export async function apiCreatePet(
     },
   });
 }
+
+export async function apiGetPetByPetId(petId: string) {
+  const url = `Pet/${petId}`;
+
+  return protectedAxios.get(url);
+}
+

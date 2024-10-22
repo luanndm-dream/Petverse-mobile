@@ -1,4 +1,4 @@
-import {FlatList, Image, StyleSheet, Text, View} from 'react-native';
+import {FlatList, Image, StyleSheet, TouchableOpacity, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {
   Container,
@@ -13,21 +13,29 @@ import {useAppSelector} from '@/redux';
 import {apiGetPetByUserId, apiGetPetSubType} from '@/api/apiPet';
 import useLoading from '@/hook/useLoading';
 import {sizes} from '@/constants/sizes';
+import { STACK_NAVIGATOR_SCREENS } from '@/constants/screens';
 
 const MyPetScreen = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
   const {showLoading, hideLoading} = useLoading();
   const userId = useAppSelector(state => state.auth.userId);
   const [pets, setPets] = useState<[]>([]);
   const [dogSubType, setDogSubType] = useState<any[]>([]);
   const [catSubType, setCatSubType] = useState<any[]>([]);
-  console.log(pets);
+
+
+  const onPressItem = (petId:number, petName: string)=>{
+    navigation.navigate(STACK_NAVIGATOR_SCREENS.PETDETAILSCREEN, {
+      petId: petId,
+      petName: petName
+    })
+  }
   useEffect(() => {
     showLoading();
     Promise.all([
-      apiGetPetSubType(1), // API cho loại chó
-      apiGetPetSubType(2), // API cho loại mèo
-      apiGetPetByUserId(userId), // API để lấy thú cưng của người dùng
+      apiGetPetSubType(1),
+      apiGetPetSubType(2),
+      apiGetPetByUserId(userId),
     ])
       .then(([dogResponse, catResponse, petResponse]: any) => {
         // Kiểm tra và thiết lập dữ liệu
@@ -46,19 +54,38 @@ const MyPetScreen = () => {
       });
   }, [userId]);
 
+  
   const renderPetItem = (item: any) => {
+    let petSubTypeName = '';
+    if (item.petTypeId === 1) {
+      const subType = dogSubType.find(
+        subType => subType.id === item.petSubTypeId,
+      );
+      petSubTypeName = subType ? subType.subName : 'Không xác định';
+    } else if (item.petTypeId === 2) {
+      const subType = catSubType.find(
+        subType => subType.id === item.petSubTypeId,
+      );
+      petSubTypeName = subType ? subType.subName : 'Không xác định';
+    }
+
     return (
-      <View key={item.id.toString()} style={[styles.itemContainer]}>
+      <TouchableOpacity key={item.id.toString()} style={styles.itemContainer} onPress={()=>onPressItem(item.id, item.name)}>
         <Image
           source={{uri: item?.avatar}}
           style={styles.image}
           resizeMode="contain"
         />
-        <View style={{justifyContent: 'flex-start'}}>
-          <TextComponent text={item.name} type="title" />
-          <RowComponent>{/* <TextComponent text={item.}/> */}</RowComponent>
+        <View style={styles.itemInfoContainer}>
+          <TextComponent text={item.name} type="title" styles={{marginTop: 6}}/>
+          <RowComponent justify="space-between" styles={styles.row}>
+            <TextComponent text={`${petSubTypeName}`} size={12} />
+            <View style={styles.ageContainer}>
+              <TextComponent text={`${item.age} tuổi`} />
+            </View>
+          </RowComponent>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   };
   return (
@@ -97,11 +124,26 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     alignItems: 'center',
     justifyContent: 'center',
+    borderRadius: 8,
   },
   image: {
-    width: 80,
-    height: 80,
+    width: 100,
+    height: 100,
     alignItems: 'center',
     borderRadius: 12,
+  },
+  row: {
+    // marginTop: 8,
+  },
+  ageContainer: {
+    padding: 3,
+    backgroundColor: colors.secondary,
+    borderRadius: 6,
+    marginHorizontal: 6,
+  },
+  itemInfoContainer: {
+    justifyContent: 'flex-start',
+    width: '100%',
+    paddingHorizontal: 6,
   },
 });

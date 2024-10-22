@@ -5,5 +5,6 @@ export const STACK_NAVIGATOR_SCREENS = {
   EMPLOYEEREGISTRATIONSCREEN: 'EmployeeRegistrationScreen',
   MYPETSCREEN: 'MyPetScreen',
   ADDPETSCREEN: 'AddPetScreen',
+  PETDETAILSCREEN: 'PetDetailScreen',
   SITTERSCREEN: 'SitterScreen',
 };
