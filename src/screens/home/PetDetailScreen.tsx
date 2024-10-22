@@ -13,6 +13,7 @@ import {
 import {colors} from '@/constants/colors';
 import {FlatList} from 'react-native-gesture-handler';
 import {Camera, Edit, Edit2, Gallery} from 'iconsax-react-native';
+import { STACK_NAVIGATOR_SCREENS } from '@/constants/screens';
 
 const PetDetailScreen = () => {
   const route = useRoute<any>();
@@ -23,6 +24,7 @@ const PetDetailScreen = () => {
   const [dogSubType, setDogSubType] = useState<any[]>([]);
   const [catSubType, setCatSubType] = useState<any[]>([]);
   const [petSubTypeName, setPetSubTypeName] = useState<string>('');
+//   console.log(petData);
   const petInfo = [
     {
       label: 'Tên',
@@ -57,6 +59,15 @@ const PetDetailScreen = () => {
     //     value: petData?.weight
     // }
   ];
+  
+  const onPressIcon = (type: string) => {
+    if(type === 'album'){
+        navigation.navigate(STACK_NAVIGATOR_SCREENS.PETALBUMSCREEN, {
+            petName: petData.name,
+            petPhotos: petData.petPhotos
+        })
+    }
+  }
 
   useEffect(() => {
     showLoading();
@@ -74,24 +85,26 @@ const PetDetailScreen = () => {
         }
         if (petResponse?.statusCode === 200) {
           setPetData(petResponse?.data);
-        }
-
-        const subTypeId = petResponse?.data?.petSubTypeId; // Kiểm tra subTypeId
-        console.log('subTypeId:', subTypeId);
-        if (petResponse?.data?.petTypeId === 1) {
-          // Nếu loại thú cưng là chó
-          const subType = dogSubType.find(item => item.id === subTypeId); // Sử dụng dogSubType đã được cập nhật
-          setPetSubTypeName(subType ? subType.subName : 'Không xác định'); // Sử dụng subName
-        } else if (petResponse?.data?.petTypeId === 2) {
-          // Nếu loại thú cưng là mèo
-          const subType = catSubType.find(item => item.id === subTypeId); // Sử dụng catSubType đã được cập nhật
-          setPetSubTypeName(subType ? subType.subName : 'Không xác định'); // Sử dụng subName
+          
+          // Xử lý tìm petSubTypeName ở đây, sau khi đã có đầy đủ data
+          const subTypeId = petResponse?.data?.petSubTypeId;
+          if (petResponse?.data?.petTypeId === 1) {
+            const subType = dogResponse?.data?.items.find(
+              (item: any) => item.id === subTypeId
+            );
+            setPetSubTypeName(subType ? subType.subName : 'Không xác định');
+          } else if (petResponse?.data?.petTypeId === 2) {
+            const subType = catResponse?.data?.items.find(
+              (item: any) => item.id === subTypeId
+            );
+            setPetSubTypeName(subType ? subType.subName : 'Không xác định');
+          }
         }
       })
       .finally(() => {
         hideLoading();
       });
-  }, [route]);
+  }, [petId]); 
 
   const renderInfoItem = (label: string, value: any, isLastItem: boolean) => {
     return (
@@ -123,21 +136,23 @@ const PetDetailScreen = () => {
         )}
         <View style={styles.editContainer}>
           <View>
-            <TextComponent text={petName} type='title' />
+            <TextComponent text={petName} type="title" />
             <RowComponent>
-            <RowComponent  styles={styles.iconContainer}>
-              <Gallery size={24} color={colors.grey}/>
-              <TextComponent text="Album" styles={{marginLeft: 6}}/>
-            </RowComponent>
-            <RowComponent  styles={styles.iconContainer}>
-              <Edit size={24} color={colors.grey}/>
-              <TextComponent text="Chỉnh sửa" styles={{marginLeft: 6}}/>
-            </RowComponent>
+              <RowComponent styles={styles.iconContainer} onPress={() => onPressIcon('album')}>
+                <Gallery size={24} color={colors.grey} />
+                <TextComponent text="Album" styles={{marginLeft: 6}} />
+              </RowComponent>
+              <RowComponent styles={styles.iconContainer}>
+                <Edit size={24} color={colors.grey} />
+                <TextComponent text="Chỉnh sửa" styles={{marginLeft: 6}} />
+              </RowComponent>
             </RowComponent>
           </View>
         </View>
       </ImageBackground>
       <SectionComponent>
+        <TextComponent text='Giới thiệu' type='title'/>
+        <TextComponent text={petData?.description.trim()} type='description'/>
         <FlatList
           contentContainerStyle={{
             backgroundColor: 'white',
@@ -151,6 +166,8 @@ const PetDetailScreen = () => {
             renderInfoItem(item.label, item.value, index === petInfo.length - 1)
           }
         />
+        {/* <TextComponent text='Hình ảnh' type='title'/> */}
+
       </SectionComponent>
     </Container>
   );
@@ -165,6 +182,7 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
     justifyContent: 'center',
     alignItems: 'center',
+    marginBottom: 8
   },
   editContainer: {
     position: 'absolute',
@@ -189,12 +207,11 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: colors.grey4,
   },
-  iconContainer: 
-  {
+  iconContainer: {
     marginTop: 16,
     padding: 6,
     backgroundColor: colors.grey4,
     borderRadius: 16,
-    marginRight: 8
-}
+    marginRight: 8,
+  },
 });

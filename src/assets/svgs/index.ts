@@ -8,6 +8,7 @@ import PetScheduleIcon from './PetScheduleIcon.svg';
 import PetTrainingIcon from './PetTrainingIcon.svg';
 import VertifyIcon from './VertifyIcon.svg';
 import DoctorIcon from './DoctorIcon.svg';
+import WorkProfileIcon from './WorkProfileIcon.svg';
 export {
   BreedIcon,
   RegistrationIcon,
@@ -19,4 +20,5 @@ export {
   PetTrainingIcon,
   VertifyIcon,
   DoctorIcon,
+  WorkProfileIcon
 };
