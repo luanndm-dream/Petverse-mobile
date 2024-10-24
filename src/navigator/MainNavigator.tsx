@@ -8,6 +8,8 @@ import AddPetScreen from '@/screens/home/AddPetScreen';
 import MyPetScreen from '@/screens/home/MyPetScreen';
 import PetDetailScreen from '@/screens/home/PetDetailScreen';
 import PetAlbumScreen from '@/screens/home/PetAlbumScreen';
+import ListChatScreen from '@/screens/chat/ListChatScreen';
+import ChatDetailScreen from '@/screens/chat/ChatDetailScreen';
 
 const MainNavigator = () => {
   const Stack = createNativeStackNavigator();
@@ -23,7 +25,9 @@ const MainNavigator = () => {
           <Stack.Screen name="AddPetScreen" component={AddPetScreen} />
           <Stack.Screen name="PetDetailScreen" component={PetDetailScreen} />
           <Stack.Screen name="SitterScreen" component={SitterScreen} />
-          <Stack.Screen name="PetAlbumScreen" component={PetAlbumScreen} />
+          <Stack.Screen name="PetAlbumScreen" component={PetAlbumScreen}/>
+          <Stack.Screen name="ListChatScreen" component={ListChatScreen}/>
+          <Stack.Screen name="ChatDetailScreen" component={ChatDetailScreen}/>
         </Stack.Navigator>
   
   );

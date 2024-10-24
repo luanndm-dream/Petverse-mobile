@@ -21,6 +21,7 @@ import {serviceData} from '@/data/servicesData';
 import ServiceItem from '@/components/ServiceItem';
 import {useCustomNavigation} from '@/utils/navigation';
 import {PERMISSIONS, RESULTS, check, request} from 'react-native-permissions';
+import { STACK_NAVIGATOR_SCREENS } from '@/constants/screens';
 const HomeScreen = () => {
   const {goBack, navigate} = useCustomNavigation();
 
@@ -64,6 +65,7 @@ const HomeScreen = () => {
             name="chat"
             color={colors.white}
             backgroundColor={colors.primary}
+            onPress={()=>navigate(STACK_NAVIGATOR_SCREENS.LISTCHATSCREEN)}
           />
         </RowComponent>
         <ImageBackground

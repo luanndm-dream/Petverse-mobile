@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Platform } from "react-native";
 
 
 const initialState = {
@@ -6,7 +7,7 @@ const initialState = {
     refreshToken: '',
     refreshTokenExpiryTime: '',
     roleName: '',
-    userId: '718cf56e-cc3f-4581-4b92-08dcf0135c72',
+    userId: Platform.OS === 'android' ? '1': '2',
     // userId: 'eac9c97b-1f5f-40d5-0f82-08dcf1c7e0cd'
 };
 

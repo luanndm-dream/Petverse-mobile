@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "943355249739",
+    "project_id": "petverse-chatting",
+    "storage_bucket": "petverse-chatting.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:943355249739:android:462a540ca4c7aae636f9ce",
+        "android_client_info": {
+          "package_name": "com.petverse"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCAlz_KH1zK7iPLCVlluZaMQ4L_1so3Pug"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
