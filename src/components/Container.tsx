@@ -30,7 +30,7 @@ const Container = (props: Props) => {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={[globalStyles.container]}>
           {(left || title || right) && (
-            <View style={[styles.row, { paddingHorizontal: 16, paddingVertical: 12 }]}>
+            <View style={[styles.row, { paddingHorizontal: 16, paddingTop: 12, paddingBottom: 6, }]}>
               {left && (
                 <TouchableOpacity onPress={onLeftPress} style={styles.iconContainer}>
                   <View>{left}</View>

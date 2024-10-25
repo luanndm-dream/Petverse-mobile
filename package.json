@@ -8,13 +8,14 @@
     "lint": "eslint .",
     "start": "react-native start",
     "test": "jest"
-},
+  },
   "dependencies": {
     "@likashefqet/react-native-image-zoom": "^4.2.0",
     "@react-native-async-storage/async-storage": "^2.0.0",
     "@react-native-community/slider": "^4.5.4",
     "@react-native-firebase/app": "^21.2.0",
     "@react-native-firebase/firestore": "^21.2.0",
+    "@react-native-firebase/storage": "^21.2.0",
     "@react-navigation/bottom-tabs": "^6.6.1",
     "@react-navigation/native": "^6.1.18",
     "@react-navigation/native-stack": "^6.11.0",
@@ -24,6 +25,7 @@
     "formik": "^2.4.6",
     "iconsax-react-native": "^0.0.8",
     "install": "^0.13.0",
+    "moment": "^2.30.1",
     "npm": "^10.9.0",
     "react": "18.2.0",
     "react-native": "0.72.0",

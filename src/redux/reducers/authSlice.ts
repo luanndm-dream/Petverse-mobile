@@ -7,7 +7,8 @@ const initialState = {
     refreshToken: '',
     refreshTokenExpiryTime: '',
     roleName: '',
-    userId: Platform.OS === 'android' ? '1': '2',
+    // userId: Platform.OS === 'ios' ? '2': '1',
+    userId: '1'
     // userId: 'eac9c97b-1f5f-40d5-0f82-08dcf1c7e0cd'
 };
 

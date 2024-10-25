@@ -5,6 +5,7 @@ import {
   Text,
   View,
   TouchableOpacity,
+  Platform,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { Container, IconButtonComponent } from '@/components';
@@ -14,55 +15,95 @@ import { useNavigation } from '@react-navigation/native';
 import { STACK_NAVIGATOR_SCREENS } from '@/constants/screens';
 import firestore from '@react-native-firebase/firestore';
 import { useAppSelector } from '@/redux';
+import moment from 'moment';
 
 const ListChatScreen = () => {
   const { goBack } = useCustomNavigation();
   const navigation = useNavigation<any>();
-  const [chatData, setChatData] = useState([]); // Khởi tạo state cho chatData
-  const userId = useAppSelector(state => state.auth.userId);
+  const [chatData, setChatData] = useState<any>([]);
+  // const userId = useAppSelector(state => state.auth.userId);
+  const userId = Platform.OS === 'ios' ? '2': '1'
 
   // Dữ liệu mẫu cho người dùng
   const users = [
-    { id: "1", name: "Bạn", avatar: "https://via.placeholder.com/50" }, // Avatar của bạn
-    { id: "2", name: "User 2", avatar: "https://randomuser.me/api/portraits/men/2.jpg" }, // Avatar của User 2
-    { id: "3", name: "User 3", avatar: "https://randomuser.me/api/portraits/women/3.jpg" }, // Avatar của User 3
+    { id: "1", name: "User 1", avatar: "https://randomuser.me/api/portraits/women/3.jpg" },
+    { id: "2", name: "User 2", avatar: "https://randomuser.me/api/portraits/men/2.jpg" },
+    { id: "3", name: "User 3", avatar: "https://randomuser.me/api/portraits/women/3.jpg" },
   ];
 
   useEffect(() => {
     const unsubscribe = firestore()
       .collection('chats')
-      .where('users', 'array-contains', userId)
-      .onSnapshot(snapshot => {
+      .where('participants', 'array-contains', userId)
+      .onSnapshot(async (snapshot) => {
         if (snapshot && !snapshot.empty) {
           const items = snapshot.docs.map(doc => ({
             id: doc.id,
             ...doc.data(),
           }));
-
-          // Lọc ra userId khác với userId của bạn
-          const filteredUserIds = items.flatMap(item => 
-            item.users.filter(user => user !== userId)
+  
+          console.log('items', items);
+  
+          const unsubscribes = items.map((item:any) => 
+            firestore()
+              .collection('chats')
+              .doc(item.id)
+              .collection('messages')
+              .orderBy('timestamp', 'desc')
+              .limit(1)
+              .onSnapshot(messagesSnapshot => {
+                const lastMessageData = messagesSnapshot.docs.length > 0 ? messagesSnapshot.docs[0].data() : null;
+  
+                const timestamp = lastMessageData && lastMessageData.timestamp 
+                  ? lastMessageData.timestamp.toDate ? lastMessageData.timestamp.toDate() : lastMessageData.timestamp 
+                  : null;
+  
+                const otherUserId = item.participants.find((user:any) => user !== userId);
+                const userInfo = users.find(user => user.id === otherUserId);
+  
+                setChatData((prevChatData:any) => {
+                  const updatedChatData = prevChatData.map((chat:any) => 
+                    chat.id === item.id
+                      ? {
+                          ...chat,
+                          name: userInfo ? userInfo.name : "Không xác định",
+                          avatar: userInfo ? userInfo.avatar : null,
+                          lastMessage: lastMessageData ? lastMessageData.text : "Chưa có tin nhắn",
+                          timestamp,
+                          isRead: lastMessageData ? lastMessageData.isRead : true,
+                        }
+                      : chat
+                  );
+  
+                  if (!prevChatData.find((chat:any) => chat.id === item.id)) {
+                    return [...prevChatData, {
+                      ...item,
+                      name: userInfo ? userInfo.name : "Không xác định",
+                      avatar: userInfo ? userInfo.avatar : null,
+                      lastMessage: lastMessageData ? lastMessageData.text : "Chưa có tin nhắn",
+                      timestamp,
+                      isRead: lastMessageData ? lastMessageData.isRead : true,
+                    }];
+                  }
+  
+                  return updatedChatData;
+                });
+              })
           );
-
-          console.log(filteredUserIds); // In ra danh sách userId khác
-
-          // Cập nhật chatData với thông tin người dùng
-          const updatedChatData = items.map(item => {
-            const otherUserId = item.users.find(user => user !== userId);
-            const userInfo = users.find(user => user.id === otherUserId);
-            return {
-              ...item,
-              name: userInfo ? userInfo.name : "Không xác định", // Tên người dùng
-              avatar: userInfo ? userInfo.avatar : null, // Avatar người dùng
-            };
-          });
-
-          setChatData(updatedChatData); // Cập nhật state với danh sách chat
+  
+          return () => unsubscribes.forEach(unsub => unsub());
         }
       });
-
+  
     return () => unsubscribe();
-  }, [userId]);
+  }, []);
+
+  const formatTimestamp = (timestamp: Date) => {
+    if (moment().isSame(timestamp, 'day')) {
+      return moment(timestamp).format('HH:mm');
+    }
+    return moment(timestamp).format('DD/MM/YYYY HH:mm');
+  };
 
   const renderChatItem = ({ item }: any) => (
     <TouchableOpacity
@@ -71,17 +112,29 @@ const ListChatScreen = () => {
         navigation.navigate(STACK_NAVIGATOR_SCREENS.CHATDETAILSCREEN, {
           chatId: item.id,
           name: item.name,
+          avatar: item.avatar
         })
       }>
       {item.avatar && (
-        <Image source={{ uri: item.avatar }} style={styles.avatar} /> // Hiển thị avatar
+        <Image source={{ uri: item.avatar }} style={styles.avatar} />
       )}
       <View style={styles.chatContent}>
         <View style={styles.chatHeader}>
-          <Text style={styles.chatName}>{item.name}</Text>
-          <Text style={styles.chatTime}>{item.time}</Text>
+          <Text style={[styles.chatName, !item.isRead && styles.unreadText]}>
+            {item.name}
+          </Text>
+          {!item.isRead && <View style={styles.unreadDot} />}
         </View>
-        <Text style={styles.chatLastMessage}>{item.lastMessage}</Text>
+        <View style={styles.messageContainer}>
+          <Text style={[styles.chatLastMessage, !item.isRead && styles.unreadText]}>
+            {item.lastMessage}
+          </Text>
+          {item.timestamp && (
+            <Text style={styles.chatTime}>
+              {formatTimestamp(item.timestamp)}
+            </Text>
+          )}
+        </View>
       </View>
     </TouchableOpacity>
   );
@@ -96,12 +149,14 @@ const ListChatScreen = () => {
           size={30}
           color={colors.dark}
           onPress={goBack}
+
         />
       }>
       <FlatList
-        data={chatData} // Sử dụng chatData từ Firestore
+        data={chatData}
         renderItem={renderChatItem}
-        keyExtractor={item => item.id} // Đảm bảo keyExtractor sử dụng id của document
+        keyExtractor={item => item.id}
+        contentContainerStyle={styles.chatList}
       />
     </Container>
   );
@@ -116,12 +171,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderBottomWidth: 1,
     borderBottomColor: colors.grey4,
+    backgroundColor: colors.white,
   },
   avatar: {
     width: 50,
     height: 50,
     borderRadius: 25,
     marginRight: 12,
+    // shadowColor: colors.dark,
+    // shadowOpacity: 0.2,
+    // shadowOffset: { width: 0, height: 1 },
+    // shadowRadius: 2,
   },
   chatContent: {
     flex: 1,
@@ -130,6 +190,7 @@ const styles = StyleSheet.create({
   chatHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 4,
   },
   chatName: {
@@ -140,9 +201,31 @@ const styles = StyleSheet.create({
   chatTime: {
     fontSize: 12,
     color: colors.grey,
+    width: 80, // Chiều ngang cố định cho khung thời gian
+    textAlign: 'right',
+  },
+  messageContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   chatLastMessage: {
     fontSize: 14,
     color: colors.grey,
+    flex: 1,
+    marginRight: 8,
+  },
+  unreadText: {
+    fontWeight: 'bold',
+    color: colors.dark,
+  },
+  unreadDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: colors.primary,
+  },
+  chatList: {
+    paddingVertical: 8,
   },
 });
