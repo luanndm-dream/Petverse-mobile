@@ -6,6 +6,7 @@ import {useSelector} from 'react-redux';
 import {useAppDispatch, useAppSelector} from '@/redux';
 import {useAsyncStorage} from '@react-native-async-storage/async-storage';
 import {addAuth} from '@/redux/reducers';
+import TestScreen from '@/screens/home/TestScreen';
 
 const AppNavigator = () => {
   const {getItem} = useAsyncStorage('auth');
@@ -26,7 +27,7 @@ const AppNavigator = () => {
     // res && dispatch(addAuth(JSON.parse(res)));
   };
 
-  return <>{auth.accessToken ? <MainNavigator /> : <AuthNavigator />}</>;
+  return <>{auth.accessToken ? <TestScreen /> : <AuthNavigator />}</>;
   // return <>{1>2 ? <MainNavigator /> : <AuthNavigator />}</>;
 };
 

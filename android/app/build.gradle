@@ -1,6 +1,6 @@
 apply plugin: "com.android.application"
 apply plugin: "com.facebook.react"
-
+apply plugin: 'kotlin-android'
 /**
  * This is the configuration block to customize your React Native Android app.
  * By default you don't need to apply any configuration, just uncomment the lines you need.
@@ -72,8 +72,8 @@ android {
     ndkVersion rootProject.ext.ndkVersion
 
     compileSdkVersion rootProject.ext.compileSdkVersion
-
     namespace "com.petverse"
+
     defaultConfig {
         applicationId "com.petverse"
         minSdkVersion rootProject.ext.minSdkVersion
@@ -81,6 +81,20 @@ android {
         versionCode 1
         versionName "1.0"
     }
+    
+    compileOptions {
+        // Sử dụng JVM Toolchain để đồng bộ JVM
+        java {
+            toolchain {
+                languageVersion.set(JavaLanguageVersion.of(17))
+            }
+        }
+    }
+
+    kotlinOptions {
+    jvmTarget = "17"
+    }
+
     signingConfigs {
         debug {
             storeFile file('debug.keystore')
@@ -89,6 +103,7 @@ android {
             keyPassword 'android'
         }
     }
+
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
@@ -109,7 +124,7 @@ dependencies {
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}")
     debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
-        exclude group:'com.squareup.okhttp3', module:'okhttp'
+        exclude group: 'com.squareup.okhttp3', module: 'okhttp'
     }
 
     debugImplementation("com.facebook.flipper:flipper-fresco-plugin:${FLIPPER_VERSION}")
