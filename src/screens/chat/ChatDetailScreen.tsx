@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   SafeAreaView,
   Image,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useEffect, useState, useRef, useCallback} from 'react';
 import {useNavigation, useRoute} from '@react-navigation/native';
@@ -22,47 +23,40 @@ import {IconButtonComponent, RowComponent} from '@/components';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ImagePicker from 'react-native-image-crop-picker';
 import storage from '@react-native-firebase/storage';
+import VideoPlayer from 'react-native-video-player';
+
 const ChatDetailScreen = () => {
   const route = useRoute<any>();
   const {chatId, name, avatar} = route.params;
   const navigation = useNavigation();
-  // const userId = useAppSelector(state => state.auth.userId);
   const userId = Platform.OS === 'ios' ? '2' : '1';
   const [messages, setMessages] = useState<any>([]);
   const [newMessage, setNewMessage] = useState('');
   const flatListRef = useRef<FlatList>(null);
-
+  const [loadingVideo, setLoadingVideo] = useState(false);
   useEffect(() => {
     const initChat = async () => {
       const chatRef = firestore().collection('chats').doc(chatId);
 
       try {
-        // Kiểm tra xem document của chat đã tồn tại chưa
         const chatDoc = await chatRef.get();
 
-        // Nếu chưa có, tạo mới document với dữ liệu cơ bản
         if (!chatDoc.exists) {
           await chatRef.set({
             createdAt: firestore.FieldValue.serverTimestamp(),
-            participants: [userId], // Bạn có thể thêm ID của những người dùng khác nếu cần
+            participants: ['1','2'],
           });
         }
 
-        // Sau khi tạo hoặc nếu đã có, kiểm tra và khởi tạo sub-collection 'messages'
         const unsubscribe = chatRef
           .collection('messages')
           .orderBy('timestamp', 'desc')
           .onSnapshot(snapshot => {
-            if (!snapshot.empty) {
-              const messagesData = snapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data(),
-              }));
-              setMessages(messagesData);
-            } else {
-              // Xử lý khi không có tin nhắn
-              setMessages([]);
-            }
+            const messagesData = snapshot.docs.map(doc => ({
+              id: doc.id,
+              ...doc.data(),
+            }));
+            setMessages(messagesData);
           });
 
         return () => unsubscribe();
@@ -73,8 +67,9 @@ const ChatDetailScreen = () => {
 
     initChat();
   }, [chatId]);
-  const sendMessage = async (urlImage?: string) => {
-    if (!urlImage && newMessage.trim().length === 0) {
+
+  const sendMessage = async (urlImage?: string, videoUrl?: string) => {
+    if (!urlImage && !videoUrl && newMessage.trim().length === 0) {
       return;
     }
   
@@ -84,13 +79,14 @@ const ChatDetailScreen = () => {
         .doc(chatId)
         .collection('messages')
         .add({
-          text: urlImage ? '' : newMessage, // Để trống nếu là hình ảnh
-          imageUrl: urlImage || '', // Lưu link hình ảnh nếu có
+          text: newMessage.trim().length > 0 ? newMessage : '',
+          imageUrl: urlImage || '',
+          videoUrl: videoUrl || '',
           senderId: userId,
           timestamp: firestore.FieldValue.serverTimestamp(),
           isRead: false,
         });
-  
+        
       setNewMessage('');
     } catch (error) {
       console.error('Lỗi khi gửi tin nhắn:', error);
@@ -122,9 +118,12 @@ const ChatDetailScreen = () => {
       mediaType: 'any',
     })
       .then(async media => {
-        const downloadUrl: any = await uploadMediaToStorage(media);
-        console.log('downloadUrl',downloadUrl)
-        await sendMessage(downloadUrl);
+        const downloadUrl = await uploadMediaToStorage(media);
+        if (media.mime.startsWith('video/')) {
+          await sendMessage(undefined, downloadUrl);
+        } else {
+          await sendMessage(downloadUrl);
+        }
       })
       .catch(error => {
         console.error('Lỗi khi chọn media:', error);
@@ -132,27 +131,53 @@ const ChatDetailScreen = () => {
   };
 
   const renderMessageItem = useCallback(
-    ({item}: any) => {
+    ({ item }: any) => {
       const timestamp =
-        item.timestamp && item.timestamp.toDate
-          ? item.timestamp.toDate()
-          : null;
+        item.timestamp && item.timestamp.toDate ? item.timestamp.toDate() : null;
   
       if (item.senderId !== userId && !item.isRead) {
         markMessageAsRead(item.id);
       }
   
       const isMyMessage = item.senderId === userId;
+      const hasImage = !!item.imageUrl;
   
       return (
         <Animated.View
           entering={FadeInUp}
           style={[
             styles.messageItem,
-            isMyMessage ? styles.myMessage : styles.otherMessage,
+            isMyMessage
+              ? [styles.myMessage, hasImage && { backgroundColor: 'transparent' }]
+              : [styles.otherMessage, hasImage && { backgroundColor: 'transparent' }],
             !item.isRead && !isMyMessage ? styles.unreadMessage : {},
-          ]}>
-          {item.imageUrl ? (
+            item.videoUrl ? styles.videoMessageContainer : {},
+          ]}
+        >
+          {item.videoUrl ? (
+            <View style={styles.videoContainer}>
+              {loadingVideo && (
+                <ActivityIndicator
+                  style={styles.loadingIndicator}
+                  size="large"
+                  color={colors.primary}
+                />
+              )}
+              <VideoPlayer
+                video={{ uri: item.videoUrl }}
+                thumbnail={require('../../assets/images/BannerVideo.png')}
+                videoHeight={250}
+                videoWidth={200}
+                resizeMode="cover"
+                onStart={() => {
+                  setLoadingVideo(true);
+                }}
+                onLoad={() => {
+                  setLoadingVideo(false);
+                }}
+              />
+            </View>
+          ) : item.imageUrl ? (
             <Image
               source={{ uri: item.imageUrl }}
               style={styles.imageMessage}
@@ -163,7 +188,8 @@ const ChatDetailScreen = () => {
               style={[
                 styles.messageText,
                 isMyMessage ? styles.myMessageText : styles.otherMessageText,
-              ]}>
+              ]}
+            >
               {item.text}
             </Text>
           )}
@@ -171,21 +197,14 @@ const ChatDetailScreen = () => {
             style={[
               styles.timestamp,
               isMyMessage ? styles.myTimestamp : styles.otherTimestamp,
-            ]}>
+            ]}
+          >
             {timestamp ? moment(timestamp).format('HH:mm') : ''}
           </Text>
         </Animated.View>
       );
     },
-    [userId],
-  );
-  const ListEmptyComponent = useCallback(
-    () => (
-      <View style={styles.emptyContainer}>
-        <Text style={styles.emptyText}>Chưa có tin nhắn nào</Text>
-      </View>
-    ),
-    [],
+    [userId, loadingVideo]
   );
 
   const renderSendButton = (isDisabled: boolean, onPress: () => void) => (
@@ -193,16 +212,16 @@ const ChatDetailScreen = () => {
       style={[styles.sendButton, isDisabled && styles.sendButtonDisabled]}
       onPress={onPress}
       disabled={isDisabled}>
-      <Send size={24} color={isDisabled ? colors.grey : colors.white} />
+      <Send size={24} color={isDisabled ? colors.grey : colors.white}
+       style={{ transform: [{ rotate: '-45deg' }] }} />
     </TouchableOpacity>
   );
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.keyboardView}
-        // keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 24}
-      >
+        style={styles.keyboardView}>
         <View style={styles.header}>
           <TouchableOpacity
             onPress={() => navigation.goBack()}
@@ -225,9 +244,12 @@ const ChatDetailScreen = () => {
           keyExtractor={item => item.id}
           contentContainerStyle={styles.messageList}
           style={styles.flatList}
-          removeClippedSubviews={false}
-          inverted={true}
-          ListEmptyComponent={ListEmptyComponent}
+          inverted
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>Chưa có tin nhắn</Text>
+            </View>
+          }
           scrollEventThrottle={16}
           showsVerticalScrollIndicator={false}
           windowSize={5}
@@ -252,7 +274,7 @@ const ChatDetailScreen = () => {
               multiline
               placeholderTextColor={colors.grey}
             />
-            {renderSendButton(!newMessage.trim(), sendMessage)}
+            {renderSendButton(!newMessage.trim(), () => sendMessage())}
           </View>
         </View>
       </KeyboardAvoidingView>
@@ -277,22 +299,40 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: colors.white,
   },
+  videoContainer: {
+    flex: 1,
+    width: 200, 
+    height: 250, 
+    maxHeight: 250,
+    maxWidth: '100%',
+    overflow: 'hidden',
+    borderRadius: 8,
+    marginBottom: 10,
+    backgroundColor: colors.grey4
+  },
+  videoMessageContainer: {
+    backgroundColor: 'transparent', 
+  },
   messageItem: {
     padding: 8,
     borderRadius: 8,
     marginBottom: 10,
     maxWidth: '80%',
   },
-  iconButton: {
-    marginRight: 12, // Space between the icon and input field
-  },
   myMessage: {
     backgroundColor: colors.primary,
     alignSelf: 'flex-end',
   },
   imageMessage: {
-    width: 200, // Đặt chiều rộng tùy ý
-    height: 200, // Đặt chiều cao tùy ý
+    width: 200,
+    height: 200,
+    borderRadius: 8,
+    marginBottom: 10,
+    backgroundColor: 'transparent',
+  },
+  videoMessage: {
+    width: 200,
+    height: 200,
     borderRadius: 8,
     marginBottom: 10,
   },
@@ -331,9 +371,8 @@ const styles = StyleSheet.create({
     borderTopColor: colors.grey4,
     backgroundColor: colors.white,
     flexDirection: 'row',
-    alignItems: 'center', // Align icon and input horizontally
+    alignItems: 'center',
   },
-
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'flex-end',
@@ -343,7 +382,7 @@ const styles = StyleSheet.create({
     borderColor: colors.grey4,
     paddingHorizontal: 12,
     paddingVertical: 8,
-    flex: 1, // Make sure it takes the available width
+    flex: 1,
   },
   input: {
     flex: 1,
@@ -365,9 +404,6 @@ const styles = StyleSheet.create({
   sendButtonDisabled: {
     backgroundColor: colors.grey4,
   },
-  sendIcon: {
-    transform: [{rotate: '-45deg'}],
-  },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -382,14 +418,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    // padding: 16,
     marginTop: Platform.OS === 'android' ? 32 : 0,
   },
   backButton: {
     padding: 8,
-  },
-  backButtonText: {
-    color: colors.dark,
   },
   title: {
     fontSize: 20,
@@ -402,9 +434,13 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
     marginHorizontal: 12,
-    // shadowColor: colors.dark,
-    // shadowOpacity: 0.2,
-    // shadowOffset: { width: 0, height: 1 },
-    // shadowRadius: 2,
+  },
+  loadingIndicator: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    marginLeft: -12, 
+    marginTop: -12, 
+    zIndex: 1,
   },
 });

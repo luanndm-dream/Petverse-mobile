@@ -1623,6 +1623,11 @@ PODS:
   - react-native-slider (4.5.5):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
+  - react-native-video (5.2.1):
+    - React-Core
+    - react-native-video/Video (= 5.2.1)
+  - react-native-video/Video (5.2.1):
+    - React-Core
   - react-native-vlc-media-player (1.0.38):
     - MobileVLCKit (= 3.5.1)
     - React
@@ -1829,6 +1834,7 @@ DEPENDENCIES:
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - "react-native-slider (from `../node_modules/@react-native-community/slider`)"
+  - react-native-video (from `../node_modules/react-native-video`)
   - react-native-vlc-media-player (from `../node_modules/react-native-vlc-media-player`)
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
@@ -1933,6 +1939,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-safe-area-context"
   react-native-slider:
     :path: "../node_modules/@react-native-community/slider"
+  react-native-video:
+    :path: "../node_modules/react-native-video"
   react-native-vlc-media-player:
     :path: "../node_modules/react-native-vlc-media-player"
   React-NativeModulesApple:
@@ -2037,6 +2045,7 @@ SPEC CHECKSUMS:
   React-logger: 454ffb01980778a43b0153ee98721d0275b56616
   react-native-safe-area-context: 5141f11858b033636f1788b14f32eaba92cee810
   react-native-slider: f931c5f4be44f500d38d6f6cc2e758f272586122
+  react-native-video: c26780b224543c62d5e1b2a7244a5cd1b50e8253
   react-native-vlc-media-player: 0f9860bded57cd6764ac55b5c0e97347069cb40a
   React-NativeModulesApple: ce53a3585837c99a6212070950204a129a6bad5f
   React-perflogger: 684a11499a0589cc42135d6d5cc04d0e4e0e261a

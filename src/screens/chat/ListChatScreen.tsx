@@ -68,24 +68,36 @@ const ListChatScreen = () => {
                           ...chat,
                           name: userInfo ? userInfo.name : "Không xác định",
                           avatar: userInfo ? userInfo.avatar : null,
-                          lastMessage: lastMessageData ? lastMessageData.text : "Chưa có tin nhắn",
+                          lastMessage: lastMessageData 
+                            ? lastMessageData.videoUrl 
+                              ? "Đã gửi video" 
+                              : lastMessageData.imageUrl 
+                                ? "Đã gửi ảnh" 
+                                : lastMessageData.text 
+                            : "Chưa có tin nhắn",
                           timestamp,
                           isRead: lastMessageData ? lastMessageData.isRead : true,
                         }
                       : chat
                   );
-  
+                
                   if (!prevChatData.find((chat:any) => chat.id === item.id)) {
                     return [...prevChatData, {
                       ...item,
                       name: userInfo ? userInfo.name : "Không xác định",
                       avatar: userInfo ? userInfo.avatar : null,
-                      lastMessage: lastMessageData ? lastMessageData.text : "Chưa có tin nhắn",
+                      lastMessage: lastMessageData 
+                        ? lastMessageData.videoUrl 
+                          ? "Video" 
+                          : lastMessageData.imageUrl 
+                            ? "Ảnh" 
+                            : lastMessageData.text 
+                        : "Chưa có tin nhắn",
                       timestamp,
                       isRead: lastMessageData ? lastMessageData.isRead : true,
                     }];
                   }
-  
+                
                   return updatedChatData;
                 });
               })
