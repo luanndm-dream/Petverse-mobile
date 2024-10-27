@@ -37,7 +37,7 @@ import useLoading from '@/hook/useLoading';
 import {useAppSelector} from '@/redux';
 import {apiPostApplication} from '@/api/apiApplication';
 import Toast from 'react-native-toast-message';
-import { imageUpload } from '@/utils/imageUpload';
+import { mediaUpload } from '@/utils/mediaUpload';
 
 const EmployeeRegistrationScreen = () => {
   const [isVisibleImage, setIsVisibleImage] = useState(false);
@@ -198,18 +198,18 @@ const EmployeeRegistrationScreen = () => {
       const certifications: any[] = [];
       if (selectedCertifications) {
         selectedCertifications.forEach(item => {
-          // Gọi imageUpload với đường dẫn thay vì đối tượng
-          certifications.push(imageUpload(item.path)); // Sử dụng item.path
+          // Gọi mediaUpload với đường dẫn thay vì đối tượng
+          certifications.push(mediaUpload(item.path)); // Sử dụng item.path
         });
       }
-      console.log('certifications',certifications, 'imageUpload(values.avatar) 1', imageUpload(values.avatar) )
+      console.log('certifications',certifications, 'mediaUpload(values.avatar) 1', mediaUpload(values.avatar) )
       showLoading()
         apiPostApplication(
           userId,
           values.name,
           values.phoneNumber,
           values.address,
-          imageUpload(values.avatar),
+          mediaUpload(values.avatar),
           values.description,
           values.services,
           certifications

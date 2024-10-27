@@ -1,7 +1,7 @@
 import {Image, ImageBackground, StyleSheet, Text, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useNavigation, useRoute} from '@react-navigation/native';
-import {apiGetPetByPetId, apiGetPetSubType} from '@/api/apiPet';
+import {apiGetPetByPetId, apiGetPetBreed} from '@/api/apiPet';
 import useLoading from '@/hook/useLoading';
 import {
   Container,
@@ -13,7 +13,8 @@ import {
 import {colors} from '@/constants/colors';
 import {FlatList} from 'react-native-gesture-handler';
 import {Camera, Edit, Edit2, Gallery} from 'iconsax-react-native';
-import { STACK_NAVIGATOR_SCREENS } from '@/constants/screens';
+import {STACK_NAVIGATOR_SCREENS} from '@/constants/screens';
+import { ageFormatter } from '@/utils/AgeFormatter';
 
 const PetDetailScreen = () => {
   const route = useRoute<any>();
@@ -24,7 +25,11 @@ const PetDetailScreen = () => {
   const [dogSubType, setDogSubType] = useState<any[]>([]);
   const [catSubType, setCatSubType] = useState<any[]>([]);
   const [petSubTypeName, setPetSubTypeName] = useState<string>('');
-//   console.log(petData);
+    console.log(petData);
+
+
+    
+
   const petInfo = [
     {
       label: 'Tên',
@@ -32,7 +37,7 @@ const PetDetailScreen = () => {
     },
     {
       label: 'Loài',
-      value: petData?.petTypeId === 1 ? 'Chó' : 'Mèo',
+      value: petData?.speciesId === 1 ? 'Chó' : 'Mèo',
     },
     {
       label: 'Giống',
@@ -40,7 +45,8 @@ const PetDetailScreen = () => {
     },
     {
       label: 'Tuổi',
-      value: petData?.age,
+      value: ageFormatter(petData?.birthDate),
+      // value:petData?.birthDate,
     },
     {
       label: 'Giới tính',
@@ -48,7 +54,7 @@ const PetDetailScreen = () => {
     },
     {
       label: 'Cân nặng',
-      value: petData?.weight,
+      value: `${petData?.weight} kg`,
     },
     {
       label: 'Triệt sản',
@@ -59,52 +65,57 @@ const PetDetailScreen = () => {
     //     value: petData?.weight
     // }
   ];
+
   
+
   const onPressIcon = (type: string) => {
-    if(type === 'album'){
-        navigation.navigate(STACK_NAVIGATOR_SCREENS.PETALBUMSCREEN, {
-            petName: petData.name,
-            petPhotos: petData.petPhotos
-        })
+    if (type === 'album') {
+      navigation.navigate(STACK_NAVIGATOR_SCREENS.PETALBUMSCREEN, {
+        petName: petData.name,
+        petPhotos: petData.petPhotos,
+      });
     }
-  }
+  };
 
   useEffect(() => {
     showLoading();
     Promise.all([
-      apiGetPetSubType(1),
-      apiGetPetSubType(2),
-      apiGetPetByPetId(petId),
+      apiGetPetBreed(1), // Lấy danh sách giống chó
+      apiGetPetBreed(2), // Lấy danh sách giống mèo
+      apiGetPetByPetId(petId), // Lấy chi tiết pet
     ])
       .then(([dogResponse, catResponse, petResponse]: any) => {
         if (dogResponse.statusCode === 200) {
+          // console.log('Dog Breed Items:', dogResponse.data.items);
           setDogSubType(dogResponse?.data?.items);
         }
         if (catResponse.statusCode === 200) {
+          // console.log('Cat Breed Items:', catResponse.data.items);
           setCatSubType(catResponse?.data?.items);
         }
+
         if (petResponse?.statusCode === 200) {
           setPetData(petResponse?.data);
-          
-          // Xử lý tìm petSubTypeName ở đây, sau khi đã có đầy đủ data
-          const subTypeId = petResponse?.data?.petSubTypeId;
-          if (petResponse?.data?.petTypeId === 1) {
-            const subType = dogResponse?.data?.items.find(
-              (item: any) => item.id === subTypeId
+          const breedId = petResponse?.data?.breedId;
+          if (petResponse?.data?.speciesId === 1) {
+            const breed = dogResponse?.data?.items.find(
+              (item: any) => item.id === breedId,
             );
-            setPetSubTypeName(subType ? subType.subName : 'Không xác định');
-          } else if (petResponse?.data?.petTypeId === 2) {
-            const subType = catResponse?.data?.items.find(
-              (item: any) => item.id === subTypeId
+            // console.log('Found Dog Breed:', breed);
+            setPetSubTypeName(breed ? breed.name : 'Không xác định');
+          } else if (petResponse?.data?.speciesId === 2) {
+            const breed = catResponse?.data?.items.find(
+              (item: any) => item.id === breedId,
             );
-            setPetSubTypeName(subType ? subType.subName : 'Không xác định');
+            // console.log('Found Cat Breed:', breed);
+            setPetSubTypeName(breed ? breed.name : 'Không xác định');
           }
         }
       })
       .finally(() => {
         hideLoading();
       });
-  }, [petId]); 
+  }, [petId]);
 
   const renderInfoItem = (label: string, value: any, isLastItem: boolean) => {
     return (
@@ -138,7 +149,9 @@ const PetDetailScreen = () => {
           <View>
             <TextComponent text={petName} type="title" />
             <RowComponent>
-              <RowComponent styles={styles.iconContainer} onPress={() => onPressIcon('album')}>
+              <RowComponent
+                styles={styles.iconContainer}
+                onPress={() => onPressIcon('album')}>
                 <Gallery size={24} color={colors.grey} />
                 <TextComponent text="Album" styles={{marginLeft: 6}} />
               </RowComponent>
@@ -151,9 +164,10 @@ const PetDetailScreen = () => {
         </View>
       </ImageBackground>
       <SectionComponent>
-        <TextComponent text='Giới thiệu' type='title'/>
-        <TextComponent text={petData?.description.trim()} type='description'/>
+        <TextComponent text="Giới thiệu" type="title" />
+        <TextComponent text={petData?.description.trim()} type="description" />
         <FlatList
+          showsVerticalScrollIndicator={false}
           contentContainerStyle={{
             backgroundColor: 'white',
             paddingHorizontal: 12,
@@ -167,7 +181,6 @@ const PetDetailScreen = () => {
           }
         />
         {/* <TextComponent text='Hình ảnh' type='title'/> */}
-
       </SectionComponent>
     </Container>
   );
@@ -182,7 +195,7 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 8
+    marginBottom: 8,
   },
   editContainer: {
     position: 'absolute',

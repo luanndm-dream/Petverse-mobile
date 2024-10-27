@@ -4,14 +4,14 @@ import { useRoute } from '@react-navigation/native'
 import { Container, IconButtonComponent } from '@/components'
 import { colors } from '@/constants/colors'
 import { useCustomNavigation } from '@/utils/navigation'
-import { Trash } from 'iconsax-react-native'
+import VideoPlayer from 'react-native-video-player'
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window')
+const { width: SCREEN_WIDTH } = Dimensions.get('window')
 const PHOTO_WIDTH = (SCREEN_WIDTH - 40) / 2
 
 const PetAlbumScreen = () => {
   const route = useRoute<any>()
-  const { navigate, goBack } = useCustomNavigation()
+  const { goBack } = useCustomNavigation()
   const { petName, petPhotos } = route.params
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number>(0)
@@ -27,21 +27,33 @@ const PetAlbumScreen = () => {
     setSelectedPhotoIndex(currentIndex)
   }
 
-  const renderPetPhoto = ({ item, index }: any) => {
+  const renderMediaItem = ({ item, index }: any) => {
+    const isVideo = item.type === 1
     return (
       <TouchableOpacity 
         style={styles.photoContainer}
         onPress={() => handlePhotoPress(index)}
         activeOpacity={0.9}
       >
-        <Image source={{ uri: item.url }} style={styles.photo} />
+        {isVideo ? (
+          <VideoPlayer
+            video={{ uri: item.url }}
+            videoWidth={PHOTO_WIDTH}
+            videoHeight={150}
+            pauseOnPress
+            thumbnail={require('../../assets/images/BannerVideo.png')} // Đảm bảo thumbnail đúng
+            style={[styles.photo, { backgroundColor: colors.grey3}]}
+          />
+        ) : (
+          <Image source={{ uri: item.url }} style={styles.photo} />
+        )}
       </TouchableOpacity>
     )
   }
 
   return (
     <>
-    <StatusBar 
+      <StatusBar 
         barStyle={isModalVisible ? "light-content" : "dark-content"} 
         translucent 
         backgroundColor={isModalVisible ? 'rgba(0, 0, 0, 0.8)' : 'transparent'}
@@ -61,7 +73,7 @@ const PetAlbumScreen = () => {
         <FlatList
           scrollEnabled={false}
           data={petPhotos}
-          renderItem={renderPetPhoto}
+          renderItem={renderMediaItem}
           keyExtractor={(item: any, index) => index.toString()}
           numColumns={2}
           columnWrapperStyle={styles.row}
@@ -76,7 +88,6 @@ const PetAlbumScreen = () => {
         onRequestClose={() => setIsModalVisible(false)}
       >
         <View style={styles.modalOverlay}>
-          {/* Tắt modal khi ấn vào vùng ngoài ảnh */}
           <TouchableOpacity 
             style={styles.modalOverlayTouchable} 
             activeOpacity={1} 
@@ -84,14 +95,6 @@ const PetAlbumScreen = () => {
           />
 
           <View style={styles.modalView}>
-            <TouchableOpacity
-              style={styles.closeButton}
-              onPress={() => setIsModalVisible(false)}
-            >
-  
-            </TouchableOpacity>
-            
-  
             <ScrollView 
               horizontal
               pagingEnabled
@@ -100,17 +103,31 @@ const PetAlbumScreen = () => {
               scrollEventThrottle={16}  
               contentOffset={{ x: selectedPhotoIndex * SCREEN_WIDTH, y: 0 }}  
             >
-              {petPhotos.map((photo: any, index: number) => (
-                <Image
-                  key={index}
-                  source={{ uri: photo.url }}
-                  style={styles.modalImage}
-                  resizeMode="contain"
-                />
-              ))}
+              {petPhotos.map((media: any, index: number) => {
+                const isVideo = media.type === 1
+                return isVideo ? (
+                  <VideoPlayer
+                    key={index}
+                    video={{ uri: media.url }}
+                    videoWidth={SCREEN_WIDTH}
+                    videoHeight={400}
+                    controls
+                    fullscreen
+                    pauseOnPress
+                    style={styles.modalImage}
+                    thumbnail={require('../../assets/images/BannerVideo.png')}
+                    resizeMode="contain"
+                  />
+                ) : (
+                  <Image
+                    key={index}
+                    source={{ uri: media.url }}
+                    style={styles.modalImage}
+                    resizeMode="contain"
+                  />
+                )
+              })}
             </ScrollView>
-
-            {/* Hiển thị chỉ số ảnh hiện tại */}
             <Text style={styles.paginationText}>{selectedPhotoIndex + 1} / {petPhotos.length}</Text>
           </View>
         </View>
@@ -124,7 +141,6 @@ export default PetAlbumScreen
 const styles = StyleSheet.create({
   list: {
     padding: 16,
-
   },
   row: {
     justifyContent: 'space-between',
@@ -136,19 +152,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,
     borderRadius: 12,
     overflow: 'hidden',
-    backgroundColor: colors.grey4,
-  
-    // Đổ bóng cho Android
-    elevation: 5, // Tăng giá trị cho đổ bóng đậm hơn
-  
-    // Đổ bóng cho iOS
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4, // Tăng chiều cao để tạo đổ bóng nhiều hơn
-    },
-    shadowOpacity: 0.3, // Tăng độ mờ đổ bóng
-    shadowRadius: 6, // Tăng bán kính đổ bóng
+   
   },
   photo: {
     width: '100%',
@@ -167,7 +171,7 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   modalView: {
-    width: SCREEN_WIDTH,  // Full screen width for horizontal scrolling
+    width: SCREEN_WIDTH,
     height: 400,
     backgroundColor: colors.white,
     borderRadius: 12,
@@ -177,15 +181,6 @@ const styles = StyleSheet.create({
   modalImage: {
     width: SCREEN_WIDTH,
     height: '100%',
-  },
-  closeButton: {
-    position: 'absolute',
-    top: -40,
-    right: 0,
-    zIndex: 1,
-    padding: 8,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    borderRadius: 20,
   },
   paginationText: {
     position: 'absolute',

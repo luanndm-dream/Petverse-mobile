@@ -6,35 +6,38 @@ export async function apiGetPetByUserId(userId: string) {
   return protectedAxios.get(url);
 }
 
-export async function apiGetPetType() {
-  const url = `PetType`;
+export async function apiGetPetSpecies() {
+  const url = `Species`;
 
   return protectedAxios.get(url);
 }
-export async function apiGetPetSubType(petTypeId: number) {
-  const url = `PetType/${petTypeId}/PetSubType`;
+export async function apiGetPetBreed(speciesId: number) {
+  const url = `Species/${speciesId}/Breed`;
 
   return protectedAxios.get(url);
 }
 export async function apiCreatePet(
   userId: string,
-  PetTypeId: number,
-  PetSubTypeId: number,
+  SpeciesId: number,
+  BreedId: number,
   Name: string,
+  BirthDate: string,
   Gender: number,
   Weight: number,
   Sterilized: boolean,
   Avatar: any ,
   Description?: string,
   PetPhotos?: any[],
-  Age?: number,
+  PetVideos?: any[],
+ 
 ) {
   const url = `Pet`;
   const formData = new FormData();
   formData.append('userId', userId)
-  formData.append('PetTypeId', PetTypeId.toString());
-  formData.append('PetSubTypeId', PetSubTypeId.toString());
+  formData.append('SpeciesId', SpeciesId);
+  formData.append('BreedId', BreedId);
   formData.append('Name', Name);
+  formData.append('BirthDate', BirthDate);
   formData.append('Gender', Gender.toString());
   formData.append('Weight', Weight.toString());
   formData.append('Sterilized', Sterilized ? 'true' : 'false');
@@ -48,10 +51,13 @@ export async function apiCreatePet(
       formData.append('PetPhotos', photo);
     });
   }
-  if (Age) {
-    formData.append('Age', Age.toString());
+  if (PetVideos) {
+    PetVideos.forEach((video) => {
+      formData.append('PetVideos', video);
+    });
   }
 
+  
   return protectedAxios.post(url, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',

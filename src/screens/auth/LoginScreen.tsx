@@ -89,7 +89,8 @@ const LoginScreen = () => {
   } 
 
   return (
-    <Container>
+    <Container
+    isScroll={true}>
       <SpaceComponent height={50} />
       <Image
         style={styles.logoImage}

@@ -10,10 +10,11 @@ import {
 import {colors} from '@/constants/colors';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {useAppSelector} from '@/redux';
-import {apiGetPetByUserId, apiGetPetSubType} from '@/api/apiPet';
+import {apiGetPetByUserId, apiGetPetBreed} from '@/api/apiPet';
 import useLoading from '@/hook/useLoading';
 import {sizes} from '@/constants/sizes';
 import { STACK_NAVIGATOR_SCREENS } from '@/constants/screens';
+import { ageFormatter } from '@/utils/AgeFormatter';
 
 const MyPetScreen = () => {
   const navigation = useNavigation<any>();
@@ -33,8 +34,8 @@ const MyPetScreen = () => {
   useEffect(() => {
     showLoading();
     Promise.all([
-      apiGetPetSubType(1),
-      apiGetPetSubType(2),
+      apiGetPetBreed(1),
+      apiGetPetBreed(2),
       apiGetPetByUserId(userId),
     ])
       .then(([dogResponse, catResponse, petResponse]: any) => {
@@ -81,7 +82,7 @@ const MyPetScreen = () => {
           <RowComponent justify="space-between" styles={styles.row}>
             <TextComponent text={`${petSubTypeName}`} size={12} />
             <View style={styles.ageContainer}>
-              <TextComponent text={`${item.age} tuổi`} />
+              <TextComponent text={ageFormatter(item.birthDate)} />
             </View>
           </RowComponent>
         </View>
@@ -99,7 +100,16 @@ const MyPetScreen = () => {
           color={colors.dark}
           onPress={() => navigation.goBack()}
         />
-      }>
+      }
+      right={
+        <IconButtonComponent
+          name="plus"
+          size={30}
+          color={colors.dark}
+          onPress={() => navigation.navigate(STACK_NAVIGATOR_SCREENS.ADDPETSCREEN)}
+        />
+      }
+      >
       <SectionComponent>
         <FlatList
           columnWrapperStyle={{justifyContent: 'space-between'}}

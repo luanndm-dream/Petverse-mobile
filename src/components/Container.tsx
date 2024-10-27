@@ -7,15 +7,15 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
 } from 'react-native';
-import React, { ReactNode } from 'react';
-import { globalStyles } from 'src/styles/globalStyles';
+import React, {ReactNode} from 'react';
+import {globalStyles} from 'src/styles/globalStyles';
 import TextComponent from './TextComponent';
 
 type Props = {
   children: ReactNode;
   title?: string;
-  left?: ReactNode; 
-  right?: ReactNode; 
+  left?: ReactNode;
+  right?: ReactNode;
   isScroll?: boolean;
   titlePosition?: 'center';
   onLeftPress?: () => void;
@@ -23,16 +23,31 @@ type Props = {
 };
 
 const Container = (props: Props) => {
-  const { children, title, left, right, isScroll = false, onLeftPress, onRightPress } = props;
+  const {
+    children,
+    title,
+    left,
+    right,
+    isScroll = false,
+    onLeftPress,
+    onRightPress,
+  } = props;
 
   return (
-    <SafeAreaView style={[globalStyles.container]} >
+    <SafeAreaView style={[globalStyles.container]}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        
         <View style={[globalStyles.container]}>
           {(left || title || right) && (
-            <View style={[styles.row, { paddingHorizontal: 16, paddingTop: 12, paddingBottom: 6, }]}>
+            <View
+              style={[
+                styles.row,
+                {paddingHorizontal: 16, paddingTop: 12, paddingBottom: 6},
+              ]}>
               {left && (
-                <TouchableOpacity onPress={onLeftPress} style={styles.iconContainer}>
+                <TouchableOpacity
+                  onPress={onLeftPress}
+                  style={styles.iconLeftContainer}>
                   <View>{left}</View>
                 </TouchableOpacity>
               )}
@@ -42,7 +57,9 @@ const Container = (props: Props) => {
               </View>
 
               {right && (
-                <TouchableOpacity onPress={onRightPress}>
+                <TouchableOpacity
+                  onPress={onRightPress}
+                  style={styles.iconRightContainer}>
                   <View>{right}</View>
                 </TouchableOpacity>
               )}
@@ -51,7 +68,9 @@ const Container = (props: Props) => {
 
           {/* Sử dụng chung style cho cả ScrollView và View */}
           {isScroll ? (
-            <ScrollView style={[globalStyles.container]} showsVerticalScrollIndicator={false}>
+            <ScrollView
+              style={[globalStyles.container]}
+              showsVerticalScrollIndicator={false}>
               {children}
             </ScrollView>
           ) : (
@@ -70,9 +89,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  iconContainer: {
+  iconLeftContainer: {
     position: 'absolute',
     left: 8,
+  },
+  iconRightContainer: {
+    position: 'absolute',
+    right: 8,
   },
   titleContainer: {
     paddingHorizontal: 16,
