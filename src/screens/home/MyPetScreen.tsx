@@ -57,17 +57,17 @@ const MyPetScreen = () => {
 
   
   const renderPetItem = (item: any) => {
-    let petSubTypeName = '';
-    if (item.petTypeId === 1) {
+    let breed = '';
+    if (item.speciesId === 1) {
       const subType = dogSubType.find(
-        subType => subType.id === item.petSubTypeId,
+        subType => subType.id === item.breedId,
       );
-      petSubTypeName = subType ? subType.subName : 'Không xác định';
+      breed = subType ? subType.name : 'Không xác định';
     } else if (item.petTypeId === 2) {
       const subType = catSubType.find(
-        subType => subType.id === item.petSubTypeId,
+        subType => subType.id === item.breedId,
       );
-      petSubTypeName = subType ? subType.subName : 'Không xác định';
+      breed = subType ? subType.name : 'Không xác định';
     }
 
     return (
@@ -80,7 +80,7 @@ const MyPetScreen = () => {
         <View style={styles.itemInfoContainer}>
           <TextComponent text={item.name} type="title" styles={{marginTop: 6}}/>
           <RowComponent justify="space-between" styles={styles.row}>
-            <TextComponent text={`${petSubTypeName}`} size={12} />
+            <TextComponent text={`${breed}`} size={12} />
             <View style={styles.ageContainer}>
               <TextComponent text={ageFormatter(item.birthDate)} />
             </View>
