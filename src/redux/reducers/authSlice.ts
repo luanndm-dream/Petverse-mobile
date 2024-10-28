@@ -11,7 +11,7 @@ const initialState = {
     userId: '15f0494d-a539-471a-9748-08dcf595a244' //User số 12
     // userId: Platform.OS === 'ios' ? '2': '1',
     // userId: '1'
-    // userId: 'eac9c97b-1f5f-40d5-0f82-08dcf1c7e0cd'
+    // userId: '0d175a92-e335-4036-94f1-08dcf6b29884' //User số 14
 };
 
 const authSlice = createSlice({

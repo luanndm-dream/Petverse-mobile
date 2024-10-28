@@ -1,12 +1,5 @@
-import {
-  FlatList,
-  ImageBackground,
-  Platform,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
-import React, {useEffect} from 'react';
+import {FlatList, ImageBackground, Platform, StyleSheet, Text, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
 import {
   Container,
   FeatureItem,
@@ -16,14 +9,26 @@ import {
   TextComponent,
 } from '@/components';
 import {colors} from '@/constants/colors';
-import {homeFeatureData} from '@/data/homeFeature';
+import {homeFeatureData as initialFeatureData} from '@/data/homeFeature';
 import {serviceData} from '@/data/servicesData';
 import ServiceItem from '@/components/ServiceItem';
 import {useCustomNavigation} from '@/utils/navigation';
 import {PERMISSIONS, RESULTS, check, request} from 'react-native-permissions';
-import { STACK_NAVIGATOR_SCREENS } from '@/constants/screens';
+import {STACK_NAVIGATOR_SCREENS} from '@/constants/screens';
+import {apiGetUserByUserId} from '@/api/apiUser';
+import {useAppSelector} from '@/redux';
+import useLoading from '@/hook/useLoading';
+import { apigetRole } from '@/api/apiRole';
+import { WorkProfileIcon } from '@/assets/svgs';
+ // đảm bảo import icon đúng
+
 const HomeScreen = () => {
   const {goBack, navigate} = useCustomNavigation();
+  const {hideLoading, showLoading} = useLoading();
+  const userId = useAppSelector(state => state.auth.userId);
+  const [userData, setUserData] = useState();
+  const [roles, setRoles] = useState([]);
+  const [homeFeatureData, setHomeFeatureData] = useState(initialFeatureData); // Chuyển thành state
 
   useEffect(() => {
     const requestCameraPermission = async () => {
@@ -36,10 +41,9 @@ const HomeScreen = () => {
         const result = await check(permission);
 
         if (result === RESULTS.DENIED) {
-          // Yêu cầu quyền camera
           const requestResult = await request(permission);
           if (requestResult !== RESULTS.GRANTED) {
-            // Alert.alert('Quyền truy cập bị từ chối', 'Bạn cần cấp quyền camera để sử dụng tính năng này');
+            console.log('Quyền truy cập bị từ chối');
           }
         }
       } catch (error) {
@@ -50,9 +54,65 @@ const HomeScreen = () => {
     requestCameraPermission();
   }, []);
 
+  useEffect(() => {
+    const initializeData = async () => {
+      try {
+        showLoading();
+        
+        // Lấy thông tin user
+        const userResponse: any = await apiGetUserByUserId(userId);
+        if (userResponse.statusCode === 200) {
+          setUserData(userResponse.data);
+          
+          // Lấy danh sách roles
+          const roleResponse: any = await apigetRole();
+          if (roleResponse.statusCode === 200) {
+            const roles = roleResponse?.data?.items;
+            setRoles(roles);
+  
+            // Tìm role PetCenter
+            const petCenterRole = roles.find((role: any) => role.name === 'PetCenter');
+            // Check match roleId
+            const isPetCenter = userResponse.data.roleId === petCenterRole?.id;
+  
+            const workFeature = {
+              id: 5,
+              name: 'Làm việc',
+              svg: WorkProfileIcon,
+              screen: STACK_NAVIGATOR_SCREENS.WORKPROFILESCREEN,
+            };
+  
+            setHomeFeatureData(prevData => {
+              const hasWorkFeature = prevData.some(feature => feature.name === 'Làm việc');
+  
+              if (isPetCenter && !hasWorkFeature) {
+                return [...prevData, workFeature];
+              }
+              
+              if (!isPetCenter && hasWorkFeature) {
+                return prevData.filter(feature => feature.name !== 'Làm việc');
+              }
+  
+              return prevData;
+            });
+          }
+        } else {
+          console.log('Lấy thông tin user thất bại');
+        }
+      } catch (error) {
+        console.error('Error initializing data:', error);
+      } finally {
+        hideLoading();
+      }
+    };
+  
+    initializeData();
+  }, [userId]); // Chỉ phụ thuộc vào userId
+
   const onPressFeature = (screen: string) => {
     navigate(screen);
   };
+
   return (
     <Container>
       <SectionComponent>
@@ -65,7 +125,7 @@ const HomeScreen = () => {
             name="chat"
             color={colors.white}
             backgroundColor={colors.primary}
-            onPress={()=>navigate(STACK_NAVIGATOR_SCREENS.LISTCHATSCREEN)}
+            onPress={() => navigate(STACK_NAVIGATOR_SCREENS.LISTCHATSCREEN)}
           />
         </RowComponent>
         <ImageBackground
@@ -79,9 +139,9 @@ const HomeScreen = () => {
         <FlatList
           data={homeFeatureData}
           keyExtractor={item => item.id.toString()}
-          numColumns={4} 
+          numColumns={4}
           columnWrapperStyle={{
-            justifyContent: 'space-between', // Căn chỉnh các item
+            justifyContent: 'space-between',
             paddingVertical: 6,
           }}
           renderItem={({item}) => (

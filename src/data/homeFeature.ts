@@ -26,10 +26,5 @@ export const homeFeatureData = [
         svg: PetScheduleIcon,
         screen: STACK_NAVIGATOR_SCREENS.EMPLOYEEREGISTRATIONSCREEN
     },
-    {
-        id: 5,
-        name: 'Làm việc',
-        svg: WorkProfileIcon,
-        screen: STACK_NAVIGATOR_SCREENS.EMPLOYEEREGISTRATIONSCREEN
-    },
+    
 ]

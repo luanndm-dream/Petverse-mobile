@@ -41,8 +41,9 @@ const PetAlbumScreen = () => {
             videoWidth={PHOTO_WIDTH}
             videoHeight={150}
             pauseOnPress
-            thumbnail={require('../../assets/images/BannerVideo.png')} // Đảm bảo thumbnail đúng
+            thumbnail={require('../../assets/images/BannerVideo.png')} 
             style={[styles.photo, { backgroundColor: colors.grey3}]}
+            resizeMode="cover"
           />
         ) : (
           <Image source={{ uri: item.url }} style={styles.photo} />

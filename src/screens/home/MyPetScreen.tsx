@@ -1,5 +1,5 @@
 import {FlatList, Image, StyleSheet, TouchableOpacity, View} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   Container,
   IconButtonComponent,
@@ -8,13 +8,14 @@ import {
   TextComponent,
 } from '@/components';
 import {colors} from '@/constants/colors';
-import {NavigationProp, useNavigation} from '@react-navigation/native';
+import {NavigationProp, useFocusEffect, useNavigation} from '@react-navigation/native';
 import {useAppSelector} from '@/redux';
 import {apiGetPetByUserId, apiGetPetBreed} from '@/api/apiPet';
 import useLoading from '@/hook/useLoading';
 import {sizes} from '@/constants/sizes';
 import { STACK_NAVIGATOR_SCREENS } from '@/constants/screens';
 import { ageFormatter } from '@/utils/AgeFormatter';
+import { async } from '@firebase/util';
 
 const MyPetScreen = () => {
   const navigation = useNavigation<any>();
@@ -36,7 +37,7 @@ const MyPetScreen = () => {
     Promise.all([
       apiGetPetBreed(1),
       apiGetPetBreed(2),
-      apiGetPetByUserId(userId),
+      // apiGetPetByUserId(userId),
     ])
       .then(([dogResponse, catResponse, petResponse]: any) => {
         // Kiểm tra và thiết lập dữ liệu
@@ -46,14 +47,33 @@ const MyPetScreen = () => {
         if (catResponse.statusCode === 200) {
           setCatSubType(catResponse.data.items);
         }
-        if (petResponse.statusCode === 200) {
-          setPets(petResponse.data.items);
-        }
+        // if (petResponse.statusCode === 200) {
+        //   setPets(petResponse.data.items);
+        // }
       })
       .finally(() => {
         hideLoading();
       });
   }, [userId]);
+
+  useFocusEffect(
+    useCallback(()=>{
+      const getMyPets = async () => {
+        showLoading()
+        await apiGetPetByUserId(userId).then((res: any) => {
+          if(res.statusCode === 200) {
+            setPets(res?.data?.items)
+            hideLoading()
+          }else{
+          console.log('Load pet fail')
+          }
+        }).finally(()=>{
+          // hideLoading()
+        })
+      }
+      getMyPets()
+    },[userId])
+  )
 
   
   const renderPetItem = (item: any) => {
