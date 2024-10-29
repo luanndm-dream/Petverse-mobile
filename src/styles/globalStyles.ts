@@ -44,4 +44,18 @@ export const globalStyles = StyleSheet.create({
         shadowRadius: 8,
         elevation: 6,
       },
+      inputContainer: {
+        flexDirection: 'row',
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: colors.grey3,
+        width: '100%',
+        minHeight: 56,
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingHorizontal: 15,
+        backgroundColor: colors.white,
+        marginBottom: 16,
+        paddingVertical: 8,
+      },
 });

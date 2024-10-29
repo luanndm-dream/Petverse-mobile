@@ -23,7 +23,7 @@ const AppNavigator = () => {
 
   const checkLogin = async () => {
     const res = await getItem();
-    res && dispatch(addAuth(JSON.parse(res)));
+    // res && dispatch(addAuth(JSON.parse(res)));
   };
 
   return <>{auth.accessToken ? <MainNavigator /> : <AuthNavigator />}</>;

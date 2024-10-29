@@ -1,4 +1,4 @@
-import {Image, StyleSheet, Text, View} from 'react-native';
+import {Image, Platform, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import {
   ButtonComponent,
@@ -13,13 +13,13 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import {colors} from '@/constants/colors';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
-import { useCustomNavigation } from '@/utils/navigation';
-import { apiSignUp } from '@/api/apiSignUp';
+import {useCustomNavigation} from '@/utils/navigation';
+import {apiSignUp} from '@/api/apiSignUp';
 import useLoading from '@/hook/useLoading';
 import Toast from 'react-native-toast-message';
 const SignUpScreen = () => {
-  const {navigate, goBack} = useCustomNavigation()
-  const {showLoading, hideLoading} = useLoading()
+  const {navigate, goBack} = useCustomNavigation();
+  const {showLoading, hideLoading} = useLoading();
   const initialValue = {
     fullname: '',
     email: '',
@@ -40,37 +40,47 @@ const SignUpScreen = () => {
       .matches(/^\d{10}$/, 'Số điện thoại phải là 10 chữ số')
       .required('Số điện thoại là bắt buộc'),
   });
-  const handleSignUp = (fullname: string, email: string, password: string, phoneNumber: string) => {
-    showLoading()
-    apiSignUp(fullname, email,password,phoneNumber).then((res:any)=>{
-      console.log(res)
-      if(res.statusCode === 200) {
-        hideLoading()
+  const handleSignUp = (
+    fullname: string,
+    email: string,
+    password: string,
+    phoneNumber: string,
+  ) => {
+    showLoading();
+    apiSignUp(fullname, email, password, phoneNumber).then((res: any) => {
+      console.log(res);
+      if (res.statusCode === 200) {
+        hideLoading();
         Toast.show({
-          type: "success",
+          type: 'success',
           text1: 'Đăng kí thành công',
-          text2: 'Petverse chúc bạn thật nhiều sức khoẻ!'
-        })
-        goBack()
-      }
-      else{
-        hideLoading()
+          text2: 'Petverse chúc bạn thật nhiều sức khoẻ!',
+        });
+        goBack();
+      } else {
+        hideLoading();
         Toast.show({
-          type: "error",
+          type: 'error',
           text1: 'Đăng kí thất bại',
-          text2: `Xảy ra lỗi khi đăng kí ${res.message}`
-        })
+          text2: `Xảy ra lỗi khi đăng kí ${res.error}`,
+        });
       }
-    })
-  }
-  const handleBack = () =>{
-    goBack()
-  }
+    });
+  };
+  const handleBack = () => {
+    goBack();
+  };
   return (
     <Container
+    isScroll={true}
       left={
         <View
-          style={{padding: 8, backgroundColor: colors.white, borderRadius: 8}}>
+          style={{
+            padding: 8,
+            backgroundColor: colors.white,
+            borderRadius: 8,
+            marginTop: Platform.OS === 'android' ? 24 : 0,
+          }}>
           <Entypo name="arrow-left" size={30} color={colors.grey} />
         </View>
       }
@@ -96,8 +106,13 @@ const SignUpScreen = () => {
       <Formik
         initialValues={initialValue}
         validationSchema={validationSchema}
-        onSubmit={(values) => {
-          handleSignUp(values.fullname, values.email, values.password, values.phoneNumber)
+        onSubmit={values => {
+          handleSignUp(
+            values.fullname,
+            values.email,
+            values.password,
+            values.phoneNumber,
+          );
         }}>
         {({
           handleChange,

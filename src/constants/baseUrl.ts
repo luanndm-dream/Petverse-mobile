@@ -1,1 +1,1 @@
-export const BASE_URL = 'https://petverse-api.azurewebsites.net/Api/V1'
+export const BASE_URL = 'http://112.213.87.177:5000/Api/V1'
