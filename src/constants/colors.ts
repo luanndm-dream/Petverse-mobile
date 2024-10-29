@@ -2,7 +2,7 @@ export const colors = {
     text : '#000000',
     description: '#666666',
     primary: '#3D4ED9',
-    secondary: '#8a92ff',
+    secondary: '#99AAF1',
     orange: '#F0900C',
     title: '#34385A',
     grey: '#727272',

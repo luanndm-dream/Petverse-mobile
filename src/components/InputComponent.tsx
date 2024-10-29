@@ -79,7 +79,7 @@ const InputComponent = (props: Props) => {
               color={colors.grey}
             />
           ) : (value.length > 0 && allowClear && (
-            <AntDesign name="close" size={22} color={colors.text} />
+            <AntDesign name="close" size={16} color={colors.text} />
           ))}
         </TouchableOpacity>
       </View>

@@ -58,4 +58,9 @@ export const globalStyles = StyleSheet.create({
         marginBottom: 16,
         paddingVertical: 8,
       },
+      errorText: {
+        color: 'red',
+        fontSize: 14,
+        // marginTop:,
+      },
 });

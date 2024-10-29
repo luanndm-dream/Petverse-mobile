@@ -14,7 +14,14 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import SpaceComponent from './SpaceComponent';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import IconButtonComponent from './IconButtonComponent';
-import {PetBoardingIcon, PetGroomingIcon, PetTrainingIcon} from '@/assets/svgs';
+import {
+  CatIcon,
+  DoctorIcon,
+  DogIcon,
+  PetBoardingIcon,
+  PetGroomingIcon,
+  PetTrainingIcon,
+} from '@/assets/svgs';
 interface Props {
   label?: string;
   values: SelectModel[];
@@ -25,8 +32,15 @@ interface Props {
   canPress?: boolean;
 }
 const DropdownPicker = (props: Props) => {
-  const {onSelect, values, label, selected, multible, placeholder, canPress=true} =
-    props;
+  const {
+    onSelect,
+    values,
+    label,
+    selected,
+    multible,
+    placeholder,
+    canPress = true,
+  } = props;
   const [isVisible, setIsVisible] = useState(false);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const modalizeRef = useRef<Modalize>();
@@ -43,6 +57,12 @@ const DropdownPicker = (props: Props) => {
         return <PetGroomingIcon width={width} height={height} />;
       case 'Huấn luyện':
         return <PetTrainingIcon width={width} height={height} />;
+      case 'Bác sĩ thú y':
+          return <DoctorIcon width={width} height={height} />;
+      case 'Chó':
+        return <DogIcon width={width} height={height} />;
+      case 'Mèo':
+        return <CatIcon width={width} height={height} />;
       default:
         return null;
     }
@@ -84,8 +104,8 @@ const DropdownPicker = (props: Props) => {
     const item = values.find(element => element.value === id);
     return item ? (
       <RowComponent key={id} styles={styles.selectedItem}>
+        {getIcon(item.label)}
         <TextComponent text={item.label} color={colors.primary} />
-
         <IconButtonComponent
           name="close"
           size={18}
@@ -136,7 +156,10 @@ const DropdownPicker = (props: Props) => {
     <View>
       {label && <TextComponent text={label} styles={{marginBottom: 8}} />}
       <RowComponent
-        styles={[globalStyles.inputContainer,{backgroundColor: canPress?colors.white:colors.grey4}]}
+        styles={[
+          globalStyles.inputContainer,
+          {backgroundColor: canPress ? colors.white : colors.grey4},
+        ]}
         onPress={() => {
           canPress && setIsVisible(true);
         }}>
@@ -187,7 +210,7 @@ const styles = StyleSheet.create({
   },
   selectedItem: {
     borderWidth: 0.5,
-    borderColor: colors.grey,
+    borderColor: colors.primary,
     padding: 4,
     marginBottom: 8,
     marginRight: 8,
