@@ -12,7 +12,6 @@ import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {Host, Portal} from 'react-native-portalize';
 const RootApp = () => {
   const isLoading = useAppSelector(state => state.app.loading);
-  console.log(isLoading);
   return (
     <SafeAreaProvider>
       <NavigationContainer>

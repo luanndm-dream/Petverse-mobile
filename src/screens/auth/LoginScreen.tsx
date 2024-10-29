@@ -49,7 +49,7 @@ const LoginScreen = () => {
       const res: any = await apiLogin(email, password);
 
       if (res.statusCode === 200) {
-        dispatch(addAuth(res.data));
+        // dispatch(addAuth(res.data));
 
         await AsyncStorage.setItem(
           'auth',
@@ -67,7 +67,7 @@ const LoginScreen = () => {
         Toast.show({
           type: 'error',
           text1: 'Đăng nhập thất bại',
-          text2: `Xảy ra lỗi: ${res.message}`,
+          text2: `Xảy ra lỗi: ${res.error}`,
         });
       }
     } catch (error) {
@@ -89,7 +89,8 @@ const LoginScreen = () => {
   } 
 
   return (
-    <Container>
+    <Container
+    isScroll={true}>
       <SpaceComponent height={50} />
       <Image
         style={styles.logoImage}

@@ -2,12 +2,25 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>localhost</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+			</dict>
+		</dict>
+	</dict>
 	<key>NSCameraUsageDescription</key>
-    <string>Petverse muốn cấp quyền truy cập camera</string>
+	<string>Petverse muốn cấp quyền truy cập camera</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-  <string>Petverse muốn cấp quyền truy cập thư viện ảnh</string>
-  <key>NSPhotoLibraryAddUsageDescription</key>
-  <string>Petverse muốn cấp quyền thêm vào thư viện ảnh</string>
+	<string>Petverse muốn cấp quyền truy cập thư viện ảnh</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Petverse muốn cấp quyền thêm vào thư viện ảnh</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -30,19 +43,8 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSAppTransportSecurity</key>
-	<dict>
-		<key>NSExceptionDomains</key>
-		<dict>
-			<key>localhost</key>
-			<dict>
-				<key>NSExceptionAllowsInsecureHTTPLoads</key>
-				<true/>
-			</dict>
-		</dict>
-	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string/>
+	<string>Cần quyền truy cập vị trí để cung cấp dịch vụ tốt hơn.</string> <!-- Thêm mô tả nếu cần -->
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>
