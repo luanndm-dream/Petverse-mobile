@@ -1,6 +1,6 @@
-import {publicAxios} from './apiConfiguration';
+import {protectedAxios, publicAxios} from './apiConfiguration';
 
 export async function apigetRole() {
   let url = 'Role';
-  return publicAxios.get(url);
+  return protectedAxios.get(url);
 }

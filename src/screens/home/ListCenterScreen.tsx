@@ -30,7 +30,7 @@ import {
 import {priceFormater} from '@/utils/priceFormater';
 import { VertifyIcon } from '@/assets/svgs';
 
-const SitterScreen = () => {
+const ListCenterScreen = () => {
   const {goBack, navigate} = useCustomNavigation();
   const [searchTerm, setSearchTerm] = useState('');
   const data = [
@@ -111,7 +111,7 @@ const SitterScreen = () => {
   return (
     <Container
       isScroll={false}
-      title="Sitter"
+      title="Danh sách trung tâm"
       left={
         <IconButtonComponent
           name="chevron-left"
@@ -126,7 +126,7 @@ const SitterScreen = () => {
             <InputComponent
               onChange={(val: string) => setSearchTerm(val)}
               value={searchTerm}
-              placeholder="Nhập tên Sitter..."
+              placeholder="Nhập tên trung tâm..."
               iconLeft={<SearchNormal1 size={24} color={colors.grey} />}
               allowClear
             />
@@ -150,7 +150,7 @@ const SitterScreen = () => {
   );
 };
 
-export default SitterScreen;
+export default ListCenterScreen;
 
 const styles = StyleSheet.create({
   searchTextContainer: {

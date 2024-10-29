@@ -247,7 +247,7 @@ const AddPetScreen = () => {
           Toast.show({
             type: 'error',
             text1: 'Tạo pet thất bại',
-            text2: `Xảy ra lỗi ${res.message}`,
+            text2: `Xảy ra lỗi ${res.error}`,
           });
         }
       });

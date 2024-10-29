@@ -12,7 +12,7 @@ export const homeFeatureData = [
         id: 2,
         name: 'Danh sách trung tâm',
         svg: ListSitterIcon,
-        screen: STACK_NAVIGATOR_SCREENS.SITTERSCREEN
+        screen: STACK_NAVIGATOR_SCREENS.LISTCENTERSCREEN
     },
     {
         id: 3,

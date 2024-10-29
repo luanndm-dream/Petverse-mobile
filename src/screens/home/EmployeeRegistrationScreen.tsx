@@ -15,7 +15,6 @@ import {
   Container,
   DropdownPicker,
   IconButtonComponent,
-  ImageZoomingComponent,
   InputComponent,
   RowComponent,
   SectionComponent,
@@ -202,7 +201,7 @@ const EmployeeRegistrationScreen = () => {
           certifications.push(mediaUpload(item.path)); // Sử dụng item.path
         });
       }
-      console.log('certifications',certifications, 'mediaUpload(values.avatar) 1', mediaUpload(values.avatar) )
+      // console.log('certifications',certifications, 'mediaUpload(values.avatar) 1', mediaUpload(values.avatar) )
       showLoading()
         apiPostApplication(
           userId,
@@ -229,7 +228,7 @@ const EmployeeRegistrationScreen = () => {
             Toast.show({
               type: 'error',
               text1: 'Đăng ký đơn thất bại',
-              text2: `Xảy ra lỗi ${res.message}`,
+              text2: `Xảy ra lỗi ${res.error}`,
             });
           }
         })
@@ -281,7 +280,7 @@ const EmployeeRegistrationScreen = () => {
             )}
           </TouchableOpacity>
           <TextComponent
-            text="Đây sẽ là ảnh đại diện của của hàng bạn, hãy chọn ảnh sao cho phù hợp nhất!"
+            text="Đây sẽ là ảnh đại diện của trung tâm bạn, hãy chọn ảnh sao cho phù hợp nhất!"
             numOfLine={2}
             type="description"
             styles={{paddingLeft: 20, flexWrap: 'wrap', maxWidth: '80%'}}
@@ -290,12 +289,12 @@ const EmployeeRegistrationScreen = () => {
         {formik.errors.avatar && formik.touched.avatar && (
           <Text style={styles.errorText}>{formik.errors.avatar}</Text>
         )}
-        <TextComponent text="Họ và tên" type="title" required />
+        <TextComponent text="Tên trung tâm" type="title" required />
         <InputComponent
           onChange={formik.handleChange('name')}
           onBlur={formik.handleBlur('name')}
           value={formik.values.name}
-          placeholder="Họ và tên"
+          placeholder="Tên trung tâm "
         />
         {formik.errors.name && formik.touched.name && (
           <Text style={styles.errorText}>{formik.errors.name}</Text>

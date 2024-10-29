@@ -28,19 +28,31 @@ export const axiosInstance = axios.create({
   timeout: TIME_OUT,
 });
 
+// Interceptor for axiosInstance
 axiosInstance.interceptors.response.use(
-  (response) => ({
-    ...response,
-    statusCode: response.status,
-  }),
+  function (response) {
+      
+    const responseObj = {
+        ...response.data,
+        statusCode: response.status,
+    };
+    // console.log('response api', responseObj)
+    return responseObj;
+},
   (error) => {
     const fieldErrors = error.response?.data?.errors || {};
-    const message = error.response?.data?.title || error.message;
-    console.log(`Instance API Error: ${message}`, fieldErrors);
-    return { api: "instance", error: message, fieldErrors };
+    const message = error.response?.data?.message || error.message;
+    const errorFields = Object.keys(fieldErrors).map(field => ({
+      field,
+      message: fieldErrors[field].join(", ")
+    }));
+
+    console.log(`Instance API Error: ${message}`,);
+    return { api: "instance", error: message, };
   }
 );
 
+// Interceptor for publicAxios
 publicAxios.interceptors.request.use(
   (config) => config,
   (error) => {
@@ -50,18 +62,29 @@ publicAxios.interceptors.request.use(
 );
 
 publicAxios.interceptors.response.use(
-  (response) => ({
-    ...response.data,
-    statusCode: response.status,
-  }),
+  function (response) {
+      
+    const responseObj = {
+        ...response.data,
+        statusCode: response.status,
+    };
+    // console.log('response api', responseObj)
+    return responseObj;
+},
   (error) => {
     const fieldErrors = error.response?.data?.errors || {};
-    const message = error.response?.data?.title || error.message;
-    console.log(`Public API Error: ${message}`, fieldErrors);
-    return { api: "public", error: message, fieldErrors };
+    const message = error.response?.data?.message || error.message;
+    const errorFields = Object.keys(fieldErrors).map(field => ({
+      field,
+      message: fieldErrors[field].join(", ")
+    }));
+
+    console.log(`Public API Error: ${message}`);
+    return { api: "public", error: message };
   }
 );
 
+// Interceptor for protectedAxios
 protectedAxios.interceptors.request.use(
   (config) => {
     const accessToken = store.getState().auth.accessToken;
@@ -77,14 +100,24 @@ protectedAxios.interceptors.request.use(
 );
 
 protectedAxios.interceptors.response.use(
-  (response) => ({
-    ...response.data,
-    statusCode: response.status,
-  }),
+  function (response) {
+      
+    const responseObj = {
+        ...response.data,
+        statusCode: response.status,
+    };
+    // console.log('response api', responseObj)
+    return responseObj;
+},
   (error) => {
     const fieldErrors = error.response?.data?.errors || {};
-    const message = error.response?.data?.title || error.message;
-    console.log(`Protected API Error: ${message}`, fieldErrors);
-    return { api: "protected", error: message, fieldErrors };
+    const message = error.response?.data?.message || error.message;
+    const errorFields = Object.keys(fieldErrors).map(field => ({
+      field,
+      message: fieldErrors[field].join(", ")
+    }));
+
+    console.log(`Protected API Error: ${message}`);
+    return { api: "protected", error: message };
   }
 );
