@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
   },
   itemContainer: {
     paddingVertical: 12,
-    backgroundColor: colors.grey4,
+    backgroundColor: colors.white,
     borderRadius: 8,
     paddingHorizontal: 6,
   },
