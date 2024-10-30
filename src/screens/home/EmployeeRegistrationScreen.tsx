@@ -213,7 +213,7 @@ const EmployeeRegistrationScreen = () => {
           values.services,
           certifications
         ).then((res:any) =>{
-          console.log('res', res)
+          console.log('res', mediaUpload(values.avatar))
           if(res.statusCode === 200){
             hideLoading()
            

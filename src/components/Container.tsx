@@ -48,7 +48,7 @@ const Container = (props: Props) => {
                 <TouchableOpacity
                   onPress={onLeftPress}
                   style={styles.iconLeftContainer}>
-                  <View>{left}</View>
+                 {left}
                 </TouchableOpacity>
               )}
 

@@ -43,7 +43,7 @@ const ButtonComponent = (props: Props) => {
                 backgroundColor: color
                   ? color
                   : disable
-                  ? colors.grey2
+                  ? colors.grey
                   : colors.primary,
                 marginBottom: 17,
                 width: '90%',

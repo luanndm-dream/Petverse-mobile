@@ -1,5 +1,5 @@
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React, { useCallback, useState } from 'react';
+import React, {useCallback, useState} from 'react';
 import {
   Container,
   IconButtonComponent,
@@ -10,50 +10,46 @@ import {
 import {colors} from '@/constants/colors';
 import {useCustomNavigation} from '@/utils/navigation';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { useFocusEffect } from '@react-navigation/native';
+import {useFocusEffect} from '@react-navigation/native';
 import useLoading from '@/hook/useLoading';
-import { apiGetJobByPetCenterId } from '@/api/apiJob';
-import { STACK_NAVIGATOR_SCREENS } from '@/constants/screens';
-import { useAppSelector } from '@/redux';
+import {apiGetJobByPetCenterId} from '@/api/apiJob';
+import {STACK_NAVIGATOR_SCREENS} from '@/constants/screens';
+import {useAppSelector} from '@/redux';
+import {EditServiceIcon} from '@/assets/svgs';
 
 const WorkProfileScreen = () => {
   const {navigate, goBack} = useCustomNavigation();
   const {showLoading, hideLoading} = useLoading();
-  const petCenterId = useAppSelector((state => state.auth.petCenterId))
-  const [petCenterData, setPetCenterData] = useState([])
+  const petCenterId = useAppSelector(state => state.auth.petCenterId);
+  const [petCenterData, setPetCenterData] = useState([]);
   useFocusEffect(
-    useCallback(()=>{
+    useCallback(() => {
       const getPetCenterJob = async () => {
-        showLoading()
-        await apiGetJobByPetCenterId(petCenterId as never).then((res: any)=>{
-          console.log(res)
-          if(res.statusCode === 200){
-            hideLoading()
-            console.log(res)
-          }else{
-            hideLoading()
-            console.log('loading working profile fail')
+        showLoading();
+        await apiGetJobByPetCenterId(petCenterId as never).then((res: any) => {
+          if (res.statusCode === 200) {
+            hideLoading();
+            setPetCenterData(res.data);
+          } else {
+            hideLoading();
+            console.log('loading working profile fail');
           }
-        })
-      }
-      getPetCenterJob()
-    },[petCenterId])
-  )
-  const createJobHandle = ()=>{
-    navigate(STACK_NAVIGATOR_SCREENS.CREATEJOBSCREEN)
+        });
+      };
+      getPetCenterJob();
+    }, [petCenterId]),
+  );
+
+  const editServiceHandle = () => {
+    navigate(STACK_NAVIGATOR_SCREENS.SERVICESCREEN)
   }
-  return (
-    <Container
-      title="Quản lí công việc"
-      left={
-        <IconButtonComponent
-          name="chevron-left"
-          size={30}
-          color={colors.dark}
-          onPress={goBack}
-        />
-      }>
-      <SectionComponent>
+  const createJobHandle = () => {
+    navigate(STACK_NAVIGATOR_SCREENS.CREATEJOBSCREEN);
+  };
+  
+  const renderCreateJob = () => {
+    return (
+      <>
         <Image
           source={require('../../assets/images/FindJobBanner.jpg')}
           style={styles.image}
@@ -78,6 +74,35 @@ const WorkProfileScreen = () => {
             />
           </RowComponent>
         </TouchableOpacity>
+      </>
+    );
+  };
+  return (
+    <Container
+      title="Quản lí công việc"
+      left={
+        <IconButtonComponent
+          name="chevron-left"
+          size={30}
+          color={colors.dark}
+          onPress={goBack}
+        />
+      }>
+      <SectionComponent>
+        {petCenterData ? (
+          <>
+            <RowComponent justify="flex-start" styles={styles.itemContainer} onPress={editServiceHandle}>
+              <EditServiceIcon width={40} height={40} />
+              <TextComponent
+                text="Tất cả dịch vụ"
+                size={18}
+                styles={{marginLeft: 24}}
+              />
+            </RowComponent>
+          </>
+        ) : (
+          renderCreateJob()
+        )}
       </SectionComponent>
     </Container>
   );
@@ -106,5 +131,11 @@ const styles = StyleSheet.create({
   description: {
     paddingVertical: 12,
     textAlign: 'center',
+  },
+  itemContainer: {
+    paddingVertical: 12,
+    backgroundColor: colors.grey4,
+    borderRadius: 8,
+    paddingHorizontal: 6,
   },
 });

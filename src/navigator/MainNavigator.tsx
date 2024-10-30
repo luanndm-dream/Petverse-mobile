@@ -13,6 +13,8 @@ import TestScreen from '@/screens/home/TestScreen';
 import WorkProfileScreen from '@/screens/home/WorkProfileScreen';
 import CreateJobScreen from '@/screens/home/CreateJobScreen';
 import ListCenterScreen from '@/screens/home/ListCenterScreen';
+import ServiceScreen from '@/screens/home/ServicesScreen';
+import EditServiceScreen from '@/screens/home/EditServiceScreen';
 
 const MainNavigator = () => {
   const Stack = createNativeStackNavigator();
@@ -33,6 +35,8 @@ const MainNavigator = () => {
           <Stack.Screen name="ChatDetailScreen" component={ChatDetailScreen}/>
           <Stack.Screen name="WorkProfileScreen" component={WorkProfileScreen}/>
           <Stack.Screen name="CreateJobScreen" component={CreateJobScreen}/>
+          <Stack.Screen name="ServiceScreen" component={ServiceScreen}/>
+          <Stack.Screen name="EditServiceScreen" component={EditServiceScreen}/>
           <Stack.Screen name="TestScreen" component={TestScreen}/>
         </Stack.Navigator>
   

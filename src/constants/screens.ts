@@ -12,4 +12,6 @@ export const STACK_NAVIGATOR_SCREENS = {
   CHATDETAILSCREEN : 'ChatDetailScreen',
   WORKPROFILESCREEN : 'WorkProfileScreen',
   CREATEJOBSCREEN : 'CreateJobScreen',
+  SERVICESCREEN : 'ServiceScreen',
+  EDITSERVICESCREEN : 'EditServiceScreen',
 };

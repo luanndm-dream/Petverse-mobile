@@ -11,6 +11,7 @@ import DoctorIcon from './DoctorIcon.svg';
 import WorkProfileIcon from './WorkProfileIcon.svg';
 import DogIcon from './DogIcon.svg';
 import CatIcon from './CatIcon.svg';
+import EditServiceIcon from './EditServiceIcon.svg';
 export {
   BreedIcon,
   RegistrationIcon,
@@ -24,5 +25,6 @@ export {
   DoctorIcon,
   WorkProfileIcon,
   CatIcon,
-  DogIcon
+  DogIcon,
+  EditServiceIcon
 };
