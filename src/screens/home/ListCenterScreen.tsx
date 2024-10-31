@@ -92,7 +92,7 @@ const ListCenterScreen = () => {
             <View style={styles.ratingContainer}>
               <Star size={16} color={colors.primary} variant="Bold" />
               <TextComponent
-                text={item.rate.toString()}
+                text={item.rate.toFixed(2)}
                 styles={styles.rateText}
               />
             </View>

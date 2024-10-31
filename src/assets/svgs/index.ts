@@ -12,6 +12,7 @@ import WorkProfileIcon from './WorkProfileIcon.svg';
 import DogIcon from './DogIcon.svg';
 import CatIcon from './CatIcon.svg';
 import EditServiceIcon from './EditServiceIcon.svg';
+import TrophyIcon from './TrophyIcon.svg';
 
 export {
   BreedIcon,
@@ -28,5 +29,5 @@ export {
   CatIcon,
   DogIcon,
   EditServiceIcon,
-
+  TrophyIcon
 };
