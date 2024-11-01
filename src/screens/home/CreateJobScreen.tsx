@@ -93,7 +93,7 @@ const CreateJobScreen = () => {
     return servicesRegisted.map((service: any, index: number) => ({
       id: service.petCenterServiceId,
       price: parseInt(priceValues[index], 10) || 0,
-      type: service.name === 'Bác sĩ thú y' ? 1 : 0,
+      type: service.name === 'Huấn luyện' || service.name === 'Trông thú' ? 1 : 0,
     }));
   };
   const formik = useFormik({

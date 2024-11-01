@@ -69,11 +69,13 @@ const DatePicker = (props: Props) => {
   const monthRef: any = useRef();
   const dayRef: any = useRef();
   const yearRef: any = useRef();
-
+  
   const defaultDate = () => {
     if (value && moment(value).isValid()) {
       console.log(' value is Valid', value);
       return value;
+    }else{
+      // console.log('value input invalid')
     }
     if (defaultValue && moment(defaultValue).isValid()) return defaultValue;
     return new Date();
@@ -123,7 +125,6 @@ const DatePicker = (props: Props) => {
       }}
       adjustToContentHeight
 
-    //   flatListProps={{scrollEnabled:false}}
       >
          <ScrollView scrollEnabled={false}>
       <View
@@ -193,6 +194,7 @@ const DatePicker = (props: Props) => {
             onPress={() => {
               const dateOutput = `${day.current}/${month.current}/${year.current}`;
               onConfirm?.(dateOutput);
+              modalizeRef.current?.close();
             }}
           />
         </View>

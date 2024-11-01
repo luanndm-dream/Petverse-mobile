@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-import {useRoute} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import {
   ButtonComponent,
   Container,
@@ -24,6 +24,7 @@ import {TrophyIcon} from '@/assets/svgs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Star} from 'iconsax-react-native';
 import {apiGetPetCenterRateByPetCenterId} from '@/api/apiPetCenterRate';
+import {STACK_NAVIGATOR_SCREENS} from '@/constants/screens';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -49,14 +50,17 @@ const OverviewTab = ({petCenterData}: any) => (
           <RowComponent>
             <View style={styles.itemOverview}>
               <MaterialCommunityIcons
-                name="paw"
+                name="truck"
                 size={24}
                 color={colors.dark}
               />
             </View>
             <View style={{marginLeft: 12}}>
-              <TextComponent text={`${petCenterData?.numPet}`} type="title" />
-              <TextComponent text="Đã làm việc" />
+              <TextComponent
+                text={petCenterData?.job?.haveTransport ? 'Có' : 'Không'}
+                type="title"
+              />
+              <TextComponent text="Ship" />
             </View>
           </RowComponent>
         </RowComponent>
@@ -64,27 +68,33 @@ const OverviewTab = ({petCenterData}: any) => (
           <RowComponent>
             <View style={styles.itemOverview}>
               <MaterialCommunityIcons
-                name="briefcase-check"
+                name="image"
                 size={24}
                 color={colors.dark}
               />
             </View>
             <View style={{marginLeft: 12}}>
-              <TextComponent text={`${petCenterData?.yoe} năm`} type="title" />
-              <TextComponent text="Kinh nghiệm" />
+              <TextComponent
+                text={petCenterData?.job?.havePhoto ? 'Có' : 'Không'}
+                type="title"
+              />
+              <TextComponent text="Chụp ảnh" />
             </View>
           </RowComponent>
           <RowComponent>
             <View style={styles.itemOverview}>
               <MaterialCommunityIcons
-                name="paw"
+                name="video"
                 size={24}
                 color={colors.dark}
               />
             </View>
             <View style={{marginLeft: 12}}>
-              <TextComponent text={`${petCenterData?.numPet}`} type="title" />
-              <TextComponent text="Đã làm việc" />
+              <TextComponent
+                text={petCenterData?.job?.haveCamera ? 'Có' : 'Không'}
+                type="title"
+              />
+              <TextComponent text="Video" />
             </View>
           </RowComponent>
         </RowComponent>
@@ -94,7 +104,11 @@ const OverviewTab = ({petCenterData}: any) => (
 );
 
 const ServicesTab = ({petCenterData}: any) => {
+  const navigation = useNavigation<any>();
   const [selectedService, setSelectedService] = useState<number | null>(null);
+  const [selectedServiceName, setSelectedServiceName] = useState<string>('');
+  const [serviceType, setServiceType] = useState();
+  const [servicePrice, setServicePrice] = useState();
   return (
     <View style={styles.tabContainer}>
       <FlatList
@@ -103,7 +117,12 @@ const ServicesTab = ({petCenterData}: any) => {
         data={petCenterData.petCenterServices}
         renderItem={({item, index}) => (
           <TouchableOpacity
-            onPress={() => setSelectedService(item.petCenterServiceId)}
+            onPress={() => {
+              setSelectedService(item.petCenterServiceId),
+                setSelectedServiceName(item.name);
+              setServiceType(item.type);
+              setServicePrice(item.price);
+            }}
             style={[
               styles.serviceCard,
               {
@@ -144,35 +163,81 @@ const ServicesTab = ({petCenterData}: any) => {
         text="Đặt dịch vụ"
         type="primary"
         disable={!selectedService}
+        onPress={() => {
+          navigation.navigate(STACK_NAVIGATOR_SCREENS.APPOINMENTSCREEN, {
+            petCenterServiceId: selectedService,
+            petCenterServiceName: selectedServiceName,
+            type: serviceType,
+            price: servicePrice,
+          });
+        }}
       />
     </View>
   );
 };
 
-const ReviewsTab = ({ petCenterRate }: any) => {
+const ReviewsTab = ({petCenterRate}: any) => {
+  const serviceColors = [
+    '#FFCDD2',
+    '#FFF9C4',
+    '#BBDEFB',
+    '#C8E6C9',
+    '#FFCCBC',
+    '#D1C4E9',
+  ];
   return (
     <View style={styles.tabContainer}>
       {petCenterRate && petCenterRate.length > 0 ? (
         <FlatList
           data={petCenterRate}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
+          keyExtractor={item => item.id.toString()}
+          renderItem={({item}) => (
             <View style={styles.reviewCard}>
               <View style={styles.headerRow}>
-                <TextComponent
-                  text={`Dịch vụ: ${item.petServiceName}`}
-                  type="title"
-                  styles={styles.reviewServiceName}
+                <Image
+                  source={
+                    item?.avatar
+                      ? {uri: item?.avatar}
+                      : require('../../assets/images/DefaultAvatar.jpg')
+                  }
+                  style={styles.avatarImage}
                 />
+                <View style={styles.reviewContent}>
+                  <TextComponent
+                    text={item.userName}
+                    styles={styles.userName}
+                  />
+                  <View style={styles.serviceNameContainer}>
+                    <TextComponent
+                      text={item.petServiceName}
+                      styles={styles.serviceNameText}
+                    />
+                  </View>
+                </View>
+
+                {/* Đánh giá với ngôi sao */}
                 <View style={styles.ratingContainer}>
                   <Star size={16} color={colors.primary} variant="Bold" />
-                  <TextComponent text={item.rate.toString()} styles={styles.rateText} />
+                  <TextComponent
+                    text={item.rate.toString()}
+                    styles={styles.rateText}
+                  />
                 </View>
               </View>
-              <TextComponent 
-                text={`Đánh giá: ${item.description || 'Không có nhận xét'}`}
-                styles={styles.description} 
-              />
+
+              {/* Mô tả đánh giá */}
+              <RowComponent
+                justify="space-between"
+                styles={styles.rowComponent}>
+                <TextComponent
+                  text={item.description || 'Không có nhận xét'}
+                  styles={styles.description}
+                />
+                <TextComponent
+                  text={item.createdDate}
+                  styles={styles.dateText}
+                />
+              </RowComponent>
             </View>
           )}
           contentContainerStyle={styles.reviewList}
@@ -181,7 +246,10 @@ const ReviewsTab = ({ petCenterRate }: any) => {
         />
       ) : (
         <View style={styles.emptyContainer}>
-          <TextComponent text="Hiện chưa có đánh giá." styles={styles.emptyText} />
+          <TextComponent
+            text="Hiện chưa có đánh giá."
+            styles={styles.emptyText}
+          />
         </View>
       )}
     </View>
@@ -202,7 +270,6 @@ const PetCenterDetailScreen = () => {
       apiGetPetCenterRateByPetCenterId(petCenterId),
     ]).then(([centerRes, rateRes]: any) => {
       if (centerRes.statusCode === 200 && rateRes.statusCode === 200) {
-       
         hideLoading();
         setPetCenterData(centerRes.data);
         setPetCenterRate(rateRes.data.items);
@@ -236,7 +303,7 @@ const PetCenterDetailScreen = () => {
           text={petCenterData.description}
           styles={styles.addressText}
         />
-        <TextComponent text="Địa chỉ" type="title"/>
+        <TextComponent text="Địa chỉ" type="title" styles={{marginVertical: 6}}/>
         <TextComponent text={petCenterData.address} size={16} />
         {/* <View style={styles.ratingContainer}>
           <Star size={18} color={colors.primary} variant="Bold" />
@@ -360,7 +427,7 @@ const styles = StyleSheet.create({
     height: 230,
     backgroundColor: '#ffeec6',
     borderRadius: 12,
-    padding: 6
+    padding: 6,
   },
   contentOverviewContainer: {
     alignSelf: 'center',
@@ -428,5 +495,41 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 2,
   },
- 
+  avatarImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 12,
+  },
+
+  reviewContent: {
+    flex: 1,
+    // justifyContent: 'flex-start'
+  },
+
+  userName: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: colors.dark,
+  },
+  rowComponent: {
+    marginTop: 8,
+  },
+  dateText: {
+    fontSize: 12,
+    color: colors.grey,
+  },
+  serviceNameContainer: {
+    backgroundColor: '#FFF9C4', 
+    paddingHorizontal: 8,     
+    paddingVertical: 4,        
+    borderRadius: 6,          
+    marginTop: 4,      
+    alignSelf: 'flex-start',   
+  },
+  serviceNameText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.dark, 
+  },
 });

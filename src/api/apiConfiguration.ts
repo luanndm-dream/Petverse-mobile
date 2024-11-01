@@ -47,7 +47,7 @@ axiosInstance.interceptors.response.use(
       message: fieldErrors[field].join(", ")
     }));
 
-    console.log(`Instance API Error: ${message}`,);
+    console.log(`Instance API Error: ${message} + ${error}`,);
     return { api: "instance", error: message, };
   }
 );
@@ -79,7 +79,7 @@ publicAxios.interceptors.response.use(
       message: fieldErrors[field].join(", ")
     }));
 
-    console.log(`Public API Error: ${message}`);
+    console.log(`Public API Error: ${message} + ${error}`);
     return { api: "public", error: message };
   }
 );
@@ -117,7 +117,7 @@ protectedAxios.interceptors.response.use(
       message: fieldErrors[field].join(", ")
     }));
 
-    console.log(`Protected API Error: ${message}`);
-    return { api: "protected", error: message };
+    console.log(`Protected API Error: ${message} + ${error}` );
+    return { api: "protected", error };
   }
 );
