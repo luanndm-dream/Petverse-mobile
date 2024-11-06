@@ -16,5 +16,7 @@ export const STACK_NAVIGATOR_SCREENS = {
   SERVICESCREEN : 'ServiceScreen',
   EDITSERVICESCREEN : 'EditServiceScreen',
   PETCENTERDETAILSCREEN : 'PetCenterDetailScreen',
-  APPOINMENTSCREEN: 'AppointmentScreen'
+  APPOINMENTSCREEN: 'AppointmentScreen',
+  MANAGEPETBREEDINGSCREEN: 'ManagePetBreedingScreen',
+  PETCENTERSERVICESCREEN: 'PetCenterServiceScreen',
 };

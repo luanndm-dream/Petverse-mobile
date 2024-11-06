@@ -12,3 +12,10 @@ export async function apiGetPetCenterByPetCenterId(petCenterId: string) {
   const url = `PetCenter/${petCenterId}`;
   return protectedAxios.get(url);
 }
+export async function apiGetPetCenterByPetServiceId(petServiceId: string) {
+  const url = `PetCenter`;
+  const params = {
+    PetServiceId: petServiceId
+  }
+  return protectedAxios.get(url, {params});
+}

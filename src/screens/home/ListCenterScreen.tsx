@@ -12,6 +12,7 @@ import {
   Container,
   IconButtonComponent,
   InputComponent,
+  PetCenterCardComponent,
   RowComponent,
   SectionComponent,
   SpaceComponent,
@@ -24,16 +25,23 @@ import {priceFormater} from '@/utils/priceFormater';
 import {VertifyIcon} from '@/assets/svgs';
 import {apiGetPetCenter} from '@/api/apiPetCenter';
 import useLoading from '@/hook/useLoading';
-import { STACK_NAVIGATOR_SCREENS } from '@/constants/screens';
-import { useNavigation } from '@react-navigation/native';
+import {STACK_NAVIGATOR_SCREENS} from '@/constants/screens';
+import {useNavigation} from '@react-navigation/native';
 
 const ListCenterScreen = () => {
   const {goBack, navigate} = useCustomNavigation();
-  const navigation = useNavigation<any>()
+  const navigation = useNavigation<any>();
   const {showLoading, hideLoading} = useLoading();
   const [searchTerm, setSearchTerm] = useState('');
   const [petCenter, setPetCenter] = useState([]);
-  const serviceColors = ['#FFCDD2', '#FFF9C4', '#BBDEFB', '#C8E6C9',  '#FFCCBC', '#D1C4E9'];
+  const serviceColors = [
+    '#FFCDD2',
+    '#FFF9C4',
+    '#BBDEFB',
+    '#C8E6C9',
+    '#FFCCBC',
+    '#D1C4E9',
+  ];
   useEffect(() => {
     showLoading();
     apiGetPetCenter().then((res: any) => {
@@ -50,108 +58,11 @@ const ListCenterScreen = () => {
     item.name.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
-  const onPressItemHandle = (item:any) => {
+  const onPressItemHandle = (item: any) => {
     navigation.navigate(STACK_NAVIGATOR_SCREENS.PETCENTERDETAILSCREEN, {
       petCenterId: item.id,
-      petCenterName: item.name
-    })
-  }
-
-  const renderSitterCard = (item: any) => {
-    return (
-      <TouchableOpacity
-        style={styles.itemContainer}
-        onPress={()=>onPressItemHandle(item)}>
-        <View style={{width: '40%'}}>
-          <Image source={{uri: item.avatar}} style={styles.avatar} />
-          <View style={styles.servicesContainer}>
-          {item.petCenterServices?.map((service: string, index: number) => (
-            <TextComponent 
-              key={index}
-              text={service}
-              type="description"
-              styles={[
-                styles.serviceText,
-                { backgroundColor: serviceColors[index % serviceColors.length] }
-              ]}
-            />
-          ))}
-        </View>
-
-        </View>
-        <View style={styles.contentContainer}>
-          <View style={styles.headerContainer}>
-            <RowComponent styles={styles.nameContainer}>
-              <TextComponent
-                text={item.name}
-                type="title"
-                styles={styles.nameText}
-              />
-              
-            </RowComponent>
-            <View style={styles.ratingContainer}>
-              <Star size={16} color={colors.primary} variant="Bold" />
-              <TextComponent
-                text={item.rate.toFixed(2)}
-                styles={styles.rateText}
-              />
-            </View>
-          </View>
-
-          <TextComponent
-            text={item.address}
-            numOfLine={2}
-            type="description"
-            styles={styles.addressText}
-          />
-
-          <View style={styles.detailsContainer}>
-            <View style={styles.experienceContainer}>
-              <TextComponent text="Kinh nghiệm: " styles={styles.labelText} />
-              <TextComponent
-                text={`${item.yoe} năm`}
-                styles={styles.valueText}
-              />
-            </View>
-
-            <View style={styles.petsContainer}>
-              <Pet size={16} color={colors.primary} variant="Bold" />
-              <TextComponent
-                text={item.pets.join(', ') || 'Chưa xác định'}
-                styles={styles.petsText}
-              />
-            </View>
-          </View>
-
-          <View style={styles.footerContainer}>
-            {/* <View style={styles.priceContainer}>
-              <TextComponent
-                text={
-                  item.petCenterServices?.length > 0
-                    ? priceFormater(item.petCenterServices[0]?.price || 0)
-                    : 'N/A'
-                }
-                type="title"
-                styles={styles.priceText}
-              />
-            </View> */}
-            {item.isVerified ? (
-                <View style={styles.verifiedContainer}>
-                  <VertifyIcon width={30} height={30} />
-                  {/* <TextComponent text='Xác minh' type='description'/> */}
-                </View>
-              ): <View/>}
-            <TouchableOpacity style={styles.bookButton}>
-              <TextComponent
-                text="Xem ngay"
-                styles={styles.bookButtonText}
-                type="title"
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
-      </TouchableOpacity>
-    );
+      petCenterName: item.name,
+    });
   };
 
   return (
@@ -197,7 +108,13 @@ const ListCenterScreen = () => {
       <SectionComponent styles={styles.listSection}>
         <FlatList
           data={filteredData}
-          renderItem={({item}) => renderSitterCard(item)}
+          renderItem={({item}) => (
+            <PetCenterCardComponent
+              item={item}
+              onPress={onPressItemHandle}
+              serviceColors={serviceColors}
+            />
+          )}
           keyExtractor={(item: any) => item.id}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.listContent}
@@ -284,7 +201,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
     // width: '50%',
     // alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   ratingContainer: {
     flexDirection: 'row',

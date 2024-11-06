@@ -1,4 +1,11 @@
-import {FlatList, ImageBackground, Platform, StyleSheet, Text, View} from 'react-native';
+import {
+  FlatList,
+  ImageBackground,
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {
   Container,
@@ -18,12 +25,14 @@ import {STACK_NAVIGATOR_SCREENS} from '@/constants/screens';
 import {apiGetUserByUserId} from '@/api/apiUser';
 import {useAppSelector} from '@/redux';
 import useLoading from '@/hook/useLoading';
-import { apigetRole } from '@/api/apiRole';
-import { WorkProfileIcon } from '@/assets/svgs';
- // đảm bảo import icon đúng
+import {apigetRole} from '@/api/apiRole';
+import {WorkProfileIcon} from '@/assets/svgs';
+import { useNavigation } from '@react-navigation/native';
+// đảm bảo import icon đúng
 
 const HomeScreen = () => {
   const {goBack, navigate} = useCustomNavigation();
+  const navigation = useNavigation<any>()
   const {hideLoading, showLoading} = useLoading();
   const userId = useAppSelector(state => state.auth.userId);
   const [userData, setUserData] = useState();
@@ -58,41 +67,45 @@ const HomeScreen = () => {
     const initializeData = async () => {
       try {
         showLoading();
-        
+
         // Lấy thông tin user
         const userResponse: any = await apiGetUserByUserId(userId);
         if (userResponse.statusCode === 200) {
           setUserData(userResponse.data);
-          
+
           // Lấy danh sách roles
           const roleResponse: any = await apigetRole();
           if (roleResponse.statusCode === 200) {
             const roles = roleResponse?.data?.items;
             setRoles(roles);
-  
+
             // Tìm role PetCenter
-            const petCenterRole = roles.find((role: any) => role.name === 'PetCenter');
+            const petCenterRole = roles.find(
+              (role: any) => role.name === 'PetCenter',
+            );
             // Check match roleId
             const isPetCenter = userResponse.data.roleId === petCenterRole?.id;
-  
+
             const workFeature = {
               id: 5,
               name: 'Làm việc',
               svg: WorkProfileIcon,
               screen: STACK_NAVIGATOR_SCREENS.WORKPROFILESCREEN,
             };
-  
+
             setHomeFeatureData(prevData => {
-              const hasWorkFeature = prevData.some(feature => feature.name === 'Làm việc');
-  
+              const hasWorkFeature = prevData.some(
+                feature => feature.name === 'Làm việc',
+              );
+
               if (isPetCenter && !hasWorkFeature) {
                 return [...prevData, workFeature];
               }
-              
+
               if (!isPetCenter && hasWorkFeature) {
                 return prevData.filter(feature => feature.name !== 'Làm việc');
               }
-  
+
               return prevData;
             });
           }
@@ -105,12 +118,18 @@ const HomeScreen = () => {
         hideLoading();
       }
     };
-  
+
     initializeData();
   }, [userId]); // Chỉ phụ thuộc vào userId
 
   const onPressFeature = (screen: string) => {
     navigate(screen);
+  };
+  const handleServicePress = (id: number, name: string) => {
+    navigation.navigate(STACK_NAVIGATOR_SCREENS.PETCENTERSERVICESCREEN, {
+      idService: id,
+      nameService: name
+    })
   };
 
   return (
@@ -166,7 +185,12 @@ const HomeScreen = () => {
             paddingVertical: 6,
           }}
           renderItem={({item}) => (
-            <ServiceItem name={item.name} svg={item.svg} />
+            <ServiceItem
+              name={item.name}
+              svg={item.svg}
+              id={item.id}
+              onPress={() => handleServicePress(item.id, item.name)}
+            />
           )}
         />
       </SectionComponent>

@@ -262,13 +262,14 @@ const PetCenterDetailScreen = () => {
   const {petCenterId, petCenterName} = route.params;
   const [petCenterData, setPetCenterData] = useState<any>();
   const [petCenterRate, setPetCenterRate] = useState<any>([]);
-
+  console.log(petCenterId)
   useEffect(() => {
     showLoading();
     Promise.all([
       apiGetPetCenterByPetCenterId(petCenterId),
       apiGetPetCenterRateByPetCenterId(petCenterId),
     ]).then(([centerRes, rateRes]: any) => {
+      console.log(centerRes, rateRes)
       if (centerRes.statusCode === 200 && rateRes.statusCode === 200) {
         hideLoading();
         setPetCenterData(centerRes.data);

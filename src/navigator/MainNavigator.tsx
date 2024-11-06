@@ -17,6 +17,8 @@ import ServiceScreen from '@/screens/home/ServicesScreen';
 import EditServiceScreen from '@/screens/home/EditServiceScreen';
 import PetCenterDetailScreen from '@/screens/home/PetCenterDetailScreen';
 import AppointmentScreen from '@/screens/home/AppointmentScreen';
+import ManagePetBreedingScreen from '@/screens/home/ManagePetBreedingScreen';
+import PetCenterServiceScreen from '@/screens/home/PetCenterServiceScreen';
 
 const MainNavigator = () => {
   const Stack = createNativeStackNavigator();
@@ -41,6 +43,8 @@ const MainNavigator = () => {
           <Stack.Screen name="EditServiceScreen" component={EditServiceScreen}/>
           <Stack.Screen name="PetCenterDetailScreen" component={PetCenterDetailScreen}/>
           <Stack.Screen name="AppointmentScreen" component={AppointmentScreen}/>
+          <Stack.Screen name="ManagePetBreedingScreen" component={ManagePetBreedingScreen}/>
+          <Stack.Screen name="PetCenterServiceScreen" component={PetCenterServiceScreen}/>
           <Stack.Screen name="TestScreen" component={TestScreen}/>
         </Stack.Navigator>
   

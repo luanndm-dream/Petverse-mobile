@@ -15,7 +15,7 @@ import useLoading from '@/hook/useLoading';
 import {apiGetJobByPetCenterId} from '@/api/apiJob';
 import {STACK_NAVIGATOR_SCREENS} from '@/constants/screens';
 import {useAppSelector} from '@/redux';
-import {EditServiceIcon} from '@/assets/svgs';
+import {EditServiceIcon, PetBreedingIcon} from '@/assets/svgs';
 
 const WorkProfileScreen = () => {
   const {navigate, goBack} = useCustomNavigation();
@@ -43,6 +43,11 @@ const WorkProfileScreen = () => {
   const editServiceHandle = () => {
     navigate(STACK_NAVIGATOR_SCREENS.SERVICESCREEN)
   }
+
+  const managePetBreedingHandle = () => {
+    navigate(STACK_NAVIGATOR_SCREENS.MANAGEPETBREEDINGSCREEN)
+  }
+
   const createJobHandle = () => {
     navigate(STACK_NAVIGATOR_SCREENS.CREATEJOBSCREEN);
   };
@@ -99,6 +104,15 @@ const WorkProfileScreen = () => {
                 styles={{marginLeft: 24}}
               />
             </RowComponent>
+            <RowComponent justify="flex-start" styles={styles.itemContainer} onPress={managePetBreedingHandle}>
+              <PetBreedingIcon width={40} height={40} />
+              <TextComponent
+                text="Quản lí giống"
+                size={18}
+                styles={{marginLeft: 24}}
+              />
+            </RowComponent>
+            
           </>
         ) : (
           renderCreateJob()
@@ -134,6 +148,7 @@ const styles = StyleSheet.create({
   },
   itemContainer: {
     paddingVertical: 12,
+    marginVertical: 8,
     backgroundColor: colors.white,
     borderRadius: 8,
     paddingHorizontal: 6,

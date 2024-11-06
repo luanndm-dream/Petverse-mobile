@@ -17,8 +17,8 @@ export const serviceData = [
         svg: PetTrainingIcon
     },
     {
-        id: 3,
-        name: 'Bác sĩ online',
+        id: 4,
+        name: 'Bác sĩ thú y',
         svg: DoctorIcon
     },
     // {

@@ -5,14 +5,16 @@ import {colors} from '@/constants/colors';
 
 interface Props {
   name: string;
+  id: number,
   svg: React.ComponentType<any>;
   screen?: string;
+  onPress?: (id: number)=> void
 }
 
 const ServiceItem = (props: Props) => {
-  const {name, svg: IconComponent} = props;
+  const {name, svg: IconComponent, onPress, id} = props;
   return (
-    <TouchableOpacity style={styles.container}>
+    <TouchableOpacity style={styles.container} onPress={() => onPress && onPress(id)}>
       <View style={styles.icon}>
         <IconComponent height={24} width={24} />
       </View>

@@ -13,6 +13,7 @@ import DogIcon from './DogIcon.svg';
 import CatIcon from './CatIcon.svg';
 import EditServiceIcon from './EditServiceIcon.svg';
 import TrophyIcon from './TrophyIcon.svg';
+import PetBreedingIcon from './PetBreedingIcon.svg';
 
 export {
   BreedIcon,
@@ -29,5 +30,6 @@ export {
   CatIcon,
   DogIcon,
   EditServiceIcon,
-  TrophyIcon
+  TrophyIcon,
+  PetBreedingIcon
 };
