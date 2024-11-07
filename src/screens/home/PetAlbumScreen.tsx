@@ -108,7 +108,7 @@ const PetAlbumScreen = () => {
                 const isVideo = media.type === 1
                 return isVideo ? (
                   <VideoPlayer
-                    key={index}
+                    key={index.toString()}
                     video={{ uri: media.url }}
                     videoWidth={SCREEN_WIDTH}
                     videoHeight={400}
@@ -117,7 +117,7 @@ const PetAlbumScreen = () => {
                     pauseOnPress
                     style={styles.modalImage}
                     thumbnail={require('../../assets/images/BannerVideo.png')}
-                    resizeMode="contain"
+                    // resizeMode="contain"
                   />
                 ) : (
                   <Image
@@ -158,7 +158,6 @@ const styles = StyleSheet.create({
   photo: {
     width: '100%',
     height: 150,
-    resizeMode: 'cover',
   },
   modalOverlay: {
     flex: 1,

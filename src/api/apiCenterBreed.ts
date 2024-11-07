@@ -7,6 +7,14 @@ export async function apiGetCenterBreedByPetCenterId(petCenterId: string) {
   return protectedAxios.get(url);
 }
 
+export async function apiGetCenterBreed(status: number) {
+  const url = `CenterBreed`;
+  const params = {
+    Status: status
+  }
+  return protectedAxios.get(url,{params});
+}
+
 export async function apiGetCenterBreedByCenterBreedId(centerBreedId: string) {
     const url = `CenterBreed/${centerBreedId}`;
   
