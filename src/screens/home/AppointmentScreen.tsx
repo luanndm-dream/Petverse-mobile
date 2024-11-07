@@ -7,7 +7,11 @@ import {
 } from 'react-native';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import moment from 'moment';
-import {useFocusEffect, useRoute} from '@react-navigation/native';
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
 import * as Yup from 'yup';
 import Toast from 'react-native-toast-message';
 import {
@@ -30,6 +34,7 @@ import {
   ArrowSwapVertical,
   CloseCircle,
   Pet,
+  Trash,
 } from 'iconsax-react-native';
 import {Portal} from 'react-native-portalize';
 import {Modalize} from 'react-native-modalize';
@@ -42,6 +47,7 @@ import {apiCreateServiceAppointment} from '@/api/apiAppoinment';
 
 const AppointmentScreen = () => {
   const route = useRoute<any>();
+  const navigation = useNavigation<any>();
   const {showLoading, hideLoading} = useLoading();
   const {petCenterServiceId, petCenterServiceName, type, price} = route.params;
   const {goBack, navigate} = useCustomNavigation();
@@ -58,7 +64,20 @@ const AppointmentScreen = () => {
   const [myPet, setMyPet] = useState<any>();
   const [selectedPet, setSelectedPet] = useState<any>(null);
   const [calculatedPrice, setCalculatedPrice] = useState(price);
+  const [scheduleData, setScheduleData] = useState([]);
   const modalPetRef = useRef<Modalize>();
+
+  const handleScheduleData = (timeSlots: any) => {
+    // Cập nhật state với dữ liệu từ ScheduleScreen
+    setScheduleData(timeSlots);
+  };
+
+  const handleDeleteSchedule = (index: number) =>{
+    const newScheduleData = [...scheduleData]
+    newScheduleData.splice(index, 1);
+    setScheduleData(newScheduleData)
+  }
+  
 
   useFocusEffect(
     useCallback(() => {
@@ -149,6 +168,11 @@ const AppointmentScreen = () => {
             break;
         }
       }
+      const formattedScheduleData = scheduleData.map(({ time, description }) => ({
+        time,
+        description,
+      }));
+      console.log('formattedScheduleData', formattedScheduleData)
       showLoading();
       apiCreateServiceAppointment(
         userId,
@@ -157,6 +181,7 @@ const AppointmentScreen = () => {
         calculatedPrice,
         startTime,
         endTime,
+        formattedScheduleData
       ).then((res: any) => {
         hideLoading();
         if (res.statusCode === 200) {
@@ -165,7 +190,7 @@ const AppointmentScreen = () => {
             text1: 'Đặt lịch thành công',
             text2: 'Petverse chúc bạn và thú cưng thật nhiều sức khoẻ!',
           });
-          navigate(STACK_NAVIGATOR_SCREENS.HOMESCREEN)
+          navigate(STACK_NAVIGATOR_SCREENS.HOMESCREEN);
         } else {
           hideLoading();
           Toast.show({
@@ -397,6 +422,36 @@ const AppointmentScreen = () => {
                   )}
                 </View>
               </RowComponent>
+              <RowComponent justify="flex-start">
+                <TextComponent text="Tạo lịch theo dõi?" type="title" />
+                <IconButtonComponent
+                  name="plus-circle"
+                  color={colors.primary}
+                  onPress={() =>
+                    navigation.navigate(
+                      STACK_NAVIGATOR_SCREENS.SCHEDULESCREEN,
+                      {
+                        onGoBack: handleScheduleData,
+                        scheduleData
+                      },
+                    )
+                  }
+                />
+              </RowComponent>
+              {scheduleData.length > 0 && (
+            <View>
+              {scheduleData.map((item: any, index) => (
+                <View key={index} style={styles.scheduleItem}>
+                  <TextComponent text={`${item.time} - ${item.description}`} />
+                  <TouchableOpacity
+                    onPress={() => handleDeleteSchedule(index)}
+                    style={styles.deleteButton}>
+                    <Trash size={20} color={colors.red} />
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </View>
+          )}
             </>
           )}
         </SectionComponent>
@@ -677,5 +732,18 @@ const styles = StyleSheet.create({
   petAge: {
     fontSize: 14,
     color: '#666666',
+  },
+  scheduleItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    backgroundColor: '#f9f9f9',
+    borderRadius: 8,
+    marginVertical: 4,
+  },
+  deleteButton: {
+    padding: 4,
   },
 });

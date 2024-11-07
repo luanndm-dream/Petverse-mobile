@@ -7,6 +7,7 @@ export async function apiCreateServiceAppointment(
   amount: number,
   startTime: string,
   endTime: string,
+  schedules?: any
 ) {
   const url = 'Appointment/ServiceAppointment';
   const dataSend = {
@@ -16,6 +17,7 @@ export async function apiCreateServiceAppointment(
     amount,
     startTime,
     endTime,
+    schedules
   };
   return protectedAxios.post(url, dataSend);
 }

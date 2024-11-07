@@ -21,6 +21,7 @@ import ManagePetBreedingScreen from '@/screens/home/ManagePetBreedingScreen';
 import PetCenterServiceScreen from '@/screens/home/PetCenterServiceScreen';
 import AddCenterBreedScreen from '@/screens/home/AddCenterBreedScreen';
 import CenterBreedDetailScreen from '@/screens/home/CenterBreedDetailScreen';
+import ScheduleScreen from '@/screens/home/ScheduleScreen';
 
 const MainNavigator = () => {
   const Stack = createNativeStackNavigator();
@@ -49,6 +50,7 @@ const MainNavigator = () => {
           <Stack.Screen name="PetCenterServiceScreen" component={PetCenterServiceScreen}/>
           <Stack.Screen name="AddCenterBreedScreen" component={AddCenterBreedScreen}/>
           <Stack.Screen name="CenterBreedDetailScreen" component={CenterBreedDetailScreen}/>
+          <Stack.Screen name="ScheduleScreen" component={ScheduleScreen}/>
           <Stack.Screen name="TestScreen" component={TestScreen}/>
         </Stack.Navigator>
   

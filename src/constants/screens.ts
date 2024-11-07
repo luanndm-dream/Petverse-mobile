@@ -21,4 +21,5 @@ export const STACK_NAVIGATOR_SCREENS = {
   PETCENTERSERVICESCREEN: 'PetCenterServiceScreen',
   ADDCENTERBREEDSCREEN: 'AddCenterBreedScreen',
   CENTERBREEDDETAILSCREEN: 'CenterBreedDetailScreen',
+  SCHEDULESCREEN: 'ScheduleScreen',
 };
