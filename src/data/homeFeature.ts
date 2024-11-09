@@ -22,9 +22,9 @@ export const homeFeatureData = [
     },
     {
         id: 4,
-        name: 'Lịch trình thú cưng',
+        name: 'Lịch hẹn của tôi',
         svg: PetScheduleIcon,
-        screen: STACK_NAVIGATOR_SCREENS.EMPLOYEEREGISTRATIONSCREEN
+        screen: STACK_NAVIGATOR_SCREENS.MYAPPOINTMENTSCREEN
     },
     
 ]

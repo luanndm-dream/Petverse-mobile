@@ -198,7 +198,7 @@ const AddPetScreen = () => {
       breed: 0,
       age: '',
       gender: gender,
-      weight: 0,
+      weight: 0.5,
       sterilized: true,
       avatar: '',
       description: '',
@@ -214,6 +214,7 @@ const AddPetScreen = () => {
         .min(1, 'Vui lòng chọn')
         .required('Giống thú cưng là bắt buộc'),
       age: Yup.string().required('Ngày sinh là bắt buộc'),
+      weight: Yup.number().required('Cân nặng là bắt buộc'),
       gender: Yup.number().required('Giới tính là bắt buộc'),
       sterilized: Yup.boolean().required('Tiêm chủng là bắt buộc'),
       avatar: Yup.string().required('Avatar là bắt buộc'),
@@ -425,6 +426,9 @@ const AddPetScreen = () => {
             maximumTrackTintColor={colors.secondary}
             thumbTintColor={colors.primary}
           />
+           {formik.errors.weight && formik.touched.weight && (
+            <Text style={styles.errorText}>{formik.errors.weight}</Text>
+          )}
           <TextComponent text="Thú cưng đã được triệt sản?" type="title" />
           <RowComponent
             styles={{justifyContent: 'space-between', marginVertical: 6}}>

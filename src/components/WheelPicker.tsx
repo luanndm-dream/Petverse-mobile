@@ -45,11 +45,11 @@ const WheelPicker: React.FC<WheelPickerProps & RefAttributes<FlatList<any>>> =
       [wheelData, itemHeight],
     );
 
-    const scrollHandler = useAnimatedScrollHandler(
-      (event: {contentOffset: {y: number}}) => {
-        translationY.value = event.contentOffset.y;
-      },
-    );
+ const scrollHandler = useAnimatedScrollHandler({
+  onScroll: (event) => {
+    translationY.value = event.contentOffset.y;
+  },
+});
 
     const onMomentumScrollBegin = () => {
       canMomentum.current = true;

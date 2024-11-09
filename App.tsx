@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {StatusBar, StyleSheet, View} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {Provider} from 'react-redux';
@@ -10,8 +10,12 @@ import {ActivityIndicator} from 'react-native';
 import Toast from 'react-native-toast-message';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {Host, Portal} from 'react-native-portalize';
+import { LogBox } from 'react-native'; 
 const RootApp = () => {
   const isLoading = useAppSelector(state => state.app.loading);
+  useEffect(() => {
+    LogBox.ignoreAllLogs(true)
+ }, [])
   return (
     <SafeAreaProvider>
       <NavigationContainer>

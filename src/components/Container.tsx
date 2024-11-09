@@ -35,7 +35,7 @@ const Container = (props: Props) => {
 
   return (
     <SafeAreaView style={[globalStyles.container]}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      {/* <TouchableWithoutFeedback onPress={Keyboard.dismiss}> */}
         
         <View style={[globalStyles.container]}>
           {(left || title || right) && (
@@ -65,8 +65,6 @@ const Container = (props: Props) => {
               )}
             </View>
           )}
-
-          {/* Sử dụng chung style cho cả ScrollView và View */}
           {isScroll ? (
             <ScrollView
               style={[globalStyles.container]}
@@ -77,7 +75,7 @@ const Container = (props: Props) => {
             <View style={[globalStyles.container]}>{children}</View>
           )}
         </View>
-      </TouchableWithoutFeedback>
+      {/* </TouchableWithoutFeedback> */}
     </SafeAreaView>
   );
 };

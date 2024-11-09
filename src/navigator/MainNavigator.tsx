@@ -23,6 +23,8 @@ import AddCenterBreedScreen from '@/screens/home/AddCenterBreedScreen';
 import CenterBreedDetailScreen from '@/screens/home/CenterBreedDetailScreen';
 import ScheduleScreen from '@/screens/home/ScheduleScreen';
 import BreedDetailScreen from '@/screens/breed/BreedDetailScreen';
+import MyAppointmentScreen from '@/screens/home/MyAppointmentScreen';
+import MyAppointmentDetailScreen from '@/screens/home/MyAppointmentDetailScreen';
 
 const MainNavigator = () => {
   const Stack = createNativeStackNavigator();
@@ -53,6 +55,8 @@ const MainNavigator = () => {
           <Stack.Screen name="CenterBreedDetailScreen" component={CenterBreedDetailScreen}/>
           <Stack.Screen name="ScheduleScreen" component={ScheduleScreen}/>
           <Stack.Screen name='BreedDetailScreen' component={BreedDetailScreen}/> 
+          <Stack.Screen name='MyAppointmentScreen' component={MyAppointmentScreen}/> 
+          <Stack.Screen name='MyAppointmentDetailScreen' component={MyAppointmentDetailScreen}/> 
           <Stack.Screen name="TestScreen" component={TestScreen}/>
         </Stack.Navigator>
   

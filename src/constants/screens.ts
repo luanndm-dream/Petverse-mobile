@@ -23,4 +23,6 @@ export const STACK_NAVIGATOR_SCREENS = {
   CENTERBREEDDETAILSCREEN: 'CenterBreedDetailScreen',
   BREEDDETAILSCREEN: 'BreedDetailScreen',
   SCHEDULESCREEN: 'ScheduleScreen',
+  MYAPPOINTMENTSCREEN: 'MyAppointmentScreen',
+  MYAPPOINTMENTDETAILSCREEN: 'MyAppointmentDetailScreen',
 };

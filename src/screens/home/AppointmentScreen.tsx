@@ -43,7 +43,10 @@ import useLoading from '@/hook/useLoading';
 import {STACK_NAVIGATOR_SCREENS} from '@/constants/screens';
 import {ageFormatter} from '@/utils/AgeFormatter';
 import {useFormik} from 'formik';
-import {apiCreateServiceAppointment} from '@/api/apiAppoinment';
+import {
+  apiCreateBreedAppointment,
+  apiCreateServiceAppointment,
+} from '@/api/apiAppoinment';
 
 const AppointmentScreen = () => {
   const route = useRoute<any>();
@@ -72,12 +75,11 @@ const AppointmentScreen = () => {
     setScheduleData(timeSlots);
   };
 
-  const handleDeleteSchedule = (index: number) =>{
-    const newScheduleData = [...scheduleData]
+  const handleDeleteSchedule = (index: number) => {
+    const newScheduleData = [...scheduleData];
     newScheduleData.splice(index, 1);
-    setScheduleData(newScheduleData)
-  }
-  
+    setScheduleData(newScheduleData);
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -168,38 +170,65 @@ const AppointmentScreen = () => {
             break;
         }
       }
-      const formattedScheduleData = scheduleData.map(({ time, description }) => ({
+      const formattedScheduleData = scheduleData.map(({time, description}) => ({
         time,
         description,
       }));
-      console.log('formattedScheduleData', formattedScheduleData)
       showLoading();
-      apiCreateServiceAppointment(
-        userId,
-        selectedPet.id,
-        petCenterServiceId,
-        calculatedPrice,
-        startTime,
-        endTime,
-        formattedScheduleData
-      ).then((res: any) => {
-        hideLoading();
-        if (res.statusCode === 200) {
-          Toast.show({
-            type: 'success',
-            text1: 'Đặt lịch thành công',
-            text2: 'Petverse chúc bạn và thú cưng thật nhiều sức khoẻ!',
-          });
-          navigate(STACK_NAVIGATOR_SCREENS.HOMESCREEN);
-        } else {
-          hideLoading();
-          Toast.show({
-            type: 'error',
-            text1: 'Đặt lịch thất bại',
-            text2: `Xảy ra lỗi ${res.error}`,
-          });
-        }
-      });
+      if (petCenterServiceName.includes('phối giống')) {
+        apiCreateBreedAppointment(
+          userId,
+          petCenterServiceId,
+          selectedPet.id,
+          price,
+          startTime,
+          endTime,
+        ).then((res: any) => {
+          if (res.statusCode === 200) {
+            hideLoading();
+            Toast.show({
+              type: 'success',
+              text1: 'Đặt lịch phối giống thành công',
+              text2: 'Petverse chúc bạn và thú cưng thật nhiều sức khoẻ!',
+            });
+            navigate(STACK_NAVIGATOR_SCREENS.HOMESCREEN);
+          } else {
+            hideLoading();
+            Toast.show({
+              type: 'error',
+              text1: 'Đặt lịch phối giống thất bại',
+              text2: `Xảy ra lỗi ${res.error}`,
+            });
+          }
+        });
+      } else {
+        apiCreateServiceAppointment(
+          userId,
+          selectedPet.id,
+          petCenterServiceId,
+          calculatedPrice,
+          startTime,
+          endTime,
+          formattedScheduleData,
+        ).then((res: any) => {
+          if (res.statusCode === 200) {
+            hideLoading();
+            Toast.show({
+              type: 'success',
+              text1: 'Đặt lịch thành công',
+              text2: 'Petverse chúc bạn và thú cưng thật nhiều sức khoẻ!',
+            });
+            navigate(STACK_NAVIGATOR_SCREENS.HOMESCREEN);
+          } else {
+            hideLoading();
+            Toast.show({
+              type: 'error',
+              text1: 'Đặt lịch thất bại',
+              text2: `Xảy ra lỗi ${res.error}`,
+            });
+          }
+        });
+      }
     },
   });
   useEffect(() => {
@@ -432,26 +461,28 @@ const AppointmentScreen = () => {
                       STACK_NAVIGATOR_SCREENS.SCHEDULESCREEN,
                       {
                         onGoBack: handleScheduleData,
-                        scheduleData
+                        scheduleData,
                       },
                     )
                   }
                 />
               </RowComponent>
               {scheduleData.length > 0 && (
-            <View>
-              {scheduleData.map((item: any, index) => (
-                <View key={index} style={styles.scheduleItem}>
-                  <TextComponent text={`${item.time} - ${item.description}`} />
-                  <TouchableOpacity
-                    onPress={() => handleDeleteSchedule(index)}
-                    style={styles.deleteButton}>
-                    <Trash size={20} color={colors.red} />
-                  </TouchableOpacity>
+                <View>
+                  {scheduleData.map((item: any, index) => (
+                    <View key={index} style={styles.scheduleItem}>
+                      <TextComponent
+                        text={`${item.time} - ${item.description}`}
+                      />
+                      <TouchableOpacity
+                        onPress={() => handleDeleteSchedule(index)}
+                        style={styles.deleteButton}>
+                        <Trash size={20} color={colors.red} />
+                      </TouchableOpacity>
+                    </View>
+                  ))}
                 </View>
-              ))}
-            </View>
-          )}
+              )}
             </>
           )}
         </SectionComponent>

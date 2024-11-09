@@ -14,13 +14,9 @@ const initialState: AuthState = {
     accessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiIxMUBnbWFpbC5jb20iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJwZXRjZW50ZXIiLCJleHAiOjE3NjI0MjUzMjMsImlzcyI6InBldHZlcnNlLWF1dGgtYXBpIiwiYXVkIjoicGV0dmVyc2UtY2xpZW50In0.9a9v1ezQB2VVa27fuA9JgtZMNUVLlXOhjqf1oCh8jXc',
     refreshToken: '',
     refreshTokenExpiryTime: '',
-    roleName: '',
-    // userId: '0d175a92-e335-4036-94f1-08dcf6b29884', //user 14
-    // petCenterId: '74af3d3c-04ba-4e1e-379d-08dcf7d40aea',//user 14
-    userId: '6bab4bf2-24c5-4dee-a2c5-08dcf7ff94b1', //user 16
-    // userId: 'db4c5744-5a58-4857-a2c8-08dcf7ff94b1', //user 18
-    // petCenterId: 'd4009399-360a-4b29-0c05-08dcf7f9ae4e', //user 16
-    petCenterId: 'd4009399-360a-4b29-0c05-08dcf7f9ae4e', //user 16
+    roleName: Platform.OS === 'android'? 'petCenter' : 'customer',
+    userId: Platform.OS === 'android'? '6bab4bf2-24c5-4dee-a2c5-08dcf7ff94b1' : '782aa387-9efc-4a37-9a8d-08dd009cdea2',
+    petCenterId: Platform.OS === 'android'? 'd4009399-360a-4b29-0c05-08dcf7f9ae4e' : undefined, 
 };
 
 const authSlice = createSlice({

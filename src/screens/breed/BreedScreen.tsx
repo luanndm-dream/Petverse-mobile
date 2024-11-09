@@ -49,6 +49,9 @@ const BreedScreen = () => {
           hideLoading();
           setCenterBreedData(res?.data?.items);
           setFilteredData(res?.data?.items);
+        } else {
+          hideLoading();
+          console.log('Lỗi lấy dữ liệu');
         }
       });
     }, []),
@@ -86,11 +89,27 @@ const BreedScreen = () => {
         <SpaceComponent width={16} />
         <View style={styles.contentContainer}>
           <RowComponent styles={styles.nameContainer}>
-            <TextComponent text={item.name} type="title" color={colors.dark} />
-            {item.status === 2 && (
-              <Verify size={24} color={colors.green} variant="Bold" />
-            )}
+            <RowComponent>
+              <TextComponent
+                text={item.name}
+                type="title"
+                color={colors.dark}
+              />
+              {item.status === 2 && (
+                <Verify size={24} color={colors.green} variant="Bold" />
+              )}
+            </RowComponent>
+
+            <View style={styles.speciesBadge}>
+              <TextComponent
+                text={item.speciesName}
+                type="title"
+                color={colors.white}
+                styles={styles.speciesText}
+              />
+            </View>
           </RowComponent>
+
           <TextComponent
             text={item.description}
             color={colors.grey}
@@ -122,7 +141,7 @@ const BreedScreen = () => {
             </View>
           </View>
         </RowComponent>
-        <RowComponent styles={styles.resultContainer} justify='flex-start'>
+        <RowComponent styles={styles.resultContainer} justify="flex-start">
           <TextComponent
             text={filteredData?.length.toString()}
             type="title"
@@ -214,6 +233,15 @@ const styles = StyleSheet.create({
   approvedBadge: {
     marginLeft: 8,
   },
+  speciesBadge: {
+    backgroundColor: colors.primary,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 16,
+    alignSelf: 'flex-start',
+    marginBottom: 8,
+  },
+  speciesText: {
+    fontSize: 12,
+  },
 });
-
-
