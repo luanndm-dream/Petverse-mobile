@@ -26,4 +26,5 @@ export const STACK_NAVIGATOR_SCREENS = {
   MYAPPOINTMENTSCREEN: 'MyAppointmentScreen',
   MYAPPOINTMENTDETAILSCREEN: 'MyAppointmentDetailScreen',
   TRACKINGSCREEN: 'TrackingScreen',
+  UPDATETRACKINGSCREEN: 'UpdateTrackingScreen',
 };

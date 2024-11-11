@@ -5,33 +5,77 @@ import {
   IconButtonComponent,
   ButtonComponent,
   RowComponent,
+  PopupComponent,
 } from '@/components';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {colors} from '@/constants/colors';
 import {useCustomNavigation} from '@/utils/navigation';
-import {apiGetAppointmentByAppointmentId} from '@/api/apiAppoinment';
+import {
+  apiGetAppointmentByAppointmentId,
+  apiUpdateAppointmentByAppointmentId,
+} from '@/api/apiAppoinment';
 import {useAppSelector} from '@/redux';
-import { STACK_NAVIGATOR_SCREENS } from '@/constants/screens';
+import {STACK_NAVIGATOR_SCREENS} from '@/constants/screens';
+import useLoading from '@/hook/useLoading';
 
 const MyAppointmentDetailScreen = () => {
   const route = useRoute<any>();
   const {goBack} = useCustomNavigation();
-  const navigation = useNavigation<any>()
+  const navigation = useNavigation<any>();
+  const {showLoading, hideLoading} = useLoading();
   const {appointmentId, appointmentType} = route.params;
   const [appointmentData, setAppointmentData] = useState<any>(null);
   const roleName = useAppSelector(state => state.auth.roleName);
 
   useEffect(() => {
-    apiGetAppointmentByAppointmentId(appointmentId).then((res: any) => {
-      setAppointmentData(res.data);
+    showLoading();
+    apiGetAppointmentByAppointmentId(
+      appointmentId,
+      appointmentType === 1 ? 1 : undefined,
+    ).then((res: any) => {
+      if (res.statusCode === 200) {
+        hideLoading();
+        setAppointmentData(res.data);
+      } else {
+        hideLoading();
+      }
     });
   }, []);
-  
+
   const trackingHandle = () => {
     navigation.navigate(STACK_NAVIGATOR_SCREENS.TRACKINGSCREEN, {
-      appointmentId: appointmentId
-    })
-  }
+      appointmentId: appointmentId,
+    });
+  };
+  const getStatusText = (status: number): string => {
+    switch (status) {
+      case 0:
+        return 'Đang chờ';
+      case 1:
+        return 'Đã nhận';
+      case 2:
+        return 'Hoàn thành';
+      case 3:
+        return 'Từ chối';
+      default:
+        return 'Không xác định';
+    }
+  };
+
+  const getStatusColor = (status: number): string => {
+    switch (status) {
+      case 0:
+        return colors.orange;
+      case 1:
+        return colors.primary;
+      case 2:
+        return colors.green;
+      case 3:
+        return colors.red;
+      default:
+        return colors.grey;
+    }
+  };
 
   const renderButtons = () => {
     const {status} = appointmentData;
@@ -45,7 +89,7 @@ const MyAppointmentDetailScreen = () => {
               type="primary"
               color={colors.red}
               onPress={() => {
-                /* Xử lý từ chối */
+                // apiUpdateAppointmentByAppointmentId(appointmentId,status, ca)
               }}
             />
             <ButtonComponent
@@ -84,11 +128,12 @@ const MyAppointmentDetailScreen = () => {
             <ButtonComponent
               text="Hoàn thành"
               type="primary"
+              color={colors.green}
               onPress={() => {
                 /* Xử lý hoàn thành */
               }}
             />
-           </RowComponent>
+          </RowComponent>
         );
       } else if (roleName === 'customer') {
         return (
@@ -119,88 +164,79 @@ const MyAppointmentDetailScreen = () => {
   };
 
   if (!appointmentData) {
-    return null;
+    return (
+      <Container
+        title="Chi tiết lịch hẹn"
+        left={
+          <IconButtonComponent
+            name="chevron-left"
+            size={30}
+            color={colors.dark}
+            onPress={goBack}
+          />
+        }>
+        <View style={styles.notFoundContainer}>
+          <Text style={styles.notFoundText}>Không tìm thấy cuộc hẹn</Text>
+        </View>
+      </Container>
+    );
   }
 
   return (
     <>
-    <Container
-      title="Chi tiết lịch hẹn"
-      left={
-        <IconButtonComponent
-          name="chevron-left"
-          size={30}
-          color={colors.dark}
-          onPress={goBack}
-        />
-      }>
-      <View style={styles.detailContainer}>
-        <Text style={styles.label}>Dịch vụ:</Text>
-        <Text style={styles.value}>
-          {appointmentType === 1 ? 'Phối giống' : 'Dịch vụ thú cưng'}
-        </Text>
+      <Container
+        title="Chi tiết lịch hẹn"
+        left={
+          <IconButtonComponent
+            name="chevron-left"
+            size={30}
+            color={colors.dark}
+            onPress={goBack}
+          />
+        }>
+        <View style={styles.detailContainer}>
+          <Text style={styles.label}>Dịch vụ:</Text>
+          <Text style={styles.value}>
+            {appointmentType === 1 ? 'Phối giống' : 'Dịch vụ thú cưng'}
+          </Text>
 
-        <Text style={styles.label}>Ngày bắt đầu:</Text>
-        <Text style={styles.value}>{appointmentData.startTime}</Text>
+          <Text style={styles.label}>Ngày bắt đầu:</Text>
+          <Text style={styles.value}>{appointmentData.startTime}</Text>
 
-        <Text style={styles.label}>Ngày kết thúc:</Text>
-        <Text style={styles.value}>{appointmentData.endTime}</Text>
+          <Text style={styles.label}>Ngày kết thúc:</Text>
+          <Text style={styles.value}>{appointmentData.endTime}</Text>
 
-        <Text style={styles.label}>Trạng thái:</Text>
-        <Text
-          style={[
-            styles.value,
-            {color: getStatusColor(appointmentData.status)},
-          ]}>
-          {getStatusText(appointmentData.status)}
-        </Text>
+          <Text style={styles.label}>Trạng thái:</Text>
+          <Text
+            style={[
+              styles.value,
+              {color: getStatusColor(appointmentData.status)},
+            ]}>
+            {getStatusText(appointmentData.status)}
+          </Text>
 
-        <Text style={styles.label}>Pet Center ID:</Text>
-        <Text style={styles.value}>{appointmentData.petCenterId}</Text>
+          <Text style={styles.label}>Pet Center ID:</Text>
+          <Text style={styles.value}>{appointmentData.petCenterId}</Text>
 
-        <Text style={styles.label}>User ID:</Text>
-        <Text style={styles.value}>{appointmentData.userId}</Text>
-
-        
-      </View>
-      
-    </Container>
-    <View style={styles.buttonContainer}>{renderButtons()}</View>
+          <Text style={styles.label}>User ID:</Text>
+          <Text style={styles.value}>{appointmentData.userId}</Text>
+        </View>
+      </Container>
+      <View style={styles.buttonContainer}>{renderButtons()}</View>
+      <PopupComponent
+        description="hehe"
+        iconColor={colors.red}
+        iconName="help-circle"
+        isVisible={true}
+        title='Hello'
+        onLeftPress={() => {}}
+        onRightPress={() => {}}
+      />
     </>
   );
 };
 
 export default MyAppointmentDetailScreen;
-
-const getStatusText = (status: number): string => {
-  switch (status) {
-    case 0:
-      return 'Đang chờ';
-    case 1:
-      return 'Đã nhận';
-    case 2:
-      return 'Hoàn thành';
-    case 3:
-      return 'Từ chối';
-    default:
-      return 'Không xác định';
-  }
-};
-
-const getStatusColor = (status: number): string => {
-  switch (status) {
-    case 0:
-      return colors.orange;
-    case 1:
-      return colors.primary;
-    case 2:
-      return colors.green;
-    case 3:
-      return colors.red;
-    default:
-      return colors.grey;
-  }
-};
 
 const styles = StyleSheet.create({
   detailContainer: {
@@ -219,14 +255,20 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     marginTop: 20,
-    paddingHorizontal: 16, // Thêm padding ngang
+    paddingHorizontal: 16,
   },
   singleButton: {
-    width: '100%', // Button sẽ chiếm full width
+    width: '100%',
   },
-  multipleButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-  }
-
+  notFoundContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+  },
+  notFoundText: {
+    fontSize: 18,
+    color: colors.grey,
+    textAlign: 'center',
+  },
 });

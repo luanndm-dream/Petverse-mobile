@@ -17,10 +17,11 @@ import IconButtonComponent from './IconButtonComponent';
 interface Props {
   onSelected: (imagePath: string | string[]) => void;
   initialImages?: string[];
+  camera?: boolean;
 }
 
 const AddImageComponent = (props: Props) => {
-  const {onSelected, initialImages} = props;
+  const {onSelected, initialImages, camera} = props;
   const [selectedImages, setSelectedImages] = useState<any[]>([]);
 
   const requestGalleryPermission = async () => {
@@ -50,23 +51,47 @@ const AddImageComponent = (props: Props) => {
           ? PERMISSIONS.IOS.PHOTO_LIBRARY
           : PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE;
       if (RESULTS.GRANTED) {
-        ImagePicker.openPicker({
-          multiple: true,
-        }).then(images => {
-          if (selectedImages.length + images.length <= 4) {
-            const newImages = images.map(image => ({
-              path: image.path,
-            }));
-            setSelectedImages(prev => [...prev, ...newImages]);
-            onSelected([...selectedImages.map(image => image.path), ...newImages.map(image => image.path)]);
-          } else {
-            Alert.alert(
-              'Giới hạn ảnh',
-              'Bạn chỉ có thể chọn tối đa 4 hình ảnh.',
-              [{text: 'OK'}]
-            );
-          }
-        });
+        if (camera) {
+          ImagePicker.openCamera({
+            cropping: true,
+          }).then(image => {
+            if (selectedImages.length < 4) {
+              const newImage = {path: image.path};
+              setSelectedImages(prev => [...prev, newImage]);
+              onSelected([
+                ...selectedImages.map(img => img.path),
+                newImage.path,
+              ]);
+            } else {
+              Alert.alert(
+                'Giới hạn ảnh',
+                'Bạn chỉ có thể chọn tối đa 4 hình ảnh.',
+                [{text: 'OK'}],
+              );
+            }
+          });
+        } else {
+          ImagePicker.openPicker({
+            multiple: true,
+          }).then(images => {
+            if (selectedImages.length + images.length <= 4) {
+              const newImages = images.map(image => ({
+                path: image.path,
+              }));
+              setSelectedImages(prev => [...prev, ...newImages]);
+              onSelected([
+                ...selectedImages.map(image => image.path),
+                ...newImages.map(image => image.path),
+              ]);
+            } else {
+              Alert.alert(
+                'Giới hạn ảnh',
+                'Bạn chỉ có thể chọn tối đa 4 hình ảnh.',
+                [{text: 'OK'}],
+              );
+            }
+          });
+        }
       } else {
         await requestGalleryPermission();
       }

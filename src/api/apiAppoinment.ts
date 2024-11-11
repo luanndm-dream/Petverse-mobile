@@ -62,7 +62,18 @@ export async function apiGetMyAppointment(role: string, pageSize: number, id: st
   return protectedAxios.get(url, { params });
 }
 
-export async function apiGetAppointmentByAppointmentId(appointmentId: string) {
+export async function apiGetAppointmentByAppointmentId(appointmentId: string, type?: number) {
   const url = `Appointment/${appointmentId}`;
-  return protectedAxios.get(url);
+  const params = type ? { Type: type } : {};
+  return protectedAxios.get(url,{ params });
+}
+
+export async function apiUpdateAppointmentByAppointmentId(appointmentId: string, status: number, cancelReason?: string) {
+  const url = `Appointment/${appointmentId}/Status`;
+  const params = {
+    id: appointmentId,
+    status: status,
+    cancelReason: cancelReason
+  }
+  return protectedAxios.put(url,{ params });
 }

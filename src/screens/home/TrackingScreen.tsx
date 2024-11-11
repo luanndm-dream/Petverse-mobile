@@ -17,16 +17,19 @@ import {
 } from '@/components';
 import {colors} from '@/constants/colors';
 import {useCustomNavigation} from '@/utils/navigation';
-import {useFocusEffect, useRoute} from '@react-navigation/native';
+import {useFocusEffect, useNavigation, useRoute} from '@react-navigation/native';
 import {apiGetAppointmentByAppointmentId} from '@/api/apiAppoinment';
 import useLoading from '@/hook/useLoading';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useAppSelector} from '@/redux';
+import { STACK_NAVIGATOR_SCREENS } from '@/constants/screens';
+import VideoPlayer from 'react-native-video-player';
 
 const {width} = Dimensions.get('window');
 
 const TrackingScreen = () => {
   const {goBack} = useCustomNavigation();
+  const navigation = useNavigation<any>()
   const {showLoading, hideLoading} = useLoading();
   const route = useRoute<any>();
   const {appointmentId} = route.params;
@@ -38,7 +41,7 @@ const TrackingScreen = () => {
   );
   const [selectedTrackings, setSelectedTrackings] = useState<any[]>([]);
   const [activeSlide, setActiveSlide] = useState(0);
-
+  const [selectedScheduleId, setSelectedScheduleId] = useState()
   useFocusEffect(
     useCallback(() => {
       showLoading();
@@ -70,14 +73,14 @@ const TrackingScreen = () => {
     const [day, month] = item.date.split('/');
     const isSelected = selectedDateIndex === index;
     const dayComplete = isDayComplete(item.records);
-
+    
     return (
       <TouchableOpacity
         style={[styles.dateItem, isSelected && styles.dateItemSelected]}
         onPress={() => {
           setSelectedDateIndex(index);
           setSelectedRecordIndex(null);
-          setSelectedTrackings([]); // Reset trackings on date change
+          setSelectedTrackings([]);
         }}>
         <View style={styles.dateContent}>
           <Text style={[styles.dayText, isSelected && styles.selectedText]}>
@@ -88,9 +91,9 @@ const TrackingScreen = () => {
           </Text>
           {dayComplete && (
             <MaterialCommunityIcons
-              name="check"
-              size={16}
-              color={colors.green}
+              name="check-circle"
+              size={18}
+              color={isSelected ? colors.white : colors.green}
             />
           )}
         </View>
@@ -107,12 +110,26 @@ const TrackingScreen = () => {
             horizontal
             pagingEnabled
             showsHorizontalScrollIndicator={false}
-            renderItem={({item}) => (
-              <View style={styles.imageWrapper}>
-                <Image source={{uri: item.url}} style={styles.image} />
-                <View style={styles.imageOverlay} />
-              </View>
-            )}
+            renderItem={({item}) => {
+              const isVideo = item.type === 1;
+              return (
+                <View style={styles.mediaWrapper}>
+                  {isVideo ? (
+                    <VideoPlayer
+                      video={{uri: item.url}}
+                      videoWidth={width}
+                      videoHeight={300}
+                      pauseOnPress
+                      thumbnail={require('../../assets/images/BannerVideo.png')} 
+                      style={styles.videoPlayer}
+                    />
+                  ) : (
+                    <Image source={{uri: item.url}} style={styles.image} />
+                  )}
+                  <View style={styles.imageOverlay} />
+                </View>
+              );
+            }}
             keyExtractor={(_, index) => index.toString()}
             onScroll={event => {
               const pageIndex = Math.round(
@@ -163,6 +180,8 @@ const TrackingScreen = () => {
                 },
               ]}
               onPress={() => {
+                // console.log(record)
+                setSelectedScheduleId(record.scheduleId)
                 setSelectedRecordIndex(index);
                 setSelectedTrackings(record.trackings || []); // Update trackings when record is selected
                 setActiveSlide(0); // Reset active slide on record change
@@ -191,9 +210,11 @@ const TrackingScreen = () => {
     </View>
   );
 
-  const handleReportAction = () => {
+  const handleReportAction = (scheduleId: number) => {
     if (roleName === 'petCenter') {
-      console.log('Tạo báo cáo cho khung giờ này');
+        navigation.navigate(STACK_NAVIGATOR_SCREENS.UPDATETRACKINGSCREEN, {
+            scheduleId: scheduleId
+        })
     } else if (roleName === 'customer') {
       console.log('Report báo cáo cho khung giờ này');
       // Thực hiện hành động report báo cáo cho customer
@@ -252,7 +273,7 @@ const TrackingScreen = () => {
               text={roleName === 'petCenter' ? 'Tạo báo cáo' : 'Report báo cáo'}
               color={roleName === 'petCenter' ? colors.primary : colors.red}
               type="primary"
-              onPress={handleReportAction}
+              onPress={()=>handleReportAction(selectedScheduleId as never)}
             />
           </View>
         )}
@@ -418,5 +439,14 @@ const styles = StyleSheet.create({
   buttonContainer: {
     paddingVertical: 16,
     backgroundColor: colors.white,
+  },
+  mediaWrapper: {
+    width: width,
+    height: 300,
+    position: 'relative',
+  },
+  videoPlayer: {
+    width: width,
+    height: 280,
   },
 });
