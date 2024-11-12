@@ -17,22 +17,26 @@ import {
 } from '@/components';
 import {colors} from '@/constants/colors';
 import {useCustomNavigation} from '@/utils/navigation';
-import {useFocusEffect, useNavigation, useRoute} from '@react-navigation/native';
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
 import {apiGetAppointmentByAppointmentId} from '@/api/apiAppoinment';
 import useLoading from '@/hook/useLoading';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useAppSelector} from '@/redux';
-import { STACK_NAVIGATOR_SCREENS } from '@/constants/screens';
+import {STACK_NAVIGATOR_SCREENS} from '@/constants/screens';
 import VideoPlayer from 'react-native-video-player';
 
 const {width} = Dimensions.get('window');
 
 const TrackingScreen = () => {
   const {goBack} = useCustomNavigation();
-  const navigation = useNavigation<any>()
+  const navigation = useNavigation<any>();
   const {showLoading, hideLoading} = useLoading();
   const route = useRoute<any>();
-  const {appointmentId} = route.params;
+  const {appointmentId, appointmentType} = route.params;
   const roleName = useAppSelector(state => state.auth.roleName);
   const [appointmentData, setAppointmentData] = useState<any>(null);
   const [selectedDateIndex, setSelectedDateIndex] = useState<number>(0);
@@ -41,11 +45,15 @@ const TrackingScreen = () => {
   );
   const [selectedTrackings, setSelectedTrackings] = useState<any[]>([]);
   const [activeSlide, setActiveSlide] = useState(0);
-  const [selectedScheduleId, setSelectedScheduleId] = useState()
+  const [selectedScheduleId, setSelectedScheduleId] = useState();
+
   useFocusEffect(
     useCallback(() => {
       showLoading();
-      apiGetAppointmentByAppointmentId(appointmentId).then((res: any) => {
+      apiGetAppointmentByAppointmentId(
+        appointmentId,
+        appointmentType === 1 ? 1 : undefined,
+      ).then((res: any) => {
         if (res.statusCode === 200) {
           hideLoading();
           setAppointmentData(res.data);
@@ -60,7 +68,7 @@ const TrackingScreen = () => {
             );
           }
         } else {
-          console.log('get appointment detail failed');
+          console.log('get appointment detail failed', res);
         }
       });
     }, []),
@@ -73,7 +81,7 @@ const TrackingScreen = () => {
     const [day, month] = item.date.split('/');
     const isSelected = selectedDateIndex === index;
     const dayComplete = isDayComplete(item.records);
-    
+
     return (
       <TouchableOpacity
         style={[styles.dateItem, isSelected && styles.dateItemSelected]}
@@ -120,7 +128,7 @@ const TrackingScreen = () => {
                       videoWidth={width}
                       videoHeight={300}
                       pauseOnPress
-                      thumbnail={require('../../assets/images/BannerVideo.png')} 
+                      thumbnail={require('../../assets/images/BannerVideo.png')}
                       style={styles.videoPlayer}
                     />
                   ) : (
@@ -181,7 +189,7 @@ const TrackingScreen = () => {
               ]}
               onPress={() => {
                 // console.log(record)
-                setSelectedScheduleId(record.scheduleId)
+                setSelectedScheduleId(record.scheduleId);
                 setSelectedRecordIndex(index);
                 setSelectedTrackings(record.trackings || []); // Update trackings when record is selected
                 setActiveSlide(0); // Reset active slide on record change
@@ -212,9 +220,9 @@ const TrackingScreen = () => {
 
   const handleReportAction = (scheduleId: number) => {
     if (roleName === 'petCenter') {
-        navigation.navigate(STACK_NAVIGATOR_SCREENS.UPDATETRACKINGSCREEN, {
-            scheduleId: scheduleId
-        })
+      navigation.navigate(STACK_NAVIGATOR_SCREENS.UPDATETRACKINGSCREEN, {
+        scheduleId: scheduleId,
+      });
     } else if (roleName === 'customer') {
       console.log('Report báo cáo cho khung giờ này');
       // Thực hiện hành động report báo cáo cho customer
@@ -263,17 +271,14 @@ const TrackingScreen = () => {
       </Container>
       {selectedRecordIndex !== null &&
         selectedDateData &&
-        ((roleName === 'petCenter' &&
-          !selectedDateData.records[selectedRecordIndex].trackings.length) ||
-          (roleName === 'customer' &&
-            selectedDateData.records[selectedRecordIndex].trackings.length >
-              0)) && (
+        roleName === 'petCenter' && // Thêm điều kiện chỉ hiển thị cho petCenter
+        !selectedDateData.records[selectedRecordIndex].trackings.length && (
           <View style={styles.buttonContainer}>
             <ButtonComponent
-              text={roleName === 'petCenter' ? 'Tạo báo cáo' : 'Report báo cáo'}
-              color={roleName === 'petCenter' ? colors.primary : colors.red}
+              text="Tạo báo cáo"
+              color={colors.primary}
               type="primary"
-              onPress={()=>handleReportAction(selectedScheduleId as never)}
+              onPress={() => handleReportAction(selectedScheduleId as never)}
             />
           </View>
         )}

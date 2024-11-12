@@ -1,5 +1,5 @@
 import {StyleSheet, Text, View, Dimensions} from 'react-native';
-import React, {useEffect, useRef} from 'react';
+import React, {ReactNode, useEffect, useRef} from 'react';
 import {Modalize} from 'react-native-modalize';
 import {Portal} from 'react-native-portalize';
 import {ButtonComponent, RowComponent} from '@/components';
@@ -13,6 +13,11 @@ interface PopupComponentProps {
   title: string;
   description: string;
   isVisible: boolean;
+  leftTitle: string
+  rightTitle: string
+  singleTitle?: string,
+  reason?: ReactNode
+  onClose: () => void,
   onLeftPress: () => void;
   onRightPress: () => void;
   onSinglePress?: () => void;
@@ -30,6 +35,11 @@ const PopupComponent = (props: PopupComponentProps) => {
     onRightPress,
     onSinglePress,
     singleButton,
+    leftTitle,
+    rightTitle,
+    singleTitle,
+    reason, 
+    onClose
   } = props;
   const modalRef = useRef<Modalize>(null);
   const screenHeight = Dimensions.get('window').height;
@@ -45,12 +55,13 @@ const PopupComponent = (props: PopupComponentProps) => {
   return (
     <Portal>
       <Modalize
+        onClose={onClose}
         ref={modalRef}
-        modalHeight={300}
+        adjustToContentHeight={true}
         modalStyle={[
           styles.modal,
           {
-            marginTop: (screenHeight - 400) / 2,
+            marginTop: (screenHeight - 550) / 2,
           },
         ]}
         handlePosition="inside"
@@ -65,11 +76,11 @@ const PopupComponent = (props: PopupComponentProps) => {
             <Text style={styles.title}>{title}</Text>
             <Text style={styles.description}>{description}</Text>
           </View>
-
-          <View style={styles.buttonContainer}>
+          {reason}
+          <View style={[styles.buttonContainer, {marginTop: reason ? 12 : 0}]}>
             {singleButton ? (
               <ButtonComponent
-                text="OK"
+                text={singleTitle as never}
                 onPress={onSinglePress}
                 type="primary"
                 color={colors.primary}
@@ -78,14 +89,14 @@ const PopupComponent = (props: PopupComponentProps) => {
             ) : (
               <RowComponent styles={{marginHorizontal:24}}>
                 <ButtonComponent
-                  text="Cancel"
+                  text={leftTitle}
                   onPress={onLeftPress}
                   type="primary"
                   color={colors.red}
                   //   containerStyle={styles.button}
                 />
                 <ButtonComponent
-                  text="Confirm"
+                  text={rightTitle}
                   onPress={onRightPress}
                   type="primary"
                   color={colors.green}

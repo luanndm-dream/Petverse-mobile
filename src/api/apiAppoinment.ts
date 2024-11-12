@@ -1,4 +1,4 @@
-import { useAppSelector } from '@/redux';
+import {useAppSelector} from '@/redux';
 import {protectedAxios} from './apiConfiguration';
 
 export async function apiCreateServiceAppointment(
@@ -8,7 +8,7 @@ export async function apiCreateServiceAppointment(
   amount: number,
   startTime: string,
   endTime: string,
-  schedules?: any
+  schedules?: any,
 ) {
   const url = 'Appointment/ServiceAppointment';
   const dataSend = {
@@ -18,62 +18,78 @@ export async function apiCreateServiceAppointment(
     amount,
     startTime,
     endTime,
-    schedules
+    schedules,
   };
   return protectedAxios.post(url, dataSend);
 }
 
-export async function apiCreateBreedAppointment(userId: string,
+export async function apiCreateBreedAppointment(
+  userId: string,
   centerBreedId: string,
   petId: string,
   amount: number,
   startTime: string,
-  endTime: string
-  ) {
-  const url = 'Appointment/BreedAppointment'
+  endTime: string,
+) {
+  const url = 'Appointment/BreedAppointment';
   const dataSend = {
     userId,
     centerBreedId,
     petId,
     amount,
     startTime,
-    endTime
-  }
-  return protectedAxios.post(url, dataSend)
+    endTime,
+  };
+  return protectedAxios.post(url, dataSend);
 }
 
-export async function apiGetBreedAppointmentHistoryByUserId(type: number, userId: string, status: number) {
-  const url = 'Appointment'
+export async function apiGetBreedAppointmentHistoryByUserId(
+  type: number,
+  userId: string,
+  status: number,
+) {
+  const url = 'Appointment';
   const params = {
     type,
     userId,
-    status
-  }
-  return protectedAxios.get(url, {params})
+    status,
+  };
+  return protectedAxios.get(url, {params});
 }
 
-export async function apiGetMyAppointment(role: string, pageSize: number, id: string ) {
+export async function apiGetMyAppointment(
+  role: string,
+  pageSize: number,
+  id: string,
+) {
   const url = 'Appointment';
   const params = {
     pageSize,
-    ...(role === 'customer' ? { userId: id } : { petCenterId: id })
+    ...(role === 'customer' ? {userId: id} : {petCenterId: id}),
   };
 
-  return protectedAxios.get(url, { params });
+  return protectedAxios.get(url, {params});
 }
 
-export async function apiGetAppointmentByAppointmentId(appointmentId: string, type?: number) {
+export async function apiGetAppointmentByAppointmentId(
+  appointmentId: string,
+  type?: number,
+) {
   const url = `Appointment/${appointmentId}`;
-  const params = type ? { Type: type } : {};
-  return protectedAxios.get(url,{ params });
+  const params = type ? {Type: type} : {};
+  return protectedAxios.get(url, {params});
 }
 
-export async function apiUpdateAppointmentByAppointmentId(appointmentId: string, status: number, cancelReason?: string) {
+export async function apiUpdateAppointmentByAppointmentId(
+  appointmentId: string,
+  status: number,
+  cancelReason?: string,
+) {
   const url = `Appointment/${appointmentId}/Status`;
-  const params = {
+  const data = {
     id: appointmentId,
     status: status,
-    cancelReason: cancelReason
-  }
-  return protectedAxios.put(url,{ params });
+    cancelReason: cancelReason,
+  };
+  return protectedAxios.put(url, data);
 }

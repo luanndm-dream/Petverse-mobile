@@ -14,7 +14,7 @@ import {useCustomNavigation} from '@/utils/navigation';
 import {useAppSelector} from '@/redux';
 import {apiGetMyAppointment} from '@/api/apiAppoinment';
 import moment from 'moment';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { STACK_NAVIGATOR_SCREENS } from '@/constants/screens';
 
 interface Appointment {
@@ -85,9 +85,13 @@ const MyAppointmentScreen = () => {
     }
   };
 
-  useEffect(() => {
-    fetchAppointments();
-  }, []);
+  useFocusEffect(
+    useCallback(()=>{
+      setPage(1);
+      fetchAppointments(1, true);
+    },[userId, petCenterId])
+  )
+ 
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);

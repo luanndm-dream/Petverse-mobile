@@ -6,6 +6,7 @@ import {
   ButtonComponent,
   RowComponent,
   PopupComponent,
+  InputComponent,
 } from '@/components';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {colors} from '@/constants/colors';
@@ -17,6 +18,7 @@ import {
 import {useAppSelector} from '@/redux';
 import {STACK_NAVIGATOR_SCREENS} from '@/constants/screens';
 import useLoading from '@/hook/useLoading';
+import Toast from 'react-native-toast-message';
 
 const MyAppointmentDetailScreen = () => {
   const route = useRoute<any>();
@@ -26,7 +28,9 @@ const MyAppointmentDetailScreen = () => {
   const {appointmentId, appointmentType} = route.params;
   const [appointmentData, setAppointmentData] = useState<any>(null);
   const roleName = useAppSelector(state => state.auth.roleName);
-
+  const [isVisible, setIsVisible] = useState(false);
+  const [cancelReason, setCancelReason] = useState('');
+  
   useEffect(() => {
     showLoading();
     apiGetAppointmentByAppointmentId(
@@ -42,9 +46,105 @@ const MyAppointmentDetailScreen = () => {
     });
   }, []);
 
+  const onAcceptHandle = () => {
+    showLoading();
+    apiUpdateAppointmentByAppointmentId(appointmentId, 1).then((res: any) => {
+      if (res.statusCode === 200) {
+        Toast.show({
+          type: 'success',
+          text1: 'Nhận lịch thành công',
+          text2: 'Petverse chúc bạn thật nhiều sức khoẻ!',
+        });
+        // Gọi lại API để cập nhật UI
+        apiGetAppointmentByAppointmentId(
+          appointmentId,
+          appointmentType === 1 ? 1 : undefined,
+        ).then((res: any) => {
+          if (res.statusCode === 200) {
+            setAppointmentData(res.data);
+          }
+          hideLoading();
+        }).catch(() => {
+          hideLoading();
+        });
+      } else {
+        hideLoading();
+        setIsVisible(false);
+        Toast.show({
+          type: 'error',
+          text1: 'Nhận lịch thất bại',
+          text2: `Xảy ra lỗi khi đăng kí ${res.error}`,
+        });
+      }
+    });
+  };
+
+  const onRejectHandle = () => {
+    showLoading()
+    apiUpdateAppointmentByAppointmentId(appointmentId,3, cancelReason).then(
+      (res: any) => {
+        if (res.statusCode === 200) {
+          hideLoading();
+          setIsVisible(false)
+          Toast.show({
+            type: 'success',
+            text1: 'Huỷ lịch thành công',
+            text2: 'Petverse chúc bạn thật nhiều sức khoẻ!',
+          });
+          goBack();
+        } else {
+          hideLoading();
+          setIsVisible(false)
+          Toast.show({
+            type: 'error',
+            text1: 'Huỷ lịch thất bại',
+            text2: `Xảy ra lỗi khi đăng kí ${res.error}`,
+          });
+        }
+        
+      },
+    );
+  };
+  const onCompleteHandle = () => {
+    showLoading()
+    apiUpdateAppointmentByAppointmentId(appointmentId, 2).then((res: any) => {
+      if (res.statusCode === 200) {
+        Toast.show({
+          type: 'success',
+          text1: 'Hoàn thành lịch thành công',
+          text2: 'Petverse chúc bạn thật nhiều sức khoẻ!',
+        });
+        // Gọi lại API để cập nhật UI
+        apiGetAppointmentByAppointmentId(
+          appointmentId,
+          appointmentType === 1 ? 1 : undefined,
+        ).then((res: any) => {
+          if (res.statusCode === 200) {
+            setAppointmentData(res.data);
+          }
+          hideLoading();
+        }).catch(() => {
+          hideLoading();
+        });
+      } else {
+        hideLoading();
+        setIsVisible(false);
+        Toast.show({
+          type: 'error',
+          text1: 'Hoàn thành lịch thất bại',
+          text2: `Xảy ra lỗi khi đăng kí ${res.error}`,
+        });
+      }
+    });
+  }
+
+  const onReportHandle = () => {
+    console.log('report')
+  }
   const trackingHandle = () => {
     navigation.navigate(STACK_NAVIGATOR_SCREENS.TRACKINGSCREEN, {
       appointmentId: appointmentId,
+      appointmentType: appointmentType
     });
   };
   const getStatusText = (status: number): string => {
@@ -79,87 +179,184 @@ const MyAppointmentDetailScreen = () => {
 
   const renderButtons = () => {
     const {status} = appointmentData;
-
-    if (status === 0) {
-      if (roleName === 'petCenter') {
-        return (
-          <RowComponent styles={{paddingHorizontal: 40}}>
+  
+    if (appointmentType === 0) {
+      // Logic cho appointmentType là 0 (Dịch vụ thông thường)
+      if (status === 0) {
+        // Khi chưa nhận đơn
+        if (roleName === 'petCenter') {
+          return (
+            <RowComponent styles={{paddingHorizontal: 40}}>
+              <ButtonComponent
+                text="Từ chối"
+                type="primary"
+                color={colors.red}
+                onPress={() => {
+                  setIsVisible(!isVisible);
+                }}
+              />
+              <ButtonComponent
+                text="Nhận lịch"
+                type="primary"
+                onPress={onAcceptHandle}
+              />
+            </RowComponent>
+          );
+        } else if (roleName === 'customer') {
+          return (
             <ButtonComponent
-              text="Từ chối"
+              text="Hủy lịch hẹn"
               type="primary"
               color={colors.red}
+              styles={styles.singleButton}
               onPress={() => {
-                // apiUpdateAppointmentByAppointmentId(appointmentId,status, ca)
+                setIsVisible(!isVisible);
               }}
             />
+          );
+        }
+      } else if (status === 1) {
+        // Khi đã nhận đơn
+        if (roleName === 'petCenter') {
+          return (
+            <RowComponent styles={{paddingHorizontal: 40}}>
+              <ButtonComponent
+                text="Báo cáo"
+                type="primary"
+                onPress={trackingHandle}
+              />
+              <ButtonComponent
+                text="Hoàn thành"
+                type="primary"
+                color={colors.green}
+                onPress={onCompleteHandle}
+              />
+            </RowComponent>
+          );
+        } else if (roleName === 'customer') {
+          return (
+            <RowComponent styles={{paddingHorizontal: 40}}>
+              <ButtonComponent
+                text="Xem báo cáo"
+                type="primary"
+                onPress={trackingHandle}
+            
+              />
+              <ButtonComponent
+                text="Report"
+                type="primary"
+                color={colors.red}
+                onPress={onReportHandle}
+          
+              />
+            </RowComponent>
+          );
+        }
+      } else if (status === 2) {
+        // Khi hoàn thành
+        if (roleName === 'petCenter') {
+          return (
             <ButtonComponent
-              text="Nhận lịch"
-              type="primary"
-              onPress={() => {
-                /* Xử lý nhận lịch */
-              }}
-            />
-          </RowComponent>
-        );
-      } else if (roleName === 'customer') {
-        return (
-          <ButtonComponent
-            text="Hủy lịch hẹn"
-            type="primary"
-            color={colors.red}
-            styles={styles.singleButton}
-            onPress={() => {
-              /* Xử lý hủy lịch hẹn */
-            }}
-          />
-        );
-      }
-    }
-
-    if (status === 1) {
-      if (roleName === 'petCenter') {
-        return (
-          <RowComponent styles={{paddingHorizontal: 40}}>
-            <ButtonComponent
-              text="Báo cáo"
+              text="Xem lại báo cáo"
               type="primary"
               onPress={trackingHandle}
+              styles={styles.singleButton}
             />
+          );
+        } else if (roleName === 'customer') {
+          return (
+            <RowComponent styles={{paddingHorizontal: 40}}>
+              <ButtonComponent
+                text="Xem báo cáo"
+                type="primary"
+                onPress={trackingHandle}
+           
+              />
+              <ButtonComponent
+                text="Report"
+                type="primary"
+                color={colors.red}
+                onPress={onReportHandle}
+             
+              />
+            </RowComponent>
+          );
+        }
+      }
+    } else if (appointmentType === 1) {
+      // Logic cho appointmentType là 1 (Phối giống)
+      if (status === 0) {
+        // Khi chưa nhận đơn
+        if (roleName === 'petCenter') {
+          return (
+            <RowComponent styles={{paddingHorizontal: 40}}>
+              <ButtonComponent
+                text="Từ chối"
+                type="primary"
+                color={colors.red}
+                onPress={() => {
+                  setIsVisible(!isVisible);
+                }}
+              />
+              <ButtonComponent
+                text="Nhận lịch"
+                type="primary"
+                onPress={onAcceptHandle}
+              />
+            </RowComponent>
+          );
+        } else if (roleName === 'customer') {
+          return (
+            <ButtonComponent
+              text="Hủy lịch hẹn"
+              type="primary"
+              color={colors.red}
+              styles={styles.singleButton}
+              onPress={() => {
+                setIsVisible(!isVisible);
+              }}
+            />
+          );
+        }
+      } else if (status === 1) {
+        // Khi đã nhận đơn
+        if (roleName === 'petCenter') {
+          return (
             <ButtonComponent
               text="Hoàn thành"
               type="primary"
               color={colors.green}
-              onPress={() => {
-                /* Xử lý hoàn thành */
-              }}
+              styles={styles.singleButton}
+              onPress={onCompleteHandle}
             />
-          </RowComponent>
-        );
-      } else if (roleName === 'customer') {
-        return (
-          <ButtonComponent
-            text="Xem báo cáo"
-            type="primary"
-            styles={styles.singleButton}
-            onPress={trackingHandle}
-          />
-        );
+          );
+        } else if (roleName === 'customer') {
+          return (
+            <ButtonComponent
+              text="Report"
+              type="primary"
+              color={colors.red}
+              onPress={trackingHandle}
+              styles={styles.singleButton}
+            />
+          );
+        }
+      } else if (status === 2) {
+        // Khi hoàn thành
+        if (roleName === 'customer') {
+          return (
+            <ButtonComponent
+              text="Report"
+              color={colors.red}
+              type="primary"
+              onPress={trackingHandle}
+              styles={styles.singleButton}
+            />
+          );
+        }
       }
     }
-
-    if (status === 2 && roleName === 'customer') {
-      return (
-        <ButtonComponent
-          text="Đánh giá"
-          type="primary"
-          styles={styles.singleButton}
-          onPress={() => {
-            /* Xử lý đánh giá */
-          }}
-        />
-      );
-    }
-
+  
     return null;
   };
 
@@ -224,13 +421,27 @@ const MyAppointmentDetailScreen = () => {
       </Container>
       <View style={styles.buttonContainer}>{renderButtons()}</View>
       <PopupComponent
-        description="hehe"
+        title="Huỷ lịch hẹn"
+        description="Bạn muốn huỷ lịch hẹn này?"
         iconColor={colors.red}
         iconName="help-circle"
-        isVisible={true}
-        title='Hello'
-        onLeftPress={() => {}}
-        onRightPress={() => {}}
+        isVisible={isVisible}
+        onClose={() => setIsVisible(false)}
+        leftTitle="Huỷ"
+        rightTitle="Xác nhận"
+        reason={
+          <View>
+            <InputComponent
+              onChange={val => setCancelReason(val)}
+              value={cancelReason}
+              maxLength={50}
+              multiline
+              placeholder="Lý do"
+            />
+          </View>
+        }
+        onLeftPress={() => setIsVisible(false)}
+        onRightPress={onRejectHandle}
       />
     </>
   );
