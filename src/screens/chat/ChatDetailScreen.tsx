@@ -27,9 +27,9 @@ import VideoPlayer from 'react-native-video-player';
 
 const ChatDetailScreen = () => {
   const route = useRoute<any>();
-  const {chatId, name, avatar} = route.params;
+  const {chatId, name, avatar,toUserId} = route.params;
   const navigation = useNavigation();
-  const userId = Platform.OS === 'ios' ? '2' : '1';
+  const userId = useAppSelector((state) => state.auth.userId)
   const [messages, setMessages] = useState<any>([]);
   const [newMessage, setNewMessage] = useState('');
   const flatListRef = useRef<FlatList>(null);
@@ -44,7 +44,7 @@ const ChatDetailScreen = () => {
         if (!chatDoc.exists) {
           await chatRef.set({
             createdAt: firestore.FieldValue.serverTimestamp(),
-            participants: ['1','2'],
+            participants: [userId,toUserId],
           });
         }
 
@@ -169,6 +169,9 @@ const ChatDetailScreen = () => {
                 videoHeight={250}
                 videoWidth={200}
                 resizeMode="cover"
+                onError={(error) => {
+                  console.error('Lỗi khi phát video:', error)
+                }}
                 onStart={() => {
                   setLoadingVideo(true);
                 }}

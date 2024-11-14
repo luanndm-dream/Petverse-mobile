@@ -27,6 +27,7 @@ import MyAppointmentScreen from '@/screens/home/MyAppointmentScreen';
 import MyAppointmentDetailScreen from '@/screens/home/MyAppointmentDetailScreen';
 import TrackingScreen from '@/screens/home/TrackingScreen';
 import UpdateTrackingScreen from '@/screens/home/UpdateTrackingScreen';
+import ManagerScreen from '@/screens/profile/ManagerScreen';
 
 const MainNavigator = () => {
   const Stack = createNativeStackNavigator();
@@ -61,6 +62,7 @@ const MainNavigator = () => {
           <Stack.Screen name='MyAppointmentDetailScreen' component={MyAppointmentDetailScreen}/> 
           <Stack.Screen name='TrackingScreen' component={TrackingScreen}/> 
           <Stack.Screen name='UpdateTrackingScreen' component={UpdateTrackingScreen}/> 
+          <Stack.Screen name='ManagerScreen' component={ManagerScreen}/> 
           <Stack.Screen name="TestScreen" component={TestScreen}/>
         </Stack.Navigator>
   
