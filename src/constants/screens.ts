@@ -29,4 +29,8 @@ export const STACK_NAVIGATOR_SCREENS = {
   UPDATETRACKINGSCREEN: 'UpdateTrackingScreen',
   MANAGERSCREEN: 'ManagerScreen',
   EDITPROFILESCREEN: 'EditProfileScreen',
+  PAYMENTSCREEN: 'PaymentScreen',
+  TRANSACTIONHISTORYSCREEN: 'TransactionHistoryScreen',
+  POLICYSCREEN: 'PolicyScreen',
+  ABOUTUSSCREEN: 'AboutUsScreen',
 };

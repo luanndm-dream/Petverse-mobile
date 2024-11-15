@@ -49,6 +49,7 @@ const MyAppointmentDetailScreen = () => {
   const onAcceptHandle = () => {
     showLoading();
     apiUpdateAppointmentByAppointmentId(appointmentId, 1).then((res: any) => {
+      console.log(res)
       if (res.statusCode === 200) {
         Toast.show({
           type: 'success',
@@ -422,6 +423,7 @@ const MyAppointmentDetailScreen = () => {
       <View style={styles.buttonContainer}>{renderButtons()}</View>
       <PopupComponent
         title="Huỷ lịch hẹn"
+        hasInput
         description="Bạn muốn huỷ lịch hẹn này?"
         iconColor={colors.red}
         iconName="help-circle"

@@ -28,6 +28,11 @@ import MyAppointmentDetailScreen from '@/screens/home/MyAppointmentDetailScreen'
 import TrackingScreen from '@/screens/home/TrackingScreen';
 import UpdateTrackingScreen from '@/screens/home/UpdateTrackingScreen';
 import ManagerScreen from '@/screens/profile/ManagerScreen';
+import PaymentScreen from '@/screens/profile/PaymentScreen';
+import TransactionHistoryScreen from '@/screens/profile/TransactionHistoryScreen';
+import PolicyScreen from '@/screens/profile/PolicyScreen';
+import AboutUsScreen from '@/screens/profile/AboutUsScreen';
+import EditProfileScreen from '@/screens/profile/EditProfileScreen';
 
 const MainNavigator = () => {
   const Stack = createNativeStackNavigator();
@@ -63,6 +68,11 @@ const MainNavigator = () => {
           <Stack.Screen name='TrackingScreen' component={TrackingScreen}/> 
           <Stack.Screen name='UpdateTrackingScreen' component={UpdateTrackingScreen}/> 
           <Stack.Screen name='ManagerScreen' component={ManagerScreen}/> 
+          <Stack.Screen name='PaymentScreen' component={PaymentScreen}/> 
+          <Stack.Screen name='TransactionHistoryScreen' component={TransactionHistoryScreen}/> 
+          <Stack.Screen name='PolicyScreen' component={PolicyScreen}/> 
+          <Stack.Screen name='AboutUsScreen' component={AboutUsScreen}/> 
+          <Stack.Screen name='EditProfileScreen' component={EditProfileScreen}/> 
           <Stack.Screen name="TestScreen" component={TestScreen}/>
         </Stack.Navigator>
   

@@ -22,6 +22,7 @@ interface PopupComponentProps {
   onRightPress: () => void;
   onSinglePress?: () => void;
   singleButton?: boolean;
+  hasInput?: boolean
 }
 
 const PopupComponent = (props: PopupComponentProps) => {
@@ -39,7 +40,8 @@ const PopupComponent = (props: PopupComponentProps) => {
     rightTitle,
     singleTitle,
     reason, 
-    onClose
+    onClose,
+    hasInput
   } = props;
   const modalRef = useRef<Modalize>(null);
   const screenHeight = Dimensions.get('window').height;
@@ -61,7 +63,7 @@ const PopupComponent = (props: PopupComponentProps) => {
         modalStyle={[
           styles.modal,
           {
-            marginTop: (screenHeight - 550) / 2,
+            marginTop: hasInput? (screenHeight - 550) / 2:(screenHeight - 300) / 2 ,
           },
         ]}
         handlePosition="inside"
@@ -99,7 +101,7 @@ const PopupComponent = (props: PopupComponentProps) => {
                   text={rightTitle}
                   onPress={onRightPress}
                   type="primary"
-                  color={colors.green}
+                  color={colors.primary}
                   //   containerStyle={styles.button}
                 />
               </RowComponent>
