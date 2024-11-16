@@ -19,18 +19,21 @@ import {useAppSelector} from '@/redux';
 import {STACK_NAVIGATOR_SCREENS} from '@/constants/screens';
 import useLoading from '@/hook/useLoading';
 import Toast from 'react-native-toast-message';
+import {pushNotification} from '@/services/notifications';
+import {managerId} from '@/constants/app';
 
 const MyAppointmentDetailScreen = () => {
+  const userId = useAppSelector(state => state.auth.userId);
   const route = useRoute<any>();
   const {goBack} = useCustomNavigation();
   const navigation = useNavigation<any>();
   const {showLoading, hideLoading} = useLoading();
-  const {appointmentId, appointmentType} = route.params;
+  const {appointmentId, appointmentType, petCenterId} = route.params;
   const [appointmentData, setAppointmentData] = useState<any>(null);
   const roleName = useAppSelector(state => state.auth.roleName);
   const [isVisible, setIsVisible] = useState(false);
   const [cancelReason, setCancelReason] = useState('');
-  
+
   useEffect(() => {
     showLoading();
     apiGetAppointmentByAppointmentId(
@@ -49,7 +52,7 @@ const MyAppointmentDetailScreen = () => {
   const onAcceptHandle = () => {
     showLoading();
     apiUpdateAppointmentByAppointmentId(appointmentId, 1).then((res: any) => {
-      console.log(res)
+      console.log(res);
       if (res.statusCode === 200) {
         Toast.show({
           type: 'success',
@@ -60,14 +63,16 @@ const MyAppointmentDetailScreen = () => {
         apiGetAppointmentByAppointmentId(
           appointmentId,
           appointmentType === 1 ? 1 : undefined,
-        ).then((res: any) => {
-          if (res.statusCode === 200) {
-            setAppointmentData(res.data);
-          }
-          hideLoading();
-        }).catch(() => {
-          hideLoading();
-        });
+        )
+          .then((res: any) => {
+            if (res.statusCode === 200) {
+              setAppointmentData(res.data);
+            }
+            hideLoading();
+          })
+          .catch(() => {
+            hideLoading();
+          });
       } else {
         hideLoading();
         setIsVisible(false);
@@ -81,12 +86,12 @@ const MyAppointmentDetailScreen = () => {
   };
 
   const onRejectHandle = () => {
-    showLoading()
-    apiUpdateAppointmentByAppointmentId(appointmentId,3, cancelReason).then(
+    showLoading();
+    apiUpdateAppointmentByAppointmentId(appointmentId, 3, cancelReason).then(
       (res: any) => {
         if (res.statusCode === 200) {
           hideLoading();
-          setIsVisible(false)
+          setIsVisible(false);
           Toast.show({
             type: 'success',
             text1: 'Huỷ lịch thành công',
@@ -95,19 +100,18 @@ const MyAppointmentDetailScreen = () => {
           goBack();
         } else {
           hideLoading();
-          setIsVisible(false)
+          setIsVisible(false);
           Toast.show({
             type: 'error',
             text1: 'Huỷ lịch thất bại',
             text2: `Xảy ra lỗi khi đăng kí ${res.error}`,
           });
         }
-        
       },
     );
   };
   const onCompleteHandle = () => {
-    showLoading()
+    showLoading();
     apiUpdateAppointmentByAppointmentId(appointmentId, 2).then((res: any) => {
       if (res.statusCode === 200) {
         Toast.show({
@@ -119,14 +123,16 @@ const MyAppointmentDetailScreen = () => {
         apiGetAppointmentByAppointmentId(
           appointmentId,
           appointmentType === 1 ? 1 : undefined,
-        ).then((res: any) => {
-          if (res.statusCode === 200) {
-            setAppointmentData(res.data);
-          }
-          hideLoading();
-        }).catch(() => {
-          hideLoading();
-        });
+        )
+          .then((res: any) => {
+            if (res.statusCode === 200) {
+              setAppointmentData(res.data);
+            }
+            hideLoading();
+          })
+          .catch(() => {
+            hideLoading();
+          });
       } else {
         hideLoading();
         setIsVisible(false);
@@ -137,15 +143,21 @@ const MyAppointmentDetailScreen = () => {
         });
       }
     });
-  }
+  };
 
   const onReportHandle = () => {
-    console.log('report')
-  }
+    pushNotification([userId, petCenterId, managerId], {
+      title: 'Báo cáo dịch vụ',
+      message: 'Thiếu report',
+      appointmentId: appointmentId,
+      sender: userId,
+      status: 1
+    });
+  };
   const trackingHandle = () => {
     navigation.navigate(STACK_NAVIGATOR_SCREENS.TRACKINGSCREEN, {
       appointmentId: appointmentId,
-      appointmentType: appointmentType
+      appointmentType: appointmentType,
     });
   };
   const getStatusText = (status: number): string => {
@@ -180,7 +192,7 @@ const MyAppointmentDetailScreen = () => {
 
   const renderButtons = () => {
     const {status} = appointmentData;
-  
+
     if (appointmentType === 0) {
       // Logic cho appointmentType là 0 (Dịch vụ thông thường)
       if (status === 0) {
@@ -222,7 +234,7 @@ const MyAppointmentDetailScreen = () => {
           return (
             <RowComponent styles={{paddingHorizontal: 40}}>
               <ButtonComponent
-                text="Báo cáo"
+                text="Tạo theo dõi"
                 type="primary"
                 onPress={trackingHandle}
               />
@@ -241,14 +253,12 @@ const MyAppointmentDetailScreen = () => {
                 text="Xem báo cáo"
                 type="primary"
                 onPress={trackingHandle}
-            
               />
               <ButtonComponent
                 text="Report"
                 type="primary"
                 color={colors.red}
                 onPress={onReportHandle}
-          
               />
             </RowComponent>
           );
@@ -271,14 +281,12 @@ const MyAppointmentDetailScreen = () => {
                 text="Xem báo cáo"
                 type="primary"
                 onPress={trackingHandle}
-           
               />
               <ButtonComponent
                 text="Report"
                 type="primary"
                 color={colors.red}
                 onPress={onReportHandle}
-             
               />
             </RowComponent>
           );
@@ -337,7 +345,7 @@ const MyAppointmentDetailScreen = () => {
               text="Report"
               type="primary"
               color={colors.red}
-              onPress={trackingHandle}
+              onPress={onReportHandle}
               styles={styles.singleButton}
             />
           );
@@ -350,14 +358,14 @@ const MyAppointmentDetailScreen = () => {
               text="Report"
               color={colors.red}
               type="primary"
-              onPress={trackingHandle}
+              onPress={onReportHandle}
               styles={styles.singleButton}
             />
           );
         }
       }
     }
-  
+
     return null;
   };
 

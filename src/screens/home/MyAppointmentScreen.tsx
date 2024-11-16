@@ -14,8 +14,8 @@ import {useCustomNavigation} from '@/utils/navigation';
 import {useAppSelector} from '@/redux';
 import {apiGetMyAppointment} from '@/api/apiAppoinment';
 import moment from 'moment';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { STACK_NAVIGATOR_SCREENS } from '@/constants/screens';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {STACK_NAVIGATOR_SCREENS} from '@/constants/screens';
 
 interface Appointment {
   createdDate: string;
@@ -37,7 +37,7 @@ const MyAppointmentScreen = () => {
   const userId = useAppSelector(state => state.auth.userId);
   const petCenterId = useAppSelector(state => state.auth.petCenterId);
   const roleName = useAppSelector(state => state.auth.roleName);
-  const navigation = useNavigation<any>()
+  const navigation = useNavigation<any>();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [page, setPage] = useState(1);
   const [refreshing, setRefreshing] = useState(false);
@@ -46,36 +46,42 @@ const MyAppointmentScreen = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  const onPressItemHandle = (appointmentId: string, type: number) =>{
+  const onPressItemHandle = (appointmentId: string, type: number, petCenterId: string) => {
     navigation.navigate(STACK_NAVIGATOR_SCREENS.MYAPPOINTMENTDETAILSCREEN, {
       appointmentId: appointmentId,
-      appointmentType: type
-    })
-  }
+      appointmentType: type,
+      petCenterId: petCenterId
+    });
+  };
   const fetchAppointments = async (pageNumber = 1, shouldRefresh = false) => {
     if (loading) return;
-  
+
     setLoading(true);
     try {
       const id = roleName === 'customer' ? userId : petCenterId;
-      const response = await apiGetMyAppointment(roleName, PAGE_SIZE, id as never);
-      const sortedData = response.data.items
-        .sort(
-          (a: Appointment, b: Appointment) =>
-            moment(b.createdDate, 'DD/MM/YYYY HH:mm').valueOf() -
-            moment(a.createdDate, 'DD/MM/YYYY HH:mm').valueOf(),
-        );
-  
+      const response = await apiGetMyAppointment(
+        roleName,
+        PAGE_SIZE,
+        id as never,
+      );
+      const sortedData = response.data.items.sort(
+        (a: Appointment, b: Appointment) =>
+          moment(b.createdDate, 'DD/MM/YYYY HH:mm').valueOf() -
+          moment(a.createdDate, 'DD/MM/YYYY HH:mm').valueOf(),
+      );
+
       if (shouldRefresh) {
         setAppointments(sortedData);
       } else {
         setAppointments(prevAppointments => {
           const existingIds = new Set(prevAppointments.map(item => item.id));
-          const newItems = sortedData.filter((item: any) => !existingIds.has(item.id));
+          const newItems = sortedData.filter(
+            (item: any) => !existingIds.has(item.id),
+          );
           return [...prevAppointments, ...newItems];
         });
       }
-  
+
       setHasMore(response.data.items.length === PAGE_SIZE);
     } catch (error) {
       console.error('Error fetching appointments:', error);
@@ -86,12 +92,11 @@ const MyAppointmentScreen = () => {
   };
 
   useFocusEffect(
-    useCallback(()=>{
+    useCallback(() => {
       setPage(1);
       fetchAppointments(1, true);
-    },[userId, petCenterId])
-  )
- 
+    }, [userId, petCenterId]),
+  );
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -106,15 +111,17 @@ const MyAppointmentScreen = () => {
     }
   }, [currentPage, hasMore, loading]);
 
-
   useEffect(() => {
     fetchAppointments(1, true);
   }, [roleName, userId, petCenterId]);
 
   const renderAppointmentItem = useCallback(({item}: {item: Appointment}) => {
     const isBreeding = item.type === 1;
+
     return (
-      <TouchableOpacity style={styles.appointmentCard} onPress={()=>onPressItemHandle(item.id, item.type)}>
+      <TouchableOpacity
+        style={styles.appointmentCard}
+        onPress={() => onPressItemHandle(item.id, item.type, item.petCenterId)}>
         <View
           style={[
             styles.typeBadge,
