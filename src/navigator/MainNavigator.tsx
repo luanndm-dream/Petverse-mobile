@@ -33,6 +33,7 @@ import TransactionHistoryScreen from '@/screens/profile/TransactionHistoryScreen
 import PolicyScreen from '@/screens/profile/PolicyScreen';
 import AboutUsScreen from '@/screens/profile/AboutUsScreen';
 import EditProfileScreen from '@/screens/profile/EditProfileScreen';
+import CheckoutScreen from '@/screens/profile/CheckoutScreen';
 
 const MainNavigator = () => {
   const Stack = createNativeStackNavigator();
@@ -73,6 +74,7 @@ const MainNavigator = () => {
           <Stack.Screen name='PolicyScreen' component={PolicyScreen}/> 
           <Stack.Screen name='AboutUsScreen' component={AboutUsScreen}/> 
           <Stack.Screen name='EditProfileScreen' component={EditProfileScreen}/> 
+          <Stack.Screen name='CheckOutScreen' component={CheckoutScreen}/> 
           <Stack.Screen name="TestScreen" component={TestScreen}/>
         </Stack.Navigator>
   

@@ -33,4 +33,5 @@ export const STACK_NAVIGATOR_SCREENS = {
   TRANSACTIONHISTORYSCREEN: 'TransactionHistoryScreen',
   POLICYSCREEN: 'PolicyScreen',
   ABOUTUSSCREEN: 'AboutUsScreen',
+  CHECKOUTSCREEN: 'CheckOutScreen',
 };

@@ -12,16 +12,20 @@ import React, {useState} from 'react';
 import {ButtonComponent, Container, IconButtonComponent} from '@/components';
 import {colors} from '@/constants/colors';
 import {useCustomNavigation} from '@/utils/navigation';
-import { paymentOptions } from '@/constants/app';
+import {paymentOptions} from '@/constants/app';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { apiCreatePayment } from '@/api/apiPayment';
-import { useAppSelector } from '@/redux';
+import {apiCreatePayment} from '@/api/apiPayment';
+import {useAppSelector} from '@/redux';
+import {STACK_NAVIGATOR_SCREENS} from '@/constants/screens';
+import {useNavigation} from '@react-navigation/native';
+import Toast from 'react-native-toast-message';
 
 const {width} = Dimensions.get('window');
 const itemWidth = (width - 48) / 3;
 const PaymentScreen = () => {
-  const userId = useAppSelector((state) => state.auth.userId)
+  const userId = useAppSelector(state => state.auth.userId);
   const {goBack, navigate} = useCustomNavigation();
+  const navigation = useNavigation<any>();
   const [amount, setAmount] = useState('');
   const [selectedAmount, setSelectedAmount] = useState(null);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
@@ -43,11 +47,25 @@ const PaymentScreen = () => {
     setSelectedPaymentMethod(id);
   };
 
-
   const handlePayment = () => {
-    apiCreatePayment(userId, 'Nạp tiền', 'Nạp tiền', Number(amount)).then((res: any)=>{
-      console.log(res)
-    })
+    apiCreatePayment(userId, 'Nạp tiền', 'Nạp tiền', Number(amount)).then(
+      (res: any) => {
+        if (res.statusCode === 200) {
+          const checkoutUrl = res.data.checkoutUrl;
+          const paymentId = res.data.id
+          navigation.navigate(STACK_NAVIGATOR_SCREENS.CHECKOUTSCREEN, {
+            checkoutUrl,
+            paymentId
+          });
+        }else{
+          Toast.show({
+            type: 'error',
+            text1: 'Thanh toán thất bại',
+            text2: `Xảy ra lỗi khi thanh toán ${res.error}`,
+          }); 
+        }
+      },
+    );
   };
 
   const formatNumber = (num: any) => {
@@ -110,13 +128,14 @@ const PaymentScreen = () => {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Phương thức thanh toán</Text>
             {paymentOptions.map(option => (
-              <TouchableOpacity 
-              style={[
-                styles.paymentMethod,
-                selectedPaymentMethod === option.id && styles.selectedPaymentMethod,
-              ]}
-              onPress={() => handleSelectPaymentMethod(option.id)}
-              key={option.id}>
+              <TouchableOpacity
+                style={[
+                  styles.paymentMethod,
+                  selectedPaymentMethod === option.id &&
+                    styles.selectedPaymentMethod,
+                ]}
+                onPress={() => handleSelectPaymentMethod(option.id)}
+                key={option.id}>
                 <View style={styles.paymentIcon}>
                   <MaterialCommunityIcons
                     name={option.icon}
@@ -135,7 +154,7 @@ const PaymentScreen = () => {
       </Container>
       <ButtonComponent
         text={`Nạp ${amount ? `${formatNumber(amount)}₫` : 'tiền'}`}
-        type='primary'
+        type="primary"
         disable={!amount || !selectedPaymentMethod}
         onPress={handlePayment}
       />

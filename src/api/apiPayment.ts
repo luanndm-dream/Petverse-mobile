@@ -12,3 +12,23 @@ export async function apiCreatePayment(userId:string, title: string, description
     }
     return protectedAxios.post(url, dataSend)
 }
+
+export async function apiGetTransactionByUserId(userId: string, pageSize: number, pageIndex: number){
+    let url = 'Transaction'
+
+        const params = {
+            userId,
+            pageSize,
+            pageIndex
+        }
+        return protectedAxios.get(url, {params})
+}
+
+export async function apiUpdatePayment(paymentId: string, status: number){
+    let url = `Transaction/${paymentId}`
+    const dataSend =  {
+       id: paymentId,
+       status: status
+    }
+    return protectedAxios.put(url, dataSend)
+}
