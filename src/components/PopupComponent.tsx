@@ -22,7 +22,9 @@ interface PopupComponentProps {
   onRightPress: () => void;
   onSinglePress?: () => void;
   singleButton?: boolean;
-  hasInput?: boolean
+  hasInput?: boolean,
+  buttonLeftColor?: string,
+  buttonRightColor?: string
 }
 
 const PopupComponent = (props: PopupComponentProps) => {
@@ -41,7 +43,9 @@ const PopupComponent = (props: PopupComponentProps) => {
     singleTitle,
     reason, 
     onClose,
-    hasInput
+    hasInput,
+    buttonLeftColor,
+    buttonRightColor
   } = props;
   const modalRef = useRef<Modalize>(null);
   const screenHeight = Dimensions.get('window').height;
@@ -94,14 +98,14 @@ const PopupComponent = (props: PopupComponentProps) => {
                   text={leftTitle}
                   onPress={onLeftPress}
                   type="primary"
-                  color={colors.red}
+                  color={buttonLeftColor? buttonLeftColor: colors.red}
                   //   containerStyle={styles.button}
                 />
                 <ButtonComponent
                   text={rightTitle}
                   onPress={onRightPress}
                   type="primary"
-                  color={colors.primary}
+                  color={buttonRightColor? buttonRightColor: colors.primary}
                   //   containerStyle={styles.button}
                 />
               </RowComponent>

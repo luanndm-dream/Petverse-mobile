@@ -34,4 +34,5 @@ export const STACK_NAVIGATOR_SCREENS = {
   POLICYSCREEN: 'PolicyScreen',
   ABOUTUSSCREEN: 'AboutUsScreen',
   CHECKOUTSCREEN: 'CheckOutScreen',
+  REPORTSCREEN: 'ReportScreen',
 };

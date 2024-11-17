@@ -165,7 +165,7 @@ const PetDetailScreen = () => {
       </ImageBackground>
       <SectionComponent>
         <TextComponent text="Giới thiệu" type="title" />
-        <TextComponent text={petData?.description.trim()} type="description" />
+        <TextComponent text={petData?.description?.trim()} type="description" />
         <FlatList
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{

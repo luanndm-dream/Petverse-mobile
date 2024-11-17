@@ -33,6 +33,67 @@ const MyAppointmentDetailScreen = () => {
   const roleName = useAppSelector(state => state.auth.roleName);
   const [isVisible, setIsVisible] = useState(false);
   const [cancelReason, setCancelReason] = useState('');
+  const [popupAction, setPopupAction] = useState<string | null>(null);
+
+  const getPopupContent = (action: string) => {
+    switch (action) {
+      case 'report':
+        return {
+          title: 'Báo cáo',
+          description: 'Bạn muốn báo cáo về dịch vụ này?',
+          iconName: 'alert-octagon',
+          iconColor: colors.red,
+          hasInput: false,
+          leftTitle: 'Huỷ',
+          rightTitle: 'Xác nhận',
+          buttonLeftColor: colors.grey,
+          buttonRightColor: colors.red,
+          onLeftPress: () => setIsVisible(false),
+          onRightPress: () => onReportHandle(),
+          reason: null,
+        };
+      case 'cancel':
+        return {
+          title: 'Huỷ lịch hẹn',
+          description: 'Bạn muốn huỷ lịch hẹn này?',
+          iconName: 'help-circle',
+          iconColor: colors.red,
+          hasInput: true,
+          leftTitle: 'Huỷ',
+          rightTitle: 'Xác nhận',
+          onLeftPress: () => setIsVisible(false),
+          onRightPress: () => {
+            console.log('Huỷ || Từ chối lịch hẹn');
+            onRejectHandle();
+          },
+          reason: (
+            <View>
+              <InputComponent
+                onChange={val => setCancelReason(val)}
+                value={cancelReason}
+                maxLength={50}
+                multiline
+                placeholder="Lý do"
+              />
+            </View>
+          ),
+        };
+      default:
+        return {
+          title: 'Thông báo',
+          description: 'Thao tác này không được hỗ trợ.',
+          iconName: 'alert-circle',
+          iconColor: colors.grey,
+          hasInput: false,
+          leftTitle: 'Đóng',
+          rightTitle: '',
+          onLeftPress: () => setIsVisible(false),
+          onRightPress: null,
+          reason: null,
+        };
+    }
+  };
+  const currentPopupContent = popupAction ? getPopupContent(popupAction) : null;
 
   useEffect(() => {
     showLoading();
@@ -85,6 +146,10 @@ const MyAppointmentDetailScreen = () => {
     });
   };
 
+  const openPopup = (action: string) => {
+    setPopupAction(action);
+    setIsVisible(true);
+  };
   const onRejectHandle = () => {
     showLoading();
     apiUpdateAppointmentByAppointmentId(appointmentId, 3, cancelReason).then(
@@ -146,13 +211,19 @@ const MyAppointmentDetailScreen = () => {
   };
 
   const onReportHandle = () => {
-    pushNotification([userId, petCenterId, managerId], {
-      title: 'Báo cáo dịch vụ',
-      message: 'Thiếu report',
-      appointmentId: appointmentId,
-      sender: userId,
-      status: 1
+    console.log('report');
+    navigation.navigate(STACK_NAVIGATOR_SCREENS.REPORTSCREEN, {
+      appointmentId,
+      petCenterId
     });
+    setIsVisible(false);
+    // pushNotification([userId, petCenterId, managerId], {
+    //   title: 'Báo cáo dịch vụ',
+    //   message: 'Thiếu report',
+    //   appointmentId: appointmentId,
+    //   sender: userId,
+    //   status: 1
+    // });
   };
   const trackingHandle = () => {
     navigation.navigate(STACK_NAVIGATOR_SCREENS.TRACKINGSCREEN, {
@@ -204,9 +275,7 @@ const MyAppointmentDetailScreen = () => {
                 text="Từ chối"
                 type="primary"
                 color={colors.red}
-                onPress={() => {
-                  setIsVisible(!isVisible);
-                }}
+                onPress={() => openPopup('cancel')}
               />
               <ButtonComponent
                 text="Nhận lịch"
@@ -222,9 +291,7 @@ const MyAppointmentDetailScreen = () => {
               type="primary"
               color={colors.red}
               styles={styles.singleButton}
-              onPress={() => {
-                setIsVisible(!isVisible);
-              }}
+              onPress={() => openPopup('cancel')}
             />
           );
         }
@@ -258,7 +325,7 @@ const MyAppointmentDetailScreen = () => {
                 text="Report"
                 type="primary"
                 color={colors.red}
-                onPress={onReportHandle}
+                onPress={() => openPopup('report')}
               />
             </RowComponent>
           );
@@ -286,7 +353,7 @@ const MyAppointmentDetailScreen = () => {
                 text="Report"
                 type="primary"
                 color={colors.red}
-                onPress={onReportHandle}
+                onPress={() => openPopup('report')}
               />
             </RowComponent>
           );
@@ -303,9 +370,7 @@ const MyAppointmentDetailScreen = () => {
                 text="Từ chối"
                 type="primary"
                 color={colors.red}
-                onPress={() => {
-                  setIsVisible(!isVisible);
-                }}
+                onPress={() => openPopup('cancel')}
               />
               <ButtonComponent
                 text="Nhận lịch"
@@ -321,9 +386,7 @@ const MyAppointmentDetailScreen = () => {
               type="primary"
               color={colors.red}
               styles={styles.singleButton}
-              onPress={() => {
-                setIsVisible(!isVisible);
-              }}
+              onPress={() => openPopup('cancel')}
             />
           );
         }
@@ -345,7 +408,7 @@ const MyAppointmentDetailScreen = () => {
               text="Report"
               type="primary"
               color={colors.red}
-              onPress={onReportHandle}
+              onPress={() => openPopup('report')}
               styles={styles.singleButton}
             />
           );
@@ -358,7 +421,7 @@ const MyAppointmentDetailScreen = () => {
               text="Report"
               color={colors.red}
               type="primary"
-              onPress={onReportHandle}
+              onPress={() => openPopup('report')}
               styles={styles.singleButton}
             />
           );
@@ -430,28 +493,24 @@ const MyAppointmentDetailScreen = () => {
       </Container>
       <View style={styles.buttonContainer}>{renderButtons()}</View>
       <PopupComponent
-        title="Huỷ lịch hẹn"
-        hasInput
-        description="Bạn muốn huỷ lịch hẹn này?"
-        iconColor={colors.red}
-        iconName="help-circle"
+        title={currentPopupContent?.title || ''}
+        description={currentPopupContent?.description || ''}
+        iconName={currentPopupContent?.iconName || 'alert-circle'}
+        iconColor={currentPopupContent?.iconColor || colors.grey}
+        hasInput={currentPopupContent?.hasInput || false}
         isVisible={isVisible}
         onClose={() => setIsVisible(false)}
-        leftTitle="Huỷ"
-        rightTitle="Xác nhận"
-        reason={
-          <View>
-            <InputComponent
-              onChange={val => setCancelReason(val)}
-              value={cancelReason}
-              maxLength={50}
-              multiline
-              placeholder="Lý do"
-            />
-          </View>
+        leftTitle={currentPopupContent?.leftTitle || 'Huỷ'}
+        rightTitle={currentPopupContent?.rightTitle || ''}
+        buttonLeftColor={currentPopupContent?.buttonLeftColor}
+        buttonRightColor={currentPopupContent?.buttonRightColor}
+        onLeftPress={
+          currentPopupContent?.onLeftPress || (() => setIsVisible(false))
         }
-        onLeftPress={() => setIsVisible(false)}
-        onRightPress={onRejectHandle}
+        onRightPress={
+          currentPopupContent?.onRightPress || (() => setIsVisible(false))
+        }
+        reason={currentPopupContent?.reason}
       />
     </>
   );
