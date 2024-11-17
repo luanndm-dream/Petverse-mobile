@@ -175,7 +175,7 @@ const NotificationScreen = () => {
         {notifications.length > 0 ? (
           <>
             <View style={styles.headerContainer}>
-              <TextComponent text="Thông báo" styles={styles.headerTitle} />
+              {/* <TextComponent text="Thông báo" styles={styles.headerTitle} /> */}
               {getUnreadCount() > 0 && (
                 <View style={styles.countContainer}>
                   <Text style={styles.notificationCount}>

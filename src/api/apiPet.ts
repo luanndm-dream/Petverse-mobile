@@ -25,15 +25,14 @@ export async function apiCreatePet(
   Gender: number,
   Weight: number,
   Sterilized: boolean,
-  Avatar: any ,
+  Avatar: any,
   Description?: string,
   PetPhotos?: any[],
   PetVideos?: any[],
- 
 ) {
   const url = `Pet`;
   const formData = new FormData();
-  formData.append('userId', userId)
+  formData.append('userId', userId);
   formData.append('SpeciesId', SpeciesId);
   formData.append('BreedId', BreedId);
   formData.append('Name', Name);
@@ -47,17 +46,16 @@ export async function apiCreatePet(
     formData.append('Description', Description);
   }
   if (PetPhotos) {
-    PetPhotos.forEach((photo) => {
+    PetPhotos.forEach(photo => {
       formData.append('PetPhotos', photo);
     });
   }
   if (PetVideos) {
-    PetVideos.forEach((video) => {
+    PetVideos.forEach(video => {
       formData.append('PetVideos', video);
     });
   }
 
-  
   return protectedAxios.post(url, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
@@ -71,3 +69,24 @@ export async function apiGetPetByPetId(petId: string) {
   return protectedAxios.get(url);
 }
 
+export async function apiUpdatePet(
+  petId: string,
+  petName: string,
+  weight: number,
+  description: string,
+  isSterilized: boolean,
+) {
+  let url = `Pet/${petId}`;
+  const formData = new FormData();
+  formData.append('Id', petId);
+  formData.append('Name', petName);
+  formData.append('Weight', weight);
+  formData.append('Sterilized', isSterilized);
+  formData.append('Description', description);
+
+  return protectedAxios.put(url, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+}

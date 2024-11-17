@@ -35,6 +35,7 @@ import AboutUsScreen from '@/screens/profile/AboutUsScreen';
 import EditProfileScreen from '@/screens/profile/EditProfileScreen';
 import CheckoutScreen from '@/screens/profile/CheckoutScreen';
 import ReportScreen from '@/screens/home/ReportScreen';
+import EditPetScreen from '@/screens/home/EditPetScreen';
 
 const MainNavigator = () => {
   const Stack = createNativeStackNavigator();
@@ -49,6 +50,7 @@ const MainNavigator = () => {
           <Stack.Screen name="MyPetScreen" component={MyPetScreen} />
           <Stack.Screen name="AddPetScreen" component={AddPetScreen} />
           <Stack.Screen name="PetDetailScreen" component={PetDetailScreen} />
+          <Stack.Screen name="EditPetScreen" component={EditPetScreen} />
           <Stack.Screen name="ListCenterScreen" component={ListCenterScreen} />
           <Stack.Screen name="PetAlbumScreen" component={PetAlbumScreen}/>
           <Stack.Screen name="ListChatScreen" component={ListChatScreen}/>

@@ -73,9 +73,23 @@ const AddImageComponent = (props: Props) => {
         } else {
           ImagePicker.openPicker({
             multiple: true,
-          }).then(images => {
-            if (selectedImages.length + images.length <= 4) {
-              const newImages = images.map(image => ({
+          }).then(mediaFiles => {
+            console.log(mediaFiles)
+          const validMedia = mediaFiles.filter((media: any) => {
+            if (media.mime.startsWith('video')) {
+              if (media.duration > 20000) {
+                Alert.alert(
+                  'Video quá dài',
+                  `Video "${media.filename || media.path}" vượt quá 20 giây.`,
+                  [{ text: 'OK' }],
+                );
+                return false; // Loại bỏ video quá dài
+              }
+            }
+            return true; // Giữ lại ảnh và video hợp lệ
+          });
+            if (selectedImages.length + validMedia.length <= 4) {
+              const newImages = validMedia.map(image => ({
                 path: image.path,
               }));
               setSelectedImages(prev => [...prev, ...newImages]);

@@ -7,6 +7,7 @@ export const STACK_NAVIGATOR_SCREENS = {
   MYPETSCREEN: 'MyPetScreen',
   ADDPETSCREEN: 'AddPetScreen',
   PETDETAILSCREEN: 'PetDetailScreen',
+  EDITPETSCREEN: 'EditPetScreen',
   LISTCENTERSCREEN: 'ListCenterScreen',
   PETALBUMSCREEN: 'PetAlbumScreen',
   LISTCHATSCREEN: 'ListChatScreen',

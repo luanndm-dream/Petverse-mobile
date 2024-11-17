@@ -233,7 +233,7 @@ const ProfileScreen = () => {
             </View>
             <View style={styles.overviewItem}>
               <TextComponent
-                text={priceFormater(10000)}
+                text={priceFormater(userData?.balance)}
                 type="title"
                 size={24}
               />

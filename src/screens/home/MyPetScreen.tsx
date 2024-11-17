@@ -1,4 +1,10 @@
-import {FlatList, Image, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {
+  FlatList,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
 import {
   Container,
@@ -8,14 +14,18 @@ import {
   TextComponent,
 } from '@/components';
 import {colors} from '@/constants/colors';
-import {NavigationProp, useFocusEffect, useNavigation} from '@react-navigation/native';
+import {
+  NavigationProp,
+  useFocusEffect,
+  useNavigation,
+} from '@react-navigation/native';
 import {useAppSelector} from '@/redux';
 import {apiGetPetByUserId, apiGetPetBreed} from '@/api/apiPet';
 import useLoading from '@/hook/useLoading';
 import {sizes} from '@/constants/sizes';
-import { STACK_NAVIGATOR_SCREENS } from '@/constants/screens';
-import { ageFormatter } from '@/utils/AgeFormatter';
-import { async } from '@firebase/util';
+import {STACK_NAVIGATOR_SCREENS} from '@/constants/screens';
+import {ageFormatter} from '@/utils/AgeFormatter';
+import {async} from '@firebase/util';
 
 const MyPetScreen = () => {
   const navigation = useNavigation<any>();
@@ -25,31 +35,23 @@ const MyPetScreen = () => {
   const [dogSubType, setDogSubType] = useState<any[]>([]);
   const [catSubType, setCatSubType] = useState<any[]>([]);
 
-
-  const onPressItem = (petId:number, petName: string)=>{
+  const onPressItem = (petId: number, petName: string) => {
     navigation.navigate(STACK_NAVIGATOR_SCREENS.PETDETAILSCREEN, {
       petId: petId,
-      petName: petName
-    })
-  }
+      petName: petName,
+    });
+  };
+
   useEffect(() => {
     showLoading();
-    Promise.all([
-      apiGetPetBreed(1),
-      apiGetPetBreed(2),
-      // apiGetPetByUserId(userId),
-    ])
-      .then(([dogResponse, catResponse, petResponse]: any) => {
-        // Kiểm tra và thiết lập dữ liệu
+    Promise.all([apiGetPetBreed(1), apiGetPetBreed(2)])
+      .then(([dogResponse, catResponse]: any) => {
         if (dogResponse.statusCode === 200) {
           setDogSubType(dogResponse.data.items);
         }
         if (catResponse.statusCode === 200) {
           setCatSubType(catResponse.data.items);
         }
-        // if (petResponse.statusCode === 200) {
-        //   setPets(petResponse.data.items);
-        // }
       })
       .finally(() => {
         hideLoading();
@@ -57,61 +59,58 @@ const MyPetScreen = () => {
   }, [userId]);
 
   useFocusEffect(
-    useCallback(()=>{
+    useCallback(() => {
       const getMyPets = async () => {
-        showLoading()
-        await apiGetPetByUserId(userId).then((res: any) => {
-          if(res.statusCode === 200) {
-            setPets(res?.data?.items)
-            hideLoading()
-          }else{
-          console.log('Load pet fail')
-          }
-        }).finally(()=>{
-          // hideLoading()
-        })
-      }
-      getMyPets()
-    },[userId])
-  )
+        showLoading();
+        await apiGetPetByUserId(userId)
+          .then((res: any) => {
+            if (res.statusCode === 200) {
+              setPets(res?.data?.items);
+              hideLoading();
+            } else {
+              console.log('Load pet fail');
+            }
+          })
+          .finally(() => {});
+      };
+      getMyPets();
+    }, [userId]),
+  );
 
-  
   const renderPetItem = (item: any) => {
-    let breed = '';
-    if (item.speciesId === 1) {
-      const subType = dogSubType.find(
-        subType => subType.id === item.breedId,
-      );
-      breed = subType ? subType.name : 'Không xác định';
-    } else if (item.petTypeId === 2) {
-      const subType = catSubType.find(
-        subType => subType.id === item.breedId,
-      );
-      breed = subType ? subType.name : 'Không xác định';
-    }
-
     return (
-      <TouchableOpacity key={item.id.toString()} style={styles.itemContainer} onPress={()=>onPressItem(item.id, item.name)}>
+      <TouchableOpacity
+        key={item.id.toString()}
+        style={[styles.itemContainer, styles.shadowProps]}
+        onPress={() => onPressItem(item.id, item.name)}
+        activeOpacity={0.7}>
         <Image
           source={{uri: item?.avatar}}
           style={styles.image}
-          resizeMode="contain"
+          resizeMode="cover"
         />
-        <View style={styles.itemInfoContainer}>
-          <TextComponent text={item.name} type="title" styles={{marginTop: 6}}/>
-          <RowComponent justify="space-between" styles={styles.row}>
-            <TextComponent text={`${breed}`} size={12} />
-            <View style={styles.ageContainer}>
-              <TextComponent text={ageFormatter(item.birthDate)} />
-            </View>
-          </RowComponent>
+        <View style={styles.overlay}>
+          <TextComponent
+            text={item.name}
+            type="title"
+            color={colors.white}
+            styles={styles.petName}
+          />
+          <TextComponent
+            text={ageFormatter(item.birthDate)}
+            color={colors.white}
+            size={12}
+            styles={styles.age}
+            type='title'
+          />
         </View>
       </TouchableOpacity>
     );
   };
+
   return (
     <Container
-      isScroll={true}
+      isScroll={false}
       title="Thú cưng của tôi"
       left={
         <IconButtonComponent
@@ -125,21 +124,21 @@ const MyPetScreen = () => {
         <IconButtonComponent
           name="plus"
           size={30}
-          color={colors.dark}
-          onPress={() => navigation.navigate(STACK_NAVIGATOR_SCREENS.ADDPETSCREEN)}
+          color={colors.grey}
+          onPress={() =>
+            navigation.navigate(STACK_NAVIGATOR_SCREENS.ADDPETSCREEN)
+          }
         />
-      }
-      >
-      <SectionComponent>
-        <FlatList
-          columnWrapperStyle={{justifyContent: 'space-between'}}
-          scrollEnabled={false}
-          numColumns={2}
-          data={pets}
-          keyExtractor={(item: any) => item.id.toString()}
-          renderItem={({item}) => renderPetItem(item)}
-        />
-      </SectionComponent>
+      }>
+      <FlatList
+        contentContainerStyle={styles.listContainer}
+        columnWrapperStyle={styles.columnWrapper}
+        showsVerticalScrollIndicator={false}
+        numColumns={2}
+        data={pets}
+        keyExtractor={(item: any) => item.id.toString()}
+        renderItem={({item}) => renderPetItem(item)}
+      />
     </Container>
   );
 };
@@ -147,33 +146,58 @@ const MyPetScreen = () => {
 export default MyPetScreen;
 
 const styles = StyleSheet.create({
+  listContainer: {
+    padding: 8,
+  },
+  columnWrapper: {
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
   itemContainer: {
-    width: '45%',
-    height: 170,
-    margin: 12,
-    backgroundColor: colors.white,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 8,
+    width: '48.5%',
+    height: 200,
+    borderRadius: 12,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  shadowProps: {
+    shadowColor: colors.dark,
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 6,
   },
   image: {
-    width: 100,
-    height: 100,
-    alignItems: 'center',
-    borderRadius: 12,
-  },
-  row: {
-    // marginTop: 8,
-  },
-  ageContainer: {
-    padding: 3,
-    backgroundColor: colors.secondary,
-    borderRadius: 6,
-    marginHorizontal: 6,
-  },
-  itemInfoContainer: {
-    justifyContent: 'flex-start',
     width: '100%',
-    paddingHorizontal: 6,
+    height: '100%',
+    backgroundColor: colors.grey4,
   },
+  overlay: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: 12,
+    paddingBottom: 8,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    borderBottomLeftRadius: 12,
+    borderBottomRightRadius: 12,
+  },
+  petName: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 4,
+    textShadowColor: 'rgba(0,0,0,0.3)',
+    textShadowOffset: {width: 0, height: 1},
+    textShadowRadius: 3,
+  },
+  age: {
+    textShadowColor: 'rgba(0,0,0,0.3)',
+    textShadowOffset: {width: 0, height: 1},
+    textShadowRadius: 3,
+    // backgroundColor: colors.primary
+  }
 });
