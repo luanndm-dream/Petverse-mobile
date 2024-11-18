@@ -36,6 +36,7 @@ import EditProfileScreen from '@/screens/profile/EditProfileScreen';
 import CheckoutScreen from '@/screens/profile/CheckoutScreen';
 import ReportScreen from '@/screens/home/ReportScreen';
 import EditPetScreen from '@/screens/home/EditPetScreen';
+import AppointmentStatusScreen from '@/screens/profile/AppointmentStatusScreen';
 
 const MainNavigator = () => {
   const Stack = createNativeStackNavigator();
@@ -79,6 +80,7 @@ const MainNavigator = () => {
           <Stack.Screen name='EditProfileScreen' component={EditProfileScreen}/> 
           <Stack.Screen name='CheckOutScreen' component={CheckoutScreen}/> 
           <Stack.Screen name='ReportScreen' component={ReportScreen}/> 
+          <Stack.Screen name='AppointmentStatusScreen' component={AppointmentStatusScreen}/> 
           <Stack.Screen name="TestScreen" component={TestScreen}/>
         </Stack.Navigator>
   

@@ -71,6 +71,19 @@ export async function apiGetMyAppointment(
   return protectedAxios.get(url, {params});
 }
 
+export async function apiGetAppointmentByStatus(role: string, id: string, status: number, pageSize: number, pageIndex: number){
+  const url = 'Appointment'
+
+  const params = {
+    status,
+    pageSize,
+    pageIndex,
+    ...(role === 'customer' ? {userId: id} : {petCenterId: id})
+  }
+  return protectedAxios.get(url, {params})
+}
+
+
 export async function apiGetAppointmentByAppointmentId(
   appointmentId: string,
   type?: number,

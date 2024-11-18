@@ -23,25 +23,35 @@ const EditProfileScreen = () => {
   const userId = useAppSelector(state => state.auth.userId);
   const {goBack, navigate} = useCustomNavigation();
   const [userData, setUserData] = useState<any>();
+
+  const [initialValues, setInitialValues] = useState({
+    fullName: '',
+    gender: '',
+    address: '',
+    phoneNumber: '',
+  });
+  
+  // Trong useEffect, khi lấy được data:
   useEffect(() => {
     showLoading();
     apiGetUserByUserId(userId).then((res: any) => {
       if (res.statusCode === 200) {
         hideLoading();
         setUserData(res.data);
-        formik.setValues({
+        const values = {
           fullName: res.data.fullName || '',
           gender: res.data.gender || '',
           address: res.data.address || '',
           phoneNumber: res.data.phoneNumber || '',
-        });
+        };
+        setInitialValues(values);
+        formik.setValues(values);
       } else {
         hideLoading();
         console.log('lấy dữ lieu user thât bại');
       }
     });
   }, [userId]);
-
   const validationSchema = Yup.object().shape({
     fullName: Yup.string()
       .min(2, 'Họ tên phải có ít nhất 2 ký tự')
@@ -90,6 +100,14 @@ const EditProfileScreen = () => {
       })
     },
   });
+  const hasChanges = () => {
+    return (
+      formik.values.fullName !== initialValues.fullName ||
+      formik.values.gender !== initialValues.gender ||
+      formik.values.address !== initialValues.address ||
+      formik.values.phoneNumber !== initialValues.phoneNumber
+    );
+  };
 
   return (
     <>
@@ -167,7 +185,8 @@ const EditProfileScreen = () => {
       <ButtonComponent
         text="Thay đổi"
         type="primary"
-        onPress={formik.handleSubmit}
+        onPress={formik.handleSubmit} 
+        disable={!hasChanges() || !formik.isValid}
       />
     </>
   );

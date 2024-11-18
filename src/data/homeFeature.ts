@@ -1,4 +1,4 @@
-import { ListSitterIcon, MyPetIcon, PetScheduleIcon, RegistrationIcon, WorkProfileIcon } from "@/assets/svgs";
+import { ListSitterIcon, MyPetIcon, PetScheduleIcon, PlacePetIcon, RegistrationIcon, WorkProfileIcon } from "@/assets/svgs";
 import { STACK_NAVIGATOR_SCREENS } from "@/constants/screens";
 
 export const homeFeatureData = [
@@ -24,6 +24,12 @@ export const homeFeatureData = [
         id: 4,
         name: 'Lịch hẹn của tôi',
         svg: PetScheduleIcon,
+        screen: STACK_NAVIGATOR_SCREENS.MYAPPOINTMENTSCREEN
+    },
+    {
+        id: 4,
+        name: 'Địa điểm thú cưng',
+        svg: PlacePetIcon,
         screen: STACK_NAVIGATOR_SCREENS.MYAPPOINTMENTSCREEN
     },
     

@@ -269,7 +269,7 @@ const PetCenterDetailScreen = () => {
       apiGetPetCenterByPetCenterId(petCenterId),
       apiGetPetCenterRateByPetCenterId(petCenterId),
     ]).then(([centerRes, rateRes]: any) => {
-      console.log(centerRes, rateRes)
+      console.log(centerRes, 'rateRes', rateRes)
       if (centerRes.statusCode === 200 && rateRes.statusCode === 200) {
         hideLoading();
         setPetCenterData(centerRes.data);

@@ -44,7 +44,7 @@ export async function apiUpdateUser(
   formData.append('Gender', gender);
   formData.append('Address', address);
   formData.append('PhoneNumber', phoneNumber);
-
+  
   return protectedAxios.put(url, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',

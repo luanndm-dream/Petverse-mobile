@@ -1,26 +1,32 @@
+import { STACK_NAVIGATOR_SCREENS } from "@/constants/screens";
+
 export const appointmentData = [
     {
         id: 1,
         title: 'Đang chờ',
         icon: 'clipboard-clock-outline',
-        count: 1
+        status: 0,
+        screen: STACK_NAVIGATOR_SCREENS.APPOINTMENTSTATUSSCREEN
     },
     {
         id: 2,
         title: 'Đã nhận',
         icon: 'clipboard-text-outline',
-        count: 2
+        status: 1,
+        screen: STACK_NAVIGATOR_SCREENS.APPOINTMENTSTATUSSCREEN
     },
     {
         id: 3,
         title: 'Hoàn thành',
         icon: 'clipboard-check-outline',
-        count: 3
+        status: 2,
+        screen: STACK_NAVIGATOR_SCREENS.APPOINTMENTSTATUSSCREEN
     },
     {
         id: 4,
-        title: 'Báo cáo',
+        title: 'Đã huỷ',
         icon: 'file-document-outline',
-        count: 4
+        status: 3,
+        screen: STACK_NAVIGATOR_SCREENS.APPOINTMENTSTATUSSCREEN
     },
 ]

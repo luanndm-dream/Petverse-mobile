@@ -53,6 +53,7 @@ const ProfileScreen = () => {
   const [isVerify, setIsVerify] = useState(false);
   const [refreshFlag, setRefreshFlag] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
+
   useEffect(() => {
     apiGetPetByUserId(userId).then((res: any) => {
       if (res.statusCode === 200) {
@@ -85,7 +86,7 @@ const ProfileScreen = () => {
           console.log('lay du lieu user that bại');
         }
       });
-    }, [userId,refreshFlag]),
+    }, [userId, refreshFlag]),
   );
   const requestGalleryPermission = async () => {
     try {
@@ -108,10 +109,10 @@ const ProfileScreen = () => {
   };
 
   const openGalarryHandle = () => {
-    showLoading()
+    showLoading();
     if (RESULTS.GRANTED) {
       ImagePicker.openPicker({}).then(image => {
-        apiChangeAvatar(userId, image.path).then((res: any)=>{
+        apiChangeAvatar(userId, image.path).then((res: any) => {
           if (res.statusCode === 200) {
             hideLoading();
             setRefreshFlag(!refreshFlag);
@@ -128,13 +129,13 @@ const ProfileScreen = () => {
               text2: `Xảy ra lỗi khi thay đổi ảnh đại diện ${res.error}`,
             });
           }
-        })
+        });
       });
     }
   };
   const onPressItem = (screen: string) => {
-    navigation.navigate(screen)
-  } 
+    navigation.navigate(screen);
+  };
   const onContactManagerHandle = () => {
     navigation.navigate(STACK_NAVIGATOR_SCREENS.CHATDETAILSCREEN, {
       chatId: `${userId}-${managerId}`,
@@ -146,7 +147,12 @@ const ProfileScreen = () => {
   const onLogoutHanble = () => {
     setIsVisible(!isVisible);
   };
-
+  const onAppointmentItemPressHandle = (status: number, title: string) => {
+    navigation.navigate(STACK_NAVIGATOR_SCREENS.APPOINTMENTSTATUSSCREEN, {
+      status: status,
+      title: title
+    });
+  };
   const toggleTooltip = () => {
     setShowTooltip(!showTooltip);
     // Auto hide tooltip after 3 seconds
@@ -156,6 +162,7 @@ const ProfileScreen = () => {
       }, 3000);
     }
   };
+
   return (
     <>
       <Container>
@@ -200,17 +207,14 @@ const ProfileScreen = () => {
               size={32}
               onPress={toggleTooltip}
             />
-             {showTooltip && (
-                <View style={styles.tooltip}>
-                  <View style={styles.tooltipArrow} />
-                  <Text style={styles.tooltipText}>
-                    {isVerify 
-                      ? 'Đã xác thực'
-                      : 'Chưa xác thực'
-                    }
-                  </Text>
-                </View>
-              )}
+            {showTooltip && (
+              <View style={styles.tooltip}>
+                <View style={styles.tooltipArrow} />
+                <Text style={styles.tooltipText}>
+                  {isVerify ? 'Đã xác thực' : 'Chưa xác thực'}
+                </Text>
+              </View>
+            )}
           </RowComponent>
         </SectionComponent>
         <SectionComponent>
@@ -245,7 +249,10 @@ const ProfileScreen = () => {
           <TextComponent text="Lịch hẹn của tôi" type="title" />
           <View style={styles.reportContainer}>
             {appointmentData.map(item => (
-              <View key={item.id} style={styles.reportItem}>
+              <TouchableOpacity
+                key={item.id}
+                style={styles.reportItem}
+                onPress={() => onAppointmentItemPressHandle(item.status, item.title)}>
                 <View style={styles.iconContainer}>
                   <MaterialCommunityIcons
                     name={item.icon}
@@ -263,7 +270,7 @@ const ProfileScreen = () => {
                   styles={styles.reportItemText}
                   size={14}
                 />
-              </View>
+              </TouchableOpacity>
             ))}
           </View>
         </SectionComponent>
@@ -272,7 +279,9 @@ const ProfileScreen = () => {
             showsVerticalScrollIndicator={false}
             data={profileFeatureData}
             renderItem={({item}) => (
-              <TouchableOpacity style={{paddingVertical: 6}} onPress={() => onPressItem(item.screen)}>
+              <TouchableOpacity
+                style={{paddingVertical: 6}}
+                onPress={() => onPressItem(item.screen)}>
                 <RowComponent justify="space-between">
                   <RowComponent>
                     <View

@@ -110,6 +110,7 @@ protectedAxios.interceptors.response.use(
     return responseObj;
 },
   (error) => {
+    
     const fieldErrors = error.response?.data?.errors || {};
     const message = error.response?.data?.message || error.message;
     const errorFields = Object.keys(fieldErrors).map(field => ({

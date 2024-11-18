@@ -36,4 +36,5 @@ export const STACK_NAVIGATOR_SCREENS = {
   ABOUTUSSCREEN: 'AboutUsScreen',
   CHECKOUTSCREEN: 'CheckOutScreen',
   REPORTSCREEN: 'ReportScreen',
+  APPOINTMENTSTATUSSCREEN: 'AppointmentStatusScreen',
 };
