@@ -27,10 +27,10 @@ export const homeFeatureData = [
         screen: STACK_NAVIGATOR_SCREENS.MYAPPOINTMENTSCREEN
     },
     {
-        id: 4,
+        id: 6,
         name: 'Địa điểm thú cưng',
         svg: PlacePetIcon,
-        screen: STACK_NAVIGATOR_SCREENS.MYAPPOINTMENTSCREEN
+        screen: STACK_NAVIGATOR_SCREENS.PLACEFORPETSCREEN
     },
     
 ]

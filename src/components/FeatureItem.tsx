@@ -25,6 +25,7 @@ const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
         width: 80,
+         minHeight: 70,
         backgroundColor: colors.white,
         paddingHorizontal: 8,
         paddingVertical: 6,

@@ -35,7 +35,7 @@ const HomeScreen = () => {
   const navigation = useNavigation<any>()
   const {hideLoading, showLoading} = useLoading();
   const userId = useAppSelector(state => state.auth.userId);
-  const [userData, setUserData] = useState();
+  const [userData, setUserData] = useState<any>();
   const [roles, setRoles] = useState([]);
   const [homeFeatureData, setHomeFeatureData] = useState(initialFeatureData); // Chuyển thành state
 
@@ -132,13 +132,30 @@ const HomeScreen = () => {
     })
   };
 
+  const renderFeatureGrid = () => {
+    const itemWidth = '25%'; 
+
+    return (
+      <View style={styles.featureGrid}>
+        {homeFeatureData.map((item) => (
+          <View key={item.id} style={[styles.featureItem, { width: itemWidth }]}>
+            <FeatureItem
+              name={item.name}
+              svgIcon={item.svg}
+              onPress={() => onPressFeature(item.screen)}
+            />
+          </View>
+        ))}
+      </View>
+    );
+  };
   return (
     <Container>
       <SectionComponent>
         <RowComponent styles={styles.header}>
           <RowComponent>
             <TextComponent text="Xin chào" />
-            <TextComponent text=", Lò văn" type="title" />
+            <TextComponent text={`, ${userData?.fullName}`} type="title" />
           </RowComponent>
           <IconButtonComponent
             name="chat"
@@ -155,22 +172,7 @@ const HomeScreen = () => {
       </SectionComponent>
       <SectionComponent>
         <TextComponent text="Tính năng nổi bật" type="title" />
-        <FlatList
-          data={homeFeatureData}
-          keyExtractor={item => item.id.toString()}
-          numColumns={4}
-          columnWrapperStyle={{
-            justifyContent: 'space-between',
-            paddingVertical: 6,
-          }}
-          renderItem={({item}) => (
-            <FeatureItem
-              name={item.name}
-              svgIcon={item.svg}
-              onPress={() => onPressFeature(item.screen)}
-            />
-          )}
-        />
+        {renderFeatureGrid()}
       </SectionComponent>
       <SectionComponent>
         <TextComponent text="Dịch vụ nổi bật" type="title" />
@@ -214,5 +216,16 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     justifyContent: 'space-between',
     flex: 1,
+  },
+  featureGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    paddingVertical: 6,
+  },
+  featureItem: {
+    marginBottom: 12,
+  },
+  serviceItem: {
+    marginBottom: 12,
   },
 });

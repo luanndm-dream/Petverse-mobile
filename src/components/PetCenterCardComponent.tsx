@@ -59,8 +59,8 @@ const PetCenterCardComponent: React.FC<Props> = ({ item, onPress, serviceColors 
           ) : (
             <View />
           )}
-          <TouchableOpacity style={styles.bookButton}>
-            <TextComponent text="Xem ngay" styles={styles.bookButtonText} type="title" />
+          <TouchableOpacity style={styles.bookButton} >
+            <TextComponent text="Đặt ngay" styles={styles.bookButtonText} type="title" />
           </TouchableOpacity>
         </View>
       </View>
