@@ -133,7 +133,7 @@ const BreedDetailScreen = () => {
     // if()
     navigation.navigate(STACK_NAVIGATOR_SCREENS.APPOINMENTSCREEN, {
       petCenterServiceId: breedId,
-      petCenterServiceName: `phối giống ${breedName}`,
+      petCenterServiceName: `${breedName}`,
       type: 0,
       price: price
     })

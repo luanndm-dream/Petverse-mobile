@@ -318,7 +318,7 @@ const ProfileScreen = () => {
         isVisible={isVisible}
         leftTitle="Huỷ"
         onClose={() => setIsVisible(false)}
-        onLeftPress={() => {}}
+        onLeftPress={() => setIsVisible(false)}
         onRightPress={() => {}}
         rightTitle="Xác nhận"
         title="Đăng xuất"

@@ -11,8 +11,10 @@ import {
   Container,
   FeatureItem,
   IconButtonComponent,
+  LeaderBoardComponent,
   RowComponent,
   SectionComponent,
+  SpaceComponent,
   TextComponent,
 } from '@/components';
 import {colors} from '@/constants/colors';
@@ -27,17 +29,17 @@ import {useAppSelector} from '@/redux';
 import useLoading from '@/hook/useLoading';
 import {apigetRole} from '@/api/apiRole';
 import {WorkProfileIcon} from '@/assets/svgs';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 // đảm bảo import icon đúng
 
 const HomeScreen = () => {
   const {goBack, navigate} = useCustomNavigation();
-  const navigation = useNavigation<any>()
+  const navigation = useNavigation<any>();
   const {hideLoading, showLoading} = useLoading();
   const userId = useAppSelector(state => state.auth.userId);
   const [userData, setUserData] = useState<any>();
   const [roles, setRoles] = useState([]);
-  const [homeFeatureData, setHomeFeatureData] = useState(initialFeatureData); // Chuyển thành state
+  const [homeFeatureData, setHomeFeatureData] = useState(initialFeatureData);
 
   useEffect(() => {
     const requestCameraPermission = async () => {
@@ -67,8 +69,6 @@ const HomeScreen = () => {
     const initializeData = async () => {
       try {
         showLoading();
-
-        // Lấy thông tin user
         const userResponse: any = await apiGetUserByUserId(userId);
         if (userResponse.statusCode === 200) {
           setUserData(userResponse.data);
@@ -128,17 +128,17 @@ const HomeScreen = () => {
   const handleServicePress = (id: number, name: string) => {
     navigation.navigate(STACK_NAVIGATOR_SCREENS.PETCENTERSERVICESCREEN, {
       idService: id,
-      nameService: name
-    })
+      nameService: name,
+    });
   };
 
   const renderFeatureGrid = () => {
-    const itemWidth = '25%'; 
+    const itemWidth = '25%';
 
     return (
       <View style={styles.featureGrid}>
-        {homeFeatureData.map((item) => (
-          <View key={item.id} style={[styles.featureItem, { width: itemWidth }]}>
+        {homeFeatureData.map(item => (
+          <View key={item.id} style={[styles.featureItem, {width: itemWidth}]}>
             <FeatureItem
               name={item.name}
               svgIcon={item.svg}
@@ -150,53 +150,66 @@ const HomeScreen = () => {
     );
   };
   return (
-    <Container>
-      <SectionComponent>
-        <RowComponent styles={styles.header}>
-          <RowComponent>
-            <TextComponent text="Xin chào" />
-            <TextComponent text={`, ${userData?.fullName}`} type="title" />
-          </RowComponent>
-          <IconButtonComponent
-            name="chat"
-            color={colors.white}
-            backgroundColor={colors.primary}
-            onPress={() => navigate(STACK_NAVIGATOR_SCREENS.LISTCHATSCREEN)}
-          />
-        </RowComponent>
-        <ImageBackground
-          source={require('../../assets/images/Banner.png')}
-          style={styles.banner}
-          resizeMode="cover"
-        />
-      </SectionComponent>
-      <SectionComponent>
-        <TextComponent text="Tính năng nổi bật" type="title" />
-        {renderFeatureGrid()}
-      </SectionComponent>
-      <SectionComponent>
-        <TextComponent text="Dịch vụ nổi bật" type="title" />
-        <FlatList
-          scrollEnabled={false}
-          data={serviceData}
-          keyExtractor={item => item.id.toString()}
-          numColumns={4}
-          columnWrapperStyle={{
-            justifyContent:
-              serviceData.length % 4 === 0 ? 'space-between' : 'flex-start',
-            paddingVertical: 6,
-          }}
-          renderItem={({item}) => (
-            <ServiceItem
-              name={item.name}
-              svg={item.svg}
-              id={item.id}
-              onPress={() => handleServicePress(item.id, item.name)}
+    <>
+      <Container isScroll={true}>
+        <SectionComponent>
+          <RowComponent styles={styles.header}>
+            <RowComponent>
+              <TextComponent text="Xin chào" />
+              <TextComponent text={`, ${userData?.fullName}`} type="title" />
+            </RowComponent>
+            <IconButtonComponent
+              name="chat"
+              color={colors.white}
+              backgroundColor={colors.primary}
+              onPress={() => navigate(STACK_NAVIGATOR_SCREENS.LISTCHATSCREEN)}
             />
-          )}
-        />
-      </SectionComponent>
-    </Container>
+          </RowComponent>
+          <ImageBackground
+            source={require('../../assets/images/Banner.png')}
+            style={styles.banner}
+            resizeMode="cover"
+          />
+        </SectionComponent>
+        
+        <SectionComponent >
+        <TextComponent text='Trung tâm nổi bật' type='title'/>
+          <View style={{ backgroundColor: colors.white, borderRadius: 12, paddingVertical: 24 }}>
+          <LeaderBoardComponent />
+          {/* <TextComponent
+            text="Trung tâm nổi bật của tháng"
+            styles={{textAlign: 'center', paddingTop: 22}}
+          /> */}
+          </View>
+        </SectionComponent>
+        <SectionComponent>
+          <TextComponent text="Tính năng nổi bật" type="title" />
+          {renderFeatureGrid()}
+        </SectionComponent>
+        <SectionComponent>
+          <TextComponent text="Dịch vụ nổi bật" type="title" />
+          <FlatList
+            scrollEnabled={false}
+            data={serviceData}
+            keyExtractor={item => item.id.toString()}
+            numColumns={4}
+            columnWrapperStyle={{
+              justifyContent:
+                serviceData.length % 4 === 0 ? 'space-between' : 'flex-start',
+              paddingVertical: 6,
+            }}
+            renderItem={({item}) => (
+              <ServiceItem
+                name={item.name}
+                svg={item.svg}
+                id={item.id}
+                onPress={() => handleServicePress(item.id, item.name)}
+              />
+            )}
+          />
+        </SectionComponent>
+      </Container>
+    </>
   );
 };
 
@@ -211,6 +224,7 @@ const styles = StyleSheet.create({
     height: 180,
     borderRadius: 20,
     overflow: 'hidden',
+    marginBottom: 12,
   },
   contentContainer: {
     paddingVertical: 6,
