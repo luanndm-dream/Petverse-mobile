@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   listContainer: {
-    padding: 16,
+    paddingVertical: 16,
   },
   cardContainer: {
     backgroundColor: 'white',

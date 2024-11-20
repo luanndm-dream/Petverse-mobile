@@ -17,6 +17,7 @@ import {
   SpaceComponent,
   TextComponent,
 } from '@/components';
+import LinearGradient from 'react-native-linear-gradient';
 import {colors} from '@/constants/colors';
 import {homeFeatureData as initialFeatureData} from '@/data/homeFeature';
 import {serviceData} from '@/data/servicesData';
@@ -28,7 +29,7 @@ import {apiGetUserByUserId} from '@/api/apiUser';
 import {useAppSelector} from '@/redux';
 import useLoading from '@/hook/useLoading';
 import {apigetRole} from '@/api/apiRole';
-import {WorkProfileIcon} from '@/assets/svgs';
+import {WorkProfileIcon, WorkTableIcon} from '@/assets/svgs';
 import {useNavigation} from '@react-navigation/native';
 // đảm bảo import icon đúng
 
@@ -40,6 +41,15 @@ const HomeScreen = () => {
   const [userData, setUserData] = useState<any>();
   const [roles, setRoles] = useState([]);
   const [homeFeatureData, setHomeFeatureData] = useState(initialFeatureData);
+  // const appointment
+  const getPreviousMonth = () => {
+    const now = new Date();
+    const previousMonth = now.getMonth(); 
+    return previousMonth === 0 ? 12 : previousMonth; 
+  };
+
+  const previousMonth = getPreviousMonth(); // Tính tháng trước
+  const monthText = `Trung tâm nổi bật tháng ${previousMonth}`;
 
   useEffect(() => {
     const requestCameraPermission = async () => {
@@ -89,7 +99,7 @@ const HomeScreen = () => {
             const workFeature = {
               id: 5,
               name: 'Làm việc',
-              svg: WorkProfileIcon,
+              svg: WorkTableIcon,
               screen: STACK_NAVIGATOR_SCREENS.WORKPROFILESCREEN,
             };
 
@@ -120,7 +130,7 @@ const HomeScreen = () => {
     };
 
     initializeData();
-  }, [userId]); // Chỉ phụ thuộc vào userId
+  }, [userId]); 
 
   const onPressFeature = (screen: string) => {
     navigate(screen);
@@ -171,16 +181,27 @@ const HomeScreen = () => {
             resizeMode="cover"
           />
         </SectionComponent>
-        
-        <SectionComponent >
-        <TextComponent text='Trung tâm nổi bật' type='title'/>
-          <View style={{ backgroundColor: colors.white, borderRadius: 12, paddingVertical: 24 }}>
-          <LeaderBoardComponent />
-          {/* <TextComponent
-            text="Trung tâm nổi bật của tháng"
-            styles={{textAlign: 'center', paddingTop: 22}}
-          /> */}
-          </View>
+        <SectionComponent>
+          <TextComponent
+            text="Trung tâm nổi bật"
+            type="title"
+            styles={{marginBottom: 8}}
+          />
+          <LinearGradient
+            colors={['#A18CD1', '#FF758C']}
+            style={{
+              flex: 1,
+              borderRadius: 12,
+              padding: 12,
+            }}>
+            <LeaderBoardComponent />
+            <TextComponent
+              text={monthText}
+              type="title"
+              color={colors.white}
+              styles={{textAlign: 'center', marginTop: 6}}
+            />
+          </LinearGradient>
         </SectionComponent>
         <SectionComponent>
           <TextComponent text="Tính năng nổi bật" type="title" />
@@ -224,7 +245,7 @@ const styles = StyleSheet.create({
     height: 180,
     borderRadius: 20,
     overflow: 'hidden',
-    marginBottom: 12,
+    // marginBottom: 12,
   },
   contentContainer: {
     paddingVertical: 6,
@@ -234,10 +255,10 @@ const styles = StyleSheet.create({
   featureGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    paddingVertical: 6,
+    paddingTop: 6,
   },
   featureItem: {
-    marginBottom: 12,
+    marginTop: 12,
   },
   serviceItem: {
     marginBottom: 12,

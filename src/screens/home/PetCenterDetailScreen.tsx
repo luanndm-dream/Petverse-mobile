@@ -259,10 +259,10 @@ const PetCenterDetailScreen = () => {
   const {goBack} = useCustomNavigation();
   const {showLoading, hideLoading} = useLoading();
   const route = useRoute<any>();
-  const {petCenterId, petCenterName} = route.params;
+  const {petCenterId, petCenterName, isBook} = route.params;
   const [petCenterData, setPetCenterData] = useState<any>();
   const [petCenterRate, setPetCenterRate] = useState<any>([]);
-  console.log(petCenterId)
+  console.log(route.params)
   useEffect(() => {
     showLoading();
     Promise.all([
@@ -325,7 +325,7 @@ const PetCenterDetailScreen = () => {
               shadowOpacity: 0,
             },
           }}
-          // initialRouteName="Dịch vụ"
+          initialRouteName={isBook ? "Dịch vụ": "Tổng quan"}
         >
           <Tab.Screen name="Tổng quan">
             {() => <OverviewTab petCenterData={petCenterData} />}

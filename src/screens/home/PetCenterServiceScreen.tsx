@@ -46,8 +46,17 @@ const PetCenterServiceScreen = () => {
     navigation.navigate(STACK_NAVIGATOR_SCREENS.PETCENTERDETAILSCREEN, {
       petCenterId: item.id,
       petCenterName: item.name,
+      isBook: false
     });
   };
+  const onPressBookHandle = (item: any) => {
+    navigation.navigate(STACK_NAVIGATOR_SCREENS.PETCENTERDETAILSCREEN, {
+      petCenterId: item.id,
+      petCenterName: item.name,
+      isBook: true
+    });
+  };
+
   return (
     <Container
       title={nameService}
@@ -65,7 +74,8 @@ const PetCenterServiceScreen = () => {
           renderItem={({item}) => (
             <PetCenterCardComponent
               item={item}
-              onPress={onPressItemHandle}
+              onPress={()=>onPressItemHandle(item)}
+              onPressBookNow={() => onPressBookHandle(item)}
               serviceColors={serviceColors}
             />
           )}

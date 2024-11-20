@@ -2,8 +2,8 @@ import {protectedAxios, publicAxios} from './apiConfiguration';
 export async function apiGetPetCenter(pageSize?: number, pageIndex?: number) {
   const url = `PetCenter`;
   const params = {
-    PageIndex: pageIndex,
-    PageSize: pageSize,
+    PageIndex: 1,
+    PageSize: 10000,
   };
   return protectedAxios.get(url, {params});
 }

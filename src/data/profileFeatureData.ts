@@ -8,13 +8,13 @@ export const profileFeatureData = [
     iconName: "account",
     screen: STACK_NAVIGATOR_SCREENS.EDITPROFILESCREEN,
   },
-  // {
-  //   id: 2,
-  //   title: 'Lịch hẹn của tôi',
-  //   backgroundColor: '#F3B580',
-  //   iconName: "clock-outline",
-  //   screen: '',
-  // },
+  {
+    id: 2,
+    title: 'Báo cáo',
+    backgroundColor: '#F3B580',
+    iconName: "clock-outline",
+    screen: '',
+  },
   {
     id: 3,
     title: 'Nạp tiền',

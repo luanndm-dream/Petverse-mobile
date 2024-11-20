@@ -14,5 +14,10 @@ export const colors = {
     dark: '#000000',
     red: '#c70000',
     green : '#2E7D32',
-    yellow: '#FFC107'
+    yellow: '#FFC107',
+    gold: '#FFD700',
+    silver: '#C0C0C0',
+    bronze: '#CD7F32',
+    lightBlue: '#EBF3FF',
+    paleGrey: '#F8FAFC',
 }

@@ -15,6 +15,7 @@ import EditServiceIcon from './EditServiceIcon.svg';
 import TrophyIcon from './TrophyIcon.svg';
 import PetBreedingIcon from './PetBreedingIcon.svg';
 import PlacePetIcon from './PlacePetIcon.svg';
+import WorkTableIcon from './WorkTableIcon.svg';
 
 export {
   BreedIcon,
@@ -33,5 +34,6 @@ export {
   EditServiceIcon,
   TrophyIcon,
   PetBreedingIcon,
-  PlacePetIcon
+  PlacePetIcon,
+  WorkTableIcon
 };

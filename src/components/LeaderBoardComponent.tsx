@@ -1,5 +1,5 @@
 import {Image, StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import React, { useEffect } from 'react';
 import Animated, {
   FadeInRight,
   interpolate,
@@ -11,10 +11,12 @@ import Animated, {
   useSharedValue,
   withDelay,
   withSpring,
+  withTiming,
 } from 'react-native-reanimated';
 import {fontFamilies} from '@/constants/fontFamilies';
 import {colors} from '@/constants/colors';
 import {Crown} from 'iconsax-react-native';
+import { useIsFocused } from '@react-navigation/native';
 
 const centers = [
   {
@@ -35,7 +37,7 @@ const centers = [
   },
   {
     name: 'Center 5',
-    rate: 2,
+    rate: 2.8,
   },
 ];
 
@@ -47,13 +49,15 @@ type PlaceProps = {
   highestRate: number;
 };
 
-const avatarSize = 28;
+const avatarSize = 26;
 const spacing = 4;
 const stagger = 300;
+const order = [3, 1, 0, 2, 4];
+const sortedByRate = [...centers].sort((a, b) => b.rate - a.rate);
 
-const sortedCenters = [...centers].sort((a, b) => b.rate - a.rate);
-const highestRate = sortedCenters[0]?.rate;
-// const secondHighestRate = sortedCenters[1]?.rate;
+const finalSortedCenters = order.map(index => sortedByRate[index]);
+
+
 
 function Place({center, index, onFinish, anim, highestRate}: PlaceProps) {
   const _anim = useDerivedValue(() => {
@@ -67,7 +71,17 @@ function Place({center, index, onFinish, anim, highestRate}: PlaceProps) {
   });
 
   const stylez = useAnimatedStyle(() => {
-    const backgroundColor = center.rate === highestRate ? 'gold' : colors.grey4;
+    let backgroundColor;
+
+    if (center.rate === highestRate) {
+      backgroundColor = '#FFC300'; 
+    } else if (center.rate === sortedByRate[1]?.rate) {
+      backgroundColor = '#4A90E2';
+    } else if (center.rate === sortedByRate[2]?.rate) {
+      backgroundColor = '#907aa5';
+    } else {
+      backgroundColor = colors.grey4; 
+    }
 
     return {
       height: interpolate(
@@ -75,7 +89,7 @@ function Place({center, index, onFinish, anim, highestRate}: PlaceProps) {
         [0, 1],
         [
           avatarSize + spacing,
-          Math.max(avatarSize, center.rate * 15 + spacing),
+          Math.max(avatarSize, center.rate * 16 + spacing),
         ],
       ),
       backgroundColor,
@@ -112,21 +126,12 @@ function Place({center, index, onFinish, anim, highestRate}: PlaceProps) {
           }
         })}>
       <Animated.Text
-        style={[{fontSize: 14, fontFamily: fontFamilies.bold}, textStylez]}>
+        style={[
+          {fontSize: 14, fontFamily: fontFamilies.bold, color: colors.white},
+          textStylez,
+        ]}>
         {center.rate}
       </Animated.Text>
-      {center.rate === highestRate && (
-        <Animated.View
-          style={[
-            {
-              position: 'absolute',
-              top: -20,
-            },
-            crownStylez,
-          ]}>
-          <Crown size="24" variant="Bold" color="gold" />
-        </Animated.View>
-      )}
       <Animated.View
         style={[
           {
@@ -160,22 +165,21 @@ const LeaderBoardComponent = () => {
     <View style={{alignSelf: 'center'}}>
       <View
         style={{
-          
           flexDirection: 'row',
           gap: spacing,
           justifyContent: 'flex-end',
           alignItems: 'flex-end',
           height: 100,
         }}>
-        {centers.map((center, index) => (
+        {finalSortedCenters.map((center, index) => (
           <Place
             key={index}
             center={center}
             index={index}
             anim={anim}
-            highestRate={highestRate}
+            highestRate={sortedByRate[0]?.rate}
             onFinish={
-              index === centers.length - 1
+              index === finalSortedCenters.length - 1
                 ? () => {
                     anim.value = 1;
                     console.log('Finished', index);

@@ -16,6 +16,7 @@ import {
 } from '@/assets/svgs';
 import {STACK_NAVIGATOR_SCREENS} from '@/constants/screens';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import { priceFormater } from '@/utils/priceFormater';
 const ServiceScreen = () => {
   const {navigate, goBack} = useCustomNavigation();
   const navigation = useNavigation<any>();
@@ -72,7 +73,7 @@ const ServiceScreen = () => {
       <View style={styles.textContainer}>
         <Text style={styles.serviceName}>{item.name}</Text>
         <Text style={styles.serviceDescription}>Mô tả: {item.description}</Text>
-        <Text style={styles.servicePrice}>Giá: {item.price} VND</Text>
+        <Text style={styles.servicePrice}>Giá: {priceFormater(item.price)} VND</Text>
       </View>
     </TouchableOpacity>
   );

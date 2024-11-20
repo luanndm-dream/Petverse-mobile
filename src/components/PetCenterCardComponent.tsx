@@ -8,10 +8,11 @@ import { VertifyIcon } from '@/assets/svgs';
 interface Props {
   item: any;
   onPress: (item: any) => void;
+  onPressBookNow: (item: any) => void
   serviceColors: string[];
 }
 
-const PetCenterCardComponent: React.FC<Props> = ({ item, onPress, serviceColors }) => {
+const PetCenterCardComponent: React.FC<Props> = ({ item, onPress, serviceColors, onPressBookNow }) => {
   return (
     <TouchableOpacity style={styles.itemContainer} onPress={() => onPress(item)}>
       <View style={{ width: '40%' }}>
@@ -59,8 +60,8 @@ const PetCenterCardComponent: React.FC<Props> = ({ item, onPress, serviceColors 
           ) : (
             <View />
           )}
-          <TouchableOpacity style={styles.bookButton} >
-            <TextComponent text="Đặt ngay" styles={styles.bookButtonText} type="title" />
+          <TouchableOpacity style={styles.bookButton} onPress={onPressBookNow}>
+            <TextComponent text="Đặt ngay" styles={styles.bookButtonText} type="title"  />
           </TouchableOpacity>
         </View>
       </View>
