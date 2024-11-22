@@ -80,7 +80,7 @@ const PetDetailScreen = () => {
           Toast.show({
             type: 'error',
             text1: 'Thay đổi thông tin thú cưng thất bại',
-            text2: `Xảy ra lỗi khi thay đổi thông tin thú cưng ${res.error}`,
+            text2: `Xảy ra lỗi khi thay đổi thông tin thú cưng ${res.message}`,
           });
         }
       });

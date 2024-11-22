@@ -45,7 +45,7 @@ const ReportScreen = () => {
     onSubmit: vals => {
       showLoading();
       apiCreateReport(appointmentId, 'Report', vals.reason, photos, videos).then((res: any) => {
-        console.log('res', res.error);
+        console.log('res', res);
         if (res.statusCode === 200) {
           hideLoading();
           Toast.show({
@@ -67,7 +67,7 @@ const ReportScreen = () => {
           Toast.show({
             type: 'error',
             text1: 'Báo cáo thất bại',
-            text2: `Xảy ra lỗi ${res}`,
+            text2: `Xảy ra lỗi ${res.message}`,
           });
         }
       });

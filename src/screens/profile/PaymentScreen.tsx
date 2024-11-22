@@ -66,7 +66,7 @@ const PaymentScreen = () => {
           Toast.show({
             type: 'error',
             text1: 'Thanh toán thất bại',
-            text2: `Xảy ra lỗi khi thanh toán ${res.error}`,
+            text2: `Xảy ra lỗi khi thanh toán ${res.message}`,
           }); 
         }
       },

@@ -62,7 +62,7 @@ const SignUpScreen = () => {
         Toast.show({
           type: 'error',
           text1: 'Đăng kí thất bại',
-          text2: `Xảy ra lỗi khi đăng kí ${res.error}`,
+          text2: `Xảy ra lỗi khi đăng kí ${res.message}`,
         });
       }
     });

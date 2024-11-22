@@ -140,7 +140,7 @@ const MyAppointmentDetailScreen = () => {
         Toast.show({
           type: 'error',
           text1: 'Nhận lịch thất bại',
-          text2: `Xảy ra lỗi khi đăng kí ${res.error}`,
+          text2: `Xảy ra lỗi khi đăng kí ${res.message}`,
         });
       }
     });
@@ -169,7 +169,7 @@ const MyAppointmentDetailScreen = () => {
           Toast.show({
             type: 'error',
             text1: 'Huỷ lịch thất bại',
-            text2: `Xảy ra lỗi khi đăng kí ${res.error}`,
+            text2: `Xảy ra lỗi khi đăng kí ${res.message}`,
           });
         }
       },
@@ -204,7 +204,7 @@ const MyAppointmentDetailScreen = () => {
         Toast.show({
           type: 'error',
           text1: 'Hoàn thành lịch thất bại',
-          text2: `Xảy ra lỗi khi đăng kí ${res.error}`,
+          text2: `Xảy ra lỗi khi đăng kí ${res.message}`,
         });
       }
     });

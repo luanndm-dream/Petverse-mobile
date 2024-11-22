@@ -67,7 +67,7 @@ const LoginScreen = () => {
         Toast.show({
           type: 'error',
           text1: 'Đăng nhập thất bại',
-          text2: `Xảy ra lỗi: ${res.error}`,
+          text2: `Xảy ra lỗi: ${res.message}`,
         });
       }
     } catch (error) {

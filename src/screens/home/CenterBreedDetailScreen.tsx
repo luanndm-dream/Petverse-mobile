@@ -75,7 +75,7 @@ const CenterBreedDetailScreen = () => {
         Toast.show({
           type: 'error',
           text1: 'Xoá giống thất bại',
-          text2: `Xảy ra lỗi ${res.error}`,
+          text2: `Xảy ra lỗi ${res.message}`,
         });
       }
     });

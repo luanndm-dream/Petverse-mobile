@@ -58,7 +58,7 @@ const EditServiceScreen = () => {
             Toast.show({
               type: 'error',
               text1: 'Chỉnh sửa dịch vụ thất bại',
-              text2: `Xảy ra lỗi ${res.error}`,
+              text2: `Xảy ra lỗi ${res.message}`,
             });
           }
       })

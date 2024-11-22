@@ -94,7 +94,7 @@ const EditProfileScreen = () => {
           Toast.show({
             type: 'error',
             text1: 'Thay đổi thông tin thất bại',
-            text2: `Xảy ra lỗi khi thay đổi thông tin ${res.error}`,
+            text2: `Xảy ra lỗi khi thay đổi thông tin ${res.message}`,
           });
         }
       })

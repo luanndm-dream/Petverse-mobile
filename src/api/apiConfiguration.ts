@@ -119,6 +119,6 @@ protectedAxios.interceptors.response.use(
     }));
 
     console.log(`Protected API Error: ${message} + ${error}` );
-    return { api: "protected", error };
+    return { api: "protected", message };
   }
 );

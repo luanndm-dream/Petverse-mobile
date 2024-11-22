@@ -201,7 +201,7 @@ const AppointmentScreen = () => {
             Toast.show({
               type: 'error',
               text1: 'Đặt lịch phối giống thất bại',
-              text2: `Xảy ra lỗi ${res.error}`,
+              text2: `Xảy ra lỗi ${res.message}`,
             });
           }
         });
@@ -228,7 +228,7 @@ const AppointmentScreen = () => {
             Toast.show({
               type: 'error',
               text1: 'Đặt lịch thất bại',
-              text2: `Xảy ra lỗi ${res.error}`,
+              text2: `Xảy ra lỗi ${res.message}`,
             });
           }
         });

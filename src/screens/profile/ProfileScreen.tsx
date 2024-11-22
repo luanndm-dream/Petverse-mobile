@@ -126,7 +126,7 @@ const ProfileScreen = () => {
             Toast.show({
               type: 'error',
               text1: 'Thay đổi ảnh đại diện thất bại',
-              text2: `Xảy ra lỗi khi thay đổi ảnh đại diện ${res.error}`,
+              text2: `Xảy ra lỗi khi thay đổi ảnh đại diện ${res.message}`,
             });
           }
         });

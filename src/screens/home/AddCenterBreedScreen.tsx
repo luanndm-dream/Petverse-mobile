@@ -101,7 +101,7 @@ const AddCenterBreedScreen = () => {
             Toast.show({
               type: 'error',
               text1: 'Tạo giống thất bại',
-              text2: `Xảy ra lỗi ${res.error}`,
+              text2: `Xảy ra lỗi ${res.message}`,
             });
             
         }

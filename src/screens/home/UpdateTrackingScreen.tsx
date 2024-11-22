@@ -83,7 +83,7 @@ const UpdateTrackingScreen = () => {
           Toast.show({
             type: 'error',
             text1: 'Tạo theo dõi thất bại',
-            text2: `Xảy ra lỗi khi đăng kí ${res.error}`,
+            text2: `Xảy ra lỗi khi đăng kí ${res.message}`,
           });
         }
       })

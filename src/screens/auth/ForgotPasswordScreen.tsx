@@ -50,7 +50,7 @@ const ForgotPasswordScreen = () => {
         Toast.show({
           type: 'error',
           text1: 'Khôi phục mật khẩu thất bại',
-          text2: `Xảy ra lỗi ${res.error}`,
+          text2: `Xảy ra lỗi ${res.message}`,
         });
       }
     });
