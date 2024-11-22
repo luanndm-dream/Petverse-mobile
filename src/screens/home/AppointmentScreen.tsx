@@ -69,7 +69,11 @@ const AppointmentScreen = () => {
   const [calculatedPrice, setCalculatedPrice] = useState(price);
   const [scheduleData, setScheduleData] = useState([]);
   const modalPetRef = useRef<Modalize>();
+  const historyBreed = useAppSelector((state) => state.breedHistory.items)
 
+
+  console.log(petCenterServiceId)
+  
   const handleScheduleData = (timeSlots: any) => {
     // Cập nhật state với dữ liệu từ ScheduleScreen
     setScheduleData(timeSlots);

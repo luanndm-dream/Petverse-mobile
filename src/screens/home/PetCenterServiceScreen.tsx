@@ -43,9 +43,12 @@ const PetCenterServiceScreen = () => {
   }, []);
 
   const onPressItemHandle = (item: any) => {
+    console.log(item)
+
     navigation.navigate(STACK_NAVIGATOR_SCREENS.PETCENTERDETAILSCREEN, {
       petCenterId: item.id,
       petCenterName: item.name,
+      userIdOfPetCenter: item.userId,
       isBook: false
     });
   };
@@ -53,6 +56,7 @@ const PetCenterServiceScreen = () => {
     navigation.navigate(STACK_NAVIGATOR_SCREENS.PETCENTERDETAILSCREEN, {
       petCenterId: item.id,
       petCenterName: item.name,
+      userIdOfPetCenter: item.userId,
       isBook: true
     });
   };

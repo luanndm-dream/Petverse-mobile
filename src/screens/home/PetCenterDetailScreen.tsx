@@ -25,6 +25,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import {Star} from 'iconsax-react-native';
 import {apiGetPetCenterRateByPetCenterId} from '@/api/apiPetCenterRate';
 import {STACK_NAVIGATOR_SCREENS} from '@/constants/screens';
+import { useAppSelector } from '@/redux';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -259,10 +260,12 @@ const PetCenterDetailScreen = () => {
   const {goBack} = useCustomNavigation();
   const {showLoading, hideLoading} = useLoading();
   const route = useRoute<any>();
-  const {petCenterId, petCenterName, isBook} = route.params;
+  const navigation = useNavigation<any>()
+  const userId = useAppSelector((state) => state.auth.userId)
+  const {petCenterId, petCenterName, userIdOfPetCenter, isBook} = route.params;
   const [petCenterData, setPetCenterData] = useState<any>();
   const [petCenterRate, setPetCenterRate] = useState<any>([]);
-  console.log(route.params)
+  console.log(userIdOfPetCenter)
   useEffect(() => {
     showLoading();
     Promise.all([
@@ -278,7 +281,17 @@ const PetCenterDetailScreen = () => {
     });
   }, []);
   if (!petCenterData) return null;
-  // console.log('petCenterData', petCenterData);
+
+
+  const onMessaging = () => {
+    navigation.navigate(STACK_NAVIGATOR_SCREENS.CHATDETAILSCREEN, {
+      chatId: `${userId}-${userIdOfPetCenter}`,
+      name: petCenterData.name,
+      avatar: petCenterData.avatar,
+      toUserId: userIdOfPetCenter,
+    });
+  };
+
   return (
     <Container
       title={petCenterName}
@@ -289,7 +302,16 @@ const PetCenterDetailScreen = () => {
           color={colors.dark}
           onPress={goBack}
         />
-      }>
+      }
+      right={
+        <IconButtonComponent
+        name="chat-plus"
+        size={30}
+        color={colors.primary}
+        onPress={onMessaging}
+      />
+      }
+      >
       <View style={styles.container}>
         <Image source={{uri: petCenterData.avatar}} style={styles.avatar} />
         {/* <TextComponent text={petCenterData.name} type="title" styles={styles.centerName} /> */}

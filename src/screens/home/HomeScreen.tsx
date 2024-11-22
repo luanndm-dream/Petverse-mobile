@@ -6,7 +6,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   Container,
   FeatureItem,
@@ -30,7 +30,8 @@ import {useAppSelector} from '@/redux';
 import useLoading from '@/hook/useLoading';
 import {apigetRole} from '@/api/apiRole';
 import {WorkProfileIcon, WorkTableIcon} from '@/assets/svgs';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import firestore from '@react-native-firebase/firestore';
 // đảm bảo import icon đúng
 
 const HomeScreen = () => {
@@ -41,7 +42,9 @@ const HomeScreen = () => {
   const [userData, setUserData] = useState<any>();
   const [roles, setRoles] = useState([]);
   const [homeFeatureData, setHomeFeatureData] = useState(initialFeatureData);
-  // const appointment
+  const [unreadCount, setUnreadCount] = useState(0);
+
+    console.log(unreadCount)
   const getPreviousMonth = () => {
     const now = new Date();
     const previousMonth = now.getMonth(); 
@@ -50,6 +53,62 @@ const HomeScreen = () => {
 
   const previousMonth = getPreviousMonth(); // Tính tháng trước
   const monthText = `Trung tâm nổi bật tháng ${previousMonth}`;
+
+  useFocusEffect(
+    useCallback(()=>{
+      const fetchUnreadConversations = async () => {
+        const count = await getUnreadConversationsCount(userId);
+        setUnreadCount(count);
+      };
+  
+      fetchUnreadConversations();
+    },[userId])
+  )
+
+
+  const getUnreadConversationsCount = async (userId:string) => {
+    try {
+      let unreadCount = 0;
+  
+      // Lấy danh sách các cuộc hội thoại mà user tham gia
+      const chatsSnapshot = await firestore()
+        .collection('chats')
+        .where('participants', 'array-contains', userId)
+        .get();
+  
+      // Kiểm tra từng cuộc hội thoại
+      const promises = chatsSnapshot.docs.map(async (chatDoc) => {
+        const chatId = chatDoc.id;
+  
+        // Lấy tin nhắn cuối cùng trong collection "messages"
+        const messagesSnapshot = await firestore()
+          .collection('chats')
+          .doc(chatId)
+          .collection('messages')
+          .orderBy('timestamp', 'desc')
+          .limit(1)
+          .get();
+  
+        if (!messagesSnapshot.empty) {
+          const lastMessage = messagesSnapshot.docs[0].data();
+  
+          // Kiểm tra nếu tin nhắn chưa đọc và không phải do user gửi
+          if (!lastMessage.isRead && lastMessage.senderId !== userId) {
+            unreadCount += 1; // Tăng số lượng hội thoại chưa đọc
+          }
+        }
+      });
+  
+      // Chờ tất cả các promises hoàn thành
+      await Promise.all(promises);
+  
+      return unreadCount;
+    } catch (error) {
+      console.error('Error fetching unread conversations:', error);
+      return 0;
+    }
+  };
+
 
   useEffect(() => {
     const requestCameraPermission = async () => {

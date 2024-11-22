@@ -53,12 +53,13 @@ const ReportScreen = () => {
             text1: 'Báo cáo thành công',
             text2: 'Vui lòng chờ quản lí phản hồi!',
           });
-          pushNotification([userId, petCenterId, managerId], {
+          pushNotification([petCenterId, managerId], {
             title: 'Báo cáo dịch vụ',
             message: vals.reason,
             appointmentId: appointmentId,
             sender: userId,
             status: 1,
+            reportId: res.data.id
           });
           goBack();
         } else {

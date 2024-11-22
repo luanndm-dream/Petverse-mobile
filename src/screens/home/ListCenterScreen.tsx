@@ -124,6 +124,7 @@ const ListCenterScreen = () => {
     navigation.navigate(STACK_NAVIGATOR_SCREENS.PETCENTERDETAILSCREEN, {
       petCenterId: item.id,
       petCenterName: item.name,
+      userIdOfPetCenter: item.userId,
       isBook: false
     });
   };
@@ -131,6 +132,7 @@ const ListCenterScreen = () => {
     navigation.navigate(STACK_NAVIGATOR_SCREENS.PETCENTERDETAILSCREEN, {
       petCenterId: item.id,
       petCenterName: item.name,
+      userIdOfPetCenter: item.userId,
       isBook: true
     });
   };

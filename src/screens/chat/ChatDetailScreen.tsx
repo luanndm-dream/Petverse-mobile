@@ -34,39 +34,36 @@ const ChatDetailScreen = () => {
   const [newMessage, setNewMessage] = useState('');
   const flatListRef = useRef<FlatList>(null);
   const [loadingVideo, setLoadingVideo] = useState(false);
+
   useEffect(() => {
-    const initChat = async () => {
-      const chatRef = firestore().collection('chats').doc(chatId);
+    const chatRef = firestore().collection('chats').doc(chatId);
+    
+    const unsubscribe = chatRef
+      .collection('messages')
+      .orderBy('timestamp', 'desc')
+      .onSnapshot(snapshot => {
+        const messagesData = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setMessages(messagesData);
+      });
 
-      try {
-        const chatDoc = await chatRef.get();
-
-        if (!chatDoc.exists) {
-          await chatRef.set({
-            createdAt: firestore.FieldValue.serverTimestamp(),
-            participants: [userId,toUserId],
-          });
-        }
-
-        const unsubscribe = chatRef
-          .collection('messages')
-          .orderBy('timestamp', 'desc')
-          .onSnapshot(snapshot => {
-            const messagesData = snapshot.docs.map(doc => ({
-              id: doc.id,
-              ...doc.data(),
-            }));
-            setMessages(messagesData);
-          });
-
-        return () => unsubscribe();
-      } catch (error) {
-        console.error('Lỗi khi khởi tạo chat:', error);
-      }
-    };
-
-    initChat();
+    return () => unsubscribe();
   }, [chatId]);
+
+  const createNewChat = async () => {
+    const chatRef = firestore().collection('chats').doc(chatId);
+    const chatDoc = await chatRef.get();
+
+    if (!chatDoc.exists) {
+      await chatRef.set({
+        createdAt: firestore.FieldValue.serverTimestamp(),
+        participants: [userId, toUserId],
+      });
+    }
+    return chatRef;
+  };
 
   const sendMessage = async (urlImage?: string, videoUrl?: string) => {
     if (!urlImage && !videoUrl && newMessage.trim().length === 0) {
@@ -74,18 +71,16 @@ const ChatDetailScreen = () => {
     }
   
     try {
-      await firestore()
-        .collection('chats')
-        .doc(chatId)
-        .collection('messages')
-        .add({
-          text: newMessage.trim().length > 0 ? newMessage : '',
-          imageUrl: urlImage || '',
-          videoUrl: videoUrl || '',
-          senderId: userId,
-          timestamp: firestore.FieldValue.serverTimestamp(),
-          isRead: false,
-        });
+      const chatRef = await createNewChat();
+      
+      await chatRef.collection('messages').add({
+        text: newMessage.trim().length > 0 ? newMessage : '',
+        imageUrl: urlImage || '',
+        videoUrl: videoUrl || '',
+        senderId: userId,
+        timestamp: firestore.FieldValue.serverTimestamp(),
+        isRead: false,
+      });
         
       setNewMessage('');
     } catch (error) {

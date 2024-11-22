@@ -19,12 +19,14 @@ import {useAppSelector} from '@/redux';
 import {STACK_NAVIGATOR_SCREENS} from '@/constants/screens';
 import {useNavigation} from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
+import useLoading from '@/hook/useLoading';
 
 const {width} = Dimensions.get('window');
 const itemWidth = (width - 48) / 3;
 const PaymentScreen = () => {
   const userId = useAppSelector(state => state.auth.userId);
   const {goBack, navigate} = useCustomNavigation();
+  const {showLoading, hideLoading} = useLoading()
   const navigation = useNavigation<any>();
   const [amount, setAmount] = useState('');
   const [selectedAmount, setSelectedAmount] = useState(null);
@@ -48,9 +50,11 @@ const PaymentScreen = () => {
   };
 
   const handlePayment = () => {
+    showLoading()
     apiCreatePayment(userId, 'Nạp tiền', 'Nạp tiền', Number(amount)).then(
       (res: any) => {
         if (res.statusCode === 200) {
+          hideLoading()
           const checkoutUrl = res.data.checkoutUrl;
           const paymentId = res.data.id
           navigation.navigate(STACK_NAVIGATOR_SCREENS.CHECKOUTSCREEN, {
@@ -58,6 +62,7 @@ const PaymentScreen = () => {
             paymentId
           });
         }else{
+          hideLoading()
           Toast.show({
             type: 'error',
             text1: 'Thanh toán thất bại',

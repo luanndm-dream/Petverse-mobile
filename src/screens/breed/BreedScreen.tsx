@@ -2,13 +2,17 @@ import React, {useState, useEffect, useCallback} from 'react';
 import {
   FlatList,
   Image,
+  Platform,
+  ScrollView,
   StyleSheet,
+  Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
 import {
   Container,
+  InputComponent,
   RowComponent,
   SectionComponent,
   SpaceComponent,
@@ -20,6 +24,7 @@ import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import useLoading from '@/hook/useLoading';
 import {apiGetCenterBreed} from '@/api/apiCenterBreed';
 import {STACK_NAVIGATOR_SCREENS} from '@/constants/screens';
+import {apiGetPetSpecies} from '@/api/apiPet';
 
 interface CenterBreed {
   id: number;
@@ -40,22 +45,58 @@ const BreedScreen = () => {
   const [centerBreedData, setCenterBreedData] = useState<CenterBreed[]>([]);
   const [filteredData, setFilteredData] = useState<CenterBreed[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-
+  const [selectedSpecies, setSelectedSpecies] = useState<any>(null);
+  const [speciesData, setSpeciesData] = useState([]);
+  const [filteredCenterBreed, setFilteredCenterBreed] = useState([]);
+  
   useFocusEffect(
     useCallback(() => {
       showLoading();
-      apiGetCenterBreed(2).then((res: any) => {
-        if (res.statusCode === 200) {
+
+      const fetchData = async () => {
+        try {
+          const [speciesRes, centerBreedRes]: any = await Promise.all([
+            apiGetPetSpecies(),
+            apiGetCenterBreed(2),
+          ]);
+
+          if (speciesRes.statusCode === 200) {
+            setSpeciesData(speciesRes.data.items);
+          }
+
+          if (centerBreedRes.statusCode === 200) {
+            setCenterBreedData(centerBreedRes.data.items);
+            setFilteredData(centerBreedRes.data.items);
+          }
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        } finally {
           hideLoading();
-          setCenterBreedData(res?.data?.items);
-          setFilteredData(res?.data?.items);
-        } else {
-          hideLoading();
-          console.log('Lỗi lấy dữ liệu');
         }
-      });
+      };
+
+      fetchData();
+
+      return () => {
+        setSpeciesData([]);
+        setCenterBreedData([]);
+        setFilteredData([]);
+      };
     }, []),
   );
+  const handleFilter = (speciesId: number | null) => {
+    setSelectedSpecies(speciesId);
+
+    const filtered = centerBreedData.filter(item => {
+      const matchesSpecies = speciesId === null || item.speciesId === speciesId;
+      const matchesSearch = item.name
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+      return matchesSpecies && matchesSearch;
+    });
+
+    setFilteredData(filtered);
+  };
 
   const onPressItemHandle = (id: string, name: string) => {
     navigation.navigate(STACK_NAVIGATOR_SCREENS.BREEDDETAILSCREEN, {
@@ -65,9 +106,16 @@ const BreedScreen = () => {
   };
   const handleSearch = (text: string) => {
     setSearchTerm(text);
-    const filtered = centerBreedData.filter(item =>
-      item.name.toLowerCase().includes(text.toLowerCase()),
-    );
+
+    const filtered = centerBreedData.filter(item => {
+      const matchesSpecies =
+        selectedSpecies === null || item.speciesId === selectedSpecies;
+      const matchesSearch = item.name
+        .toLowerCase()
+        .includes(text.toLowerCase());
+      return matchesSpecies && matchesSearch;
+    });
+
     setFilteredData(filtered);
   };
 
@@ -127,20 +175,48 @@ const BreedScreen = () => {
   return (
     <Container title="Phối giống">
       <SectionComponent>
-        <RowComponent styles={styles.searchContainer}>
-          <View style={styles.searchInputContainer}>
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Tìm kiếm theo tên giống..."
-              value={searchTerm}
-              onChangeText={handleSearch}
-              placeholderTextColor={colors.grey}
-            />
-            <View style={styles.searchIconContainer}>
-              <SearchNormal1 size={24} color={colors.grey} />
-            </View>
-          </View>
-        </RowComponent>
+        <InputComponent
+          onChange={handleSearch}
+          value={searchTerm}
+          placeholder="Nhập tên giống..."
+          allowClear
+        />
+
+        <View style={styles.filterContainer}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            <TouchableOpacity
+              style={[
+                styles.filterButton,
+                selectedSpecies === null && styles.filterButtonActive,
+              ]}
+              onPress={() => handleFilter(null)}>
+              <Text
+                style={[
+                  styles.filterText,
+                  selectedSpecies === null && styles.filterTextActive,
+                ]}>
+                Tất cả
+              </Text>
+            </TouchableOpacity>
+            {speciesData.map((species: any) => (
+              <TouchableOpacity
+                key={species.id}
+                style={[
+                  styles.filterButton,
+                  selectedSpecies === species.id && styles.filterButtonActive,
+                ]}
+                onPress={() => handleFilter(species.id)}>
+                <Text
+                  style={[
+                    styles.filterText,
+                    selectedSpecies === species.id && styles.filterTextActive,
+                  ]}>
+                  {species.name}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
         <RowComponent styles={styles.resultContainer} justify="flex-start">
           <TextComponent
             text={filteredData?.length.toString()}
@@ -187,7 +263,6 @@ const styles = StyleSheet.create({
   },
   resultContainer: {
     alignItems: 'center',
-    marginBottom: 12,
   },
   resultCount: {
     marginRight: 4,
@@ -200,6 +275,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     padding: 16,
     borderRadius: 12,
+    marginBottom: 16,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -208,11 +284,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
-    marginBottom: 16,
+
   },
   imageContainer: {
-    width: 80,
-    height: 80,
+    width: 100,
+    height: 100,
     borderRadius: 8,
     overflow: 'hidden',
   },
@@ -222,13 +298,14 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
+    paddingLeft: 8
   },
   nameContainer: {
     justifyContent: 'space-between',
     alignItems: 'center',
   },
   description: {
-    marginVertical: 4,
+    marginVertical: 8,
   },
   approvedBadge: {
     marginLeft: 8,
@@ -240,8 +317,35 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     alignSelf: 'flex-start',
     marginBottom: 8,
+    marginLeft: 6
   },
   speciesText: {
-    fontSize: 12,
+    fontSize: 13,
+  },
+  filterContainer: {
+    paddingVertical: 6,
+  },
+  filterButton: {
+    backgroundColor: colors.grey4,
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+    borderRadius: 25,
+    marginHorizontal: 6,
+    elevation: Platform.select({android: 2, ios: 0}),
+    shadowColor: colors.dark,
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  filterButtonActive: {
+    backgroundColor: colors.primary,
+  },
+  filterText: {
+    color: colors.dark,
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  filterTextActive: {
+    color: colors.white,
   },
 });

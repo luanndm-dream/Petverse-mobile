@@ -7,6 +7,7 @@ interface NotificationData {
   appointmentId: string
   message?: string;
   timestamp?: Date;
+  reportId?: string
 }
 
 export const pushNotification = async (

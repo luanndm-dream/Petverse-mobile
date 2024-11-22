@@ -36,7 +36,6 @@ const ListChatScreen = () => {
       return null;
     }
   };
-
   useEffect(() => {
     const unsubscribe = firestore()
       .collection('chats')
@@ -171,7 +170,14 @@ const ListChatScreen = () => {
           });
         }}>
         {item.avatar && (
-          <Image source={{uri: item.avatar}} style={styles.avatar} />
+       <Image
+       source={
+         item.avatar && item.avatar !== null
+           ? {uri: item.avatar}
+           : require('../../assets/images/DefaultAvatar.jpg')
+       }
+       style={styles.avatar}
+     />
         )}
         <View style={styles.chatContent}>
           <View style={styles.chatHeader}>

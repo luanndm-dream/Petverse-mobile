@@ -23,28 +23,32 @@ import {useNavigation, useRoute} from '@react-navigation/native';
 import {apiGetCenterBreedByCenterBreedId} from '@/api/apiCenterBreed';
 import useLoading from '@/hook/useLoading';
 import Icon from 'react-native-vector-icons/Feather';
-import { apiGetBreedAppointmentHistoryByUserId } from '@/api/apiAppoinment';
-import { useAppSelector } from '@/redux';
-import { STACK_NAVIGATOR_SCREENS } from '@/constants/screens';
+import {
+  apiGetBreedAppointmentHistoryByUserId,
+  apiGetUserBreedAppointmentHistory,
+} from '@/api/apiAppoinment';
+import {useAppDispatch, useAppSelector} from '@/redux';
+import {STACK_NAVIGATOR_SCREENS} from '@/constants/screens';
+import { addBreedHistory } from '@/redux/reducers';
 
 const DEFAULT_IMAGE = require('../../assets/images/DefaultPetAvatar.jpg');
 
 const BreedDetailScreen = () => {
   const {width} = Dimensions.get('window');
   const {goBack} = useCustomNavigation();
-  const navigation = useNavigation<any>()
-  const userId = useAppSelector((state) => state.auth.userId)
+  const navigation = useNavigation<any>();
+  const userId = useAppSelector(state => state.auth.userId);
   const {showLoading, hideLoading} = useLoading();
   const route = useRoute<any>();
+  const dispatch = useAppDispatch()
   const {centerBreedId, breedName} = route.params;
   const [breedCenterData, setBreedCenterData] = useState<any>();
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [historyBreed, setHistoryBreed] = useState()
-
+  const [historyBreed, setHistoryBreed] = useState();
+  const historyBreedA = useAppSelector((state) => state.breedHistory.items)
   useEffect(() => {
     showLoading();
     apiGetCenterBreedByCenterBreedId(centerBreedId).then((res: any) => {
-     
       if (res.statusCode === 200) {
         hideLoading();
         setBreedCenterData(res.data);
@@ -53,19 +57,18 @@ const BreedDetailScreen = () => {
       }
     });
   }, []);
-
-  useEffect(()=>{
+  useEffect(() => {
     showLoading();
-    apiGetBreedAppointmentHistoryByUserId(1,userId,2).then((res:any)=>{
-      console.log(res)
+    apiGetUserBreedAppointmentHistory(userId).then((res: any) => {
       if (res.statusCode === 200) {
         hideLoading();
+        dispatch(addBreedHistory(res.data.items))
         setHistoryBreed(res.data.items);
       } else {
         console.log('get center breed thất bại');
       }
-    })
-  },[])
+    });
+  }, []);
 
   const formatPrice = (price: number) => {
     return price?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' VNĐ';
@@ -135,8 +138,8 @@ const BreedDetailScreen = () => {
       petCenterServiceId: breedId,
       petCenterServiceName: `${breedName}`,
       type: 0,
-      price: price
-    })
+      price: price,
+    });
   };
 
   return (

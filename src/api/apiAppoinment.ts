@@ -71,18 +71,23 @@ export async function apiGetMyAppointment(
   return protectedAxios.get(url, {params});
 }
 
-export async function apiGetAppointmentByStatus(role: string, id: string, status: number, pageSize: number, pageIndex: number){
-  const url = 'Appointment'
+export async function apiGetAppointmentByStatus(
+  role: string,
+  id: string,
+  status: number,
+  pageSize: number,
+  pageIndex: number,
+) {
+  const url = 'Appointment';
 
   const params = {
     status,
     pageSize,
     pageIndex,
-    ...(role === 'customer' ? {userId: id} : {petCenterId: id})
-  }
-  return protectedAxios.get(url, {params})
+    ...(role === 'customer' ? {userId: id} : {petCenterId: id}),
+  };
+  return protectedAxios.get(url, {params});
 }
-
 
 export async function apiGetAppointmentByAppointmentId(
   appointmentId: string,
@@ -105,4 +110,17 @@ export async function apiUpdateAppointmentByAppointmentId(
     cancelReason: cancelReason,
   };
   return protectedAxios.put(url, data);
+}
+
+export async function apiGetUserBreedAppointmentHistory(userId: string) {
+  let url = 'Appointment'
+  const params = {
+    userId,
+    Type: 1,
+    status: 2,
+    PageSize: 1000
+  };
+
+  return protectedAxios(url, {params})
+
 }
