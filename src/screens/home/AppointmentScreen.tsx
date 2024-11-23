@@ -19,6 +19,7 @@ import {
   Container,
   DatePicker,
   IconButtonComponent,
+  PopupComponent,
   RowComponent,
   SectionComponent,
   TextComponent,
@@ -47,6 +48,8 @@ import {
   apiCreateBreedAppointment,
   apiCreateServiceAppointment,
 } from '@/api/apiAppoinment';
+import firestore from '@react-native-firebase/firestore';
+import { addAppointmentInBreedingToFirestore } from '@/services/firestoreFunction';
 
 const AppointmentScreen = () => {
   const route = useRoute<any>();
@@ -59,23 +62,34 @@ const AppointmentScreen = () => {
   const [isVisibleToModal, setIsVisibleToModal] = useState(false);
   const [isVisibleFromTimeModal, setIsVisibleFromTimeModal] = useState(false);
   const [isVisibleToTimeModal, setIsVisibleToTimeModal] = useState(false);
-  const [fromDate, setFromDate] = useState('');
-  const [toDate, setToDate] = useState('');
-  const [fromTime, setFromTime] = useState('');
-  const [toTime, setToTime] = useState('');
   const [petModal, setPetModal] = useState(false);
   const [myPet, setMyPet] = useState<any>();
   const [selectedPet, setSelectedPet] = useState<any>(null);
   const [calculatedPrice, setCalculatedPrice] = useState(price);
   const [scheduleData, setScheduleData] = useState([]);
   const modalPetRef = useRef<Modalize>();
-  const historyBreed = useAppSelector((state) => state.breedHistory.items)
+  const historyBreed = useAppSelector(state => state.breedHistory.items);
+  const [isPopup, setIsPopup] = useState(false);
+  const [isAgree, setIsAgree] = useState(false);
 
+  useEffect(() => {
+    if (selectedPet) {
+      const isMatched = historyBreed.some(
+        (history: any) =>
+          history.centerBreedId === petCenterServiceId &&
+          history.petId === selectedPet.id,
+      );
 
-  console.log(petCenterServiceId)
-  
+      if (isMatched) {
+        setIsPopup(true);
+      } else {
+        setIsPopup(false);
+        setIsAgree(false);
+      }
+    }
+  }, [selectedPet, petCenterServiceId, historyBreed]);
+
   const handleScheduleData = (timeSlots: any) => {
-    // Cập nhật state với dữ liệu từ ScheduleScreen
     setScheduleData(timeSlots);
   };
 
@@ -132,6 +146,7 @@ const AppointmentScreen = () => {
     }
   };
 
+  
   const validationSchema = Yup.object().shape({
     petId: Yup.string().required('Vui lòng chọn thú cưng'),
     fromDate: Yup.string().required('Vui lòng chọn ngày bắt đầu'),
@@ -179,7 +194,8 @@ const AppointmentScreen = () => {
         description,
       }));
       showLoading();
-      if (petCenterServiceName.includes('phối giống')) {
+      console.log(petCenterServiceName);
+      if (petCenterServiceName.includes('phối')) {
         apiCreateBreedAppointment(
           userId,
           petCenterServiceId,
@@ -189,6 +205,13 @@ const AppointmentScreen = () => {
           endTime,
         ).then((res: any) => {
           if (res.statusCode === 200) {
+            if (isAgree) {
+              addAppointmentInBreedingToFirestore(
+                res.data.id,
+                res.data.userId,
+                res.data.petId,
+              );
+            }
             hideLoading();
             Toast.show({
               type: 'success',
@@ -219,7 +242,7 @@ const AppointmentScreen = () => {
             hideLoading();
             Toast.show({
               type: 'success',
-              text1: 'Đặt lịch thành công',
+              text1: 'Đặt lịch dịch vụ thành công',
               text2: 'Petverse chúc bạn và thú cưng thật nhiều sức khoẻ!',
             });
             navigate(STACK_NAVIGATOR_SCREENS.HOMESCREEN);
@@ -304,6 +327,16 @@ const AppointmentScreen = () => {
             onPress={goBack}
           />
         }>
+        {isAgree && (
+          <View style={styles.warningContainer}>
+            <RowComponent justify="space-between">
+              <TextComponent
+                text="Lưu ý: Bạn đã đồng ý đặt lịch phối giống với thú cưng có thể dẫn đến cận huyết."
+                styles={styles.warningText}
+              />
+            </RowComponent>
+          </View>
+        )}
         <SectionComponent>
           <RowComponent justify="space-between">
             <TextComponent text="Dịch vụ" type="title" />
@@ -623,6 +656,23 @@ const AppointmentScreen = () => {
         onCancel={() => setIsVisibleToTimeModal(false)}
         onConfirm={handleToTimeConfirm}
       />
+      <PopupComponent
+        description="Có thể dẫn đến cận huyết, do thú cưng và giống đã từng phối với nhau."
+        iconColor={colors.yellow}
+        iconName="alert-circle"
+        isVisible={isPopup}
+        leftTitle="Huỷ"
+        onClose={() => setIsPopup(false)}
+        onLeftPress={() => setIsPopup(false)}
+        title="Cảnh báo cận huyết"
+        onRightPress={() => {
+          setIsPopup(false);
+          setIsAgree(true);
+        }}
+        rightTitle="Vẫn đặt lịch"
+        buttonLeftColor={colors.grey}
+        buttonRightColor={colors.red}
+      />
     </>
   );
 };
@@ -780,5 +830,21 @@ const styles = StyleSheet.create({
   },
   deleteButton: {
     padding: 4,
+  },
+  warningContainer: {
+    backgroundColor: '#FFF5F5',
+    padding: 12,
+    marginHorizontal: 16,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#FFA39E',
+    marginVertical: 8,
+  },
+  warningText: {
+    color: '#D4380D',
+    fontSize: 14,
+    fontWeight: 'bold',
+    flex: 1,
+    marginRight: 8,
   },
 });

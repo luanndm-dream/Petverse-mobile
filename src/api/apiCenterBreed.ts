@@ -1,4 +1,4 @@
-import { mediaUpload } from '@/utils/mediaUpload';
+import {mediaUpload} from '@/utils/mediaUpload';
 import {protectedAxios} from './apiConfiguration';
 
 export async function apiGetCenterBreedByPetCenterId(petCenterId: string) {
@@ -10,22 +10,22 @@ export async function apiGetCenterBreedByPetCenterId(petCenterId: string) {
 export async function apiGetCenterBreed(status: number) {
   const url = `CenterBreed`;
   const params = {
-    Status: status
-  }
-  return protectedAxios.get(url,{params});
+    Status: status,
+  };
+  return protectedAxios.get(url, {params});
 }
 
 export async function apiGetCenterBreedByCenterBreedId(centerBreedId: string) {
-    const url = `CenterBreed/${centerBreedId}`;
-  
-    return protectedAxios.get(url);
-  }
+  const url = `CenterBreed/${centerBreedId}`;
 
-  export async function apiDeleteCenterBreed(centerBreedId: string) {
-    const url = `CenterBreed/${centerBreedId}`;
-  
-    return protectedAxios.delete(url);
-  }
+  return protectedAxios.get(url);
+}
+
+export async function apiDeleteCenterBreed(centerBreedId: string) {
+  const url = `CenterBreed/${centerBreedId}`;
+
+  return protectedAxios.delete(url);
+}
 export async function apiCreateCenterBreed(
   petCenterId: string,
   speciesId: number,
@@ -55,3 +55,18 @@ export async function apiCreateCenterBreed(
   });
 }
 
+export async function apiUpdateBreedCenterAvailability(
+  centerBreedId: number,
+  isDiasble: boolean,
+) {
+  let url = `CenterBreed/Availability/${centerBreedId}`;
+
+  const dataSend = {
+    id: centerBreedId,
+    isDisabled: isDiasble,
+  };
+
+
+  console.log('Sending data to API:', dataSend);
+  return protectedAxios.put(url, dataSend);
+}

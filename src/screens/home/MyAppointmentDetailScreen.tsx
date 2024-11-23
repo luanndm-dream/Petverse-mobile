@@ -7,20 +7,21 @@ import {
   RowComponent,
   PopupComponent,
   InputComponent,
+  TextComponent,
 } from '@/components';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {colors} from '@/constants/colors';
 import {useCustomNavigation} from '@/utils/navigation';
 import {
   apiGetAppointmentByAppointmentId,
+  apiGetUserBreedAppointmentHistory,
   apiUpdateAppointmentByAppointmentId,
 } from '@/api/apiAppoinment';
 import {useAppSelector} from '@/redux';
 import {STACK_NAVIGATOR_SCREENS} from '@/constants/screens';
 import useLoading from '@/hook/useLoading';
 import Toast from 'react-native-toast-message';
-import {pushNotification} from '@/services/notifications';
-import {managerId} from '@/constants/app';
+import firestore from '@react-native-firebase/firestore';
 
 const MyAppointmentDetailScreen = () => {
   const userId = useAppSelector(state => state.auth.userId);
@@ -34,9 +35,63 @@ const MyAppointmentDetailScreen = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [cancelReason, setCancelReason] = useState('');
   const [popupAction, setPopupAction] = useState<string | null>(null);
+  const [inBreedingIds, setInbreedingIds] = useState<string[]>([]);
+  const [isInBreeding, setIsInBreeding] = useState(false);
+  const fetchDocumentIds = async () => {
+    try {
+      const snapshot = await firestore().collection('inbreeding').get();
+      const documentIds = snapshot.docs.map(doc => doc.id); // Lấy tất cả ID của document
+      console.log('Document IDs:', documentIds);
+      return documentIds;
+    } catch (error) {
+      console.error('Error fetching document IDs:', error);
+      return [];
+    }
+  };
+
+  useEffect(() => {
+    const loadDocumentIds = async () => {
+      const ids = await fetchDocumentIds();
+      setInbreedingIds(ids);
+    };
+
+    loadDocumentIds();
+  }, []);
+
+  useEffect(() => {
+    const checkAppointmentIdInDocumentIds = () => {
+      if (inBreedingIds.includes(appointmentId)) {
+        setIsInBreeding(true);
+      } else {
+        setIsInBreeding(false);
+      }
+    };
+
+    if (inBreedingIds.length > 0) {
+      checkAppointmentIdInDocumentIds();
+    }
+  }, [inBreedingIds, appointmentId]);
 
   const getPopupContent = (action: string) => {
     switch (action) {
+      case 'warning':
+        return {
+          title: 'Cảnh báo cận huyết',
+          description:
+            'Lịch hẹn này có thể dẫn đến cận huyết vì thú cưng đã từng phối giống với loại giống này trước đây. Bạn có chắc chắn muốn tiếp tục?',
+          iconName: 'alert-circle',
+          iconColor: colors.yellow,
+          hasInput: false,
+          leftTitle: 'Huỷ',
+          rightTitle: 'Xác nhận',
+          buttonLeftColor: colors.grey,
+          buttonRightColor: colors.red,
+          onLeftPress: () => setIsVisible(false),
+          onRightPress: () => {
+            setIsVisible(false);
+            processAcceptAppointment();
+          },
+        };
       case 'report':
         return {
           title: 'Báo cáo',
@@ -111,6 +166,16 @@ const MyAppointmentDetailScreen = () => {
   }, []);
 
   const onAcceptHandle = () => {
+    if (isInBreeding) {
+      // Hiển thị Popup cảnh báo nếu là lịch cận huyết
+      openPopup('warning');
+    } else {
+      // Thực hiện nhận lịch nếu không phải cận huyết
+      processAcceptAppointment();
+    }
+  };
+
+  const processAcceptAppointment = () => {
     showLoading();
     apiUpdateAppointmentByAppointmentId(appointmentId, 1).then((res: any) => {
       console.log(res);
@@ -214,7 +279,7 @@ const MyAppointmentDetailScreen = () => {
     console.log('report');
     navigation.navigate(STACK_NAVIGATOR_SCREENS.REPORTSCREEN, {
       appointmentId,
-      petCenterId
+      petCenterId,
     });
     setIsVisible(false);
     // pushNotification([userId, petCenterId, managerId], {
@@ -463,6 +528,16 @@ const MyAppointmentDetailScreen = () => {
             onPress={goBack}
           />
         }>
+        {isInBreeding && (
+          <View style={styles.warningContainer}>
+            <RowComponent justify="space-between">
+              <TextComponent
+                text="Lưu ý: Đây là lịch hẹn có thể gây ra tình trạng cận huyết do thú cưng đã tưng phối giống với loại giống này!"
+                styles={styles.warningText}
+              />
+            </RowComponent>
+          </View>
+        )}
         <View style={styles.detailContainer}>
           <Text style={styles.label}>Dịch vụ:</Text>
           <Text style={styles.value}>
@@ -550,5 +625,21 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: colors.grey,
     textAlign: 'center',
+  },
+  warningContainer: {
+    backgroundColor: '#FFF5F5',
+    padding: 12,
+    marginHorizontal: 16,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#FFA39E',
+    marginVertical: 8,
+  },
+  warningText: {
+    color: '#D4380D',
+    fontSize: 14,
+    fontWeight: 'bold',
+    flex: 1,
+    marginRight: 8,
   },
 });

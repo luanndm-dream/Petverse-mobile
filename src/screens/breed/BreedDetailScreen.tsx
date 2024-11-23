@@ -44,8 +44,13 @@ const BreedDetailScreen = () => {
   const {centerBreedId, breedName} = route.params;
   const [breedCenterData, setBreedCenterData] = useState<any>();
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [historyBreed, setHistoryBreed] = useState();
-  const historyBreedA = useAppSelector((state) => state.breedHistory.items)
+
+
+
+
+
+
+
   useEffect(() => {
     showLoading();
     apiGetCenterBreedByCenterBreedId(centerBreedId).then((res: any) => {
@@ -59,15 +64,25 @@ const BreedDetailScreen = () => {
   }, []);
   useEffect(() => {
     showLoading();
-    apiGetUserBreedAppointmentHistory(userId).then((res: any) => {
-      if (res.statusCode === 200) {
-        hideLoading();
-        dispatch(addBreedHistory(res.data.items))
-        setHistoryBreed(res.data.items);
-      } else {
-        console.log('get center breed thất bại');
+    apiGetUserBreedAppointmentHistory(userId).then((res:any) => {
+      if(res.statusCode === 200){
+        hideLoading()
+        dispatch(addBreedHistory(res.data.breedAppointemnts))
+      }else{
+        console.log('get lich su dat phoi giong that bai')
+        hideLoading()
       }
-    });
+    })
+
+    // apiGetUserBreedAppointmentHistory(userId).then((res: any) => {
+    //   if (res.statusCode === 200) {
+    //     hideLoading();
+    //     dispatch(addBreedHistory(res.data.items))
+    //     setHistoryBreed(res.data.items);
+    //   } else {
+    //     console.log('get center breed thất bại');
+    //   }
+    // });
   }, []);
 
   const formatPrice = (price: number) => {
@@ -136,7 +151,7 @@ const BreedDetailScreen = () => {
     // if()
     navigation.navigate(STACK_NAVIGATOR_SCREENS.APPOINMENTSCREEN, {
       petCenterServiceId: breedId,
-      petCenterServiceName: `${breedName}`,
+      petCenterServiceName: ` phối ${breedName}`,
       type: 0,
       price: price,
     });

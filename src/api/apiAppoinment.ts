@@ -113,14 +113,7 @@ export async function apiUpdateAppointmentByAppointmentId(
 }
 
 export async function apiGetUserBreedAppointmentHistory(userId: string) {
-  let url = 'Appointment'
-  const params = {
-    userId,
-    Type: 1,
-    status: 2,
-    PageSize: 1000
-  };
+  let url = `Appointment/BreedAppointment/${userId}`;
 
-  return protectedAxios(url, {params})
-
+  return protectedAxios(url);
 }
