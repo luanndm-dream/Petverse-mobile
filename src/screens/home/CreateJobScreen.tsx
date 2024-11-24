@@ -193,7 +193,7 @@ const formatPrice = (value: string): string => {
       <RowComponent>
       <TextComponent text={item.name} color={colors.dark} />
       {(item.name === 'Bác sĩ thú y' || item.name === 'Dịch vụ spa') && (
-  <TextComponent text="/trường hợp" type="title" />
+  <TextComponent text="/case" type="title" />
 )}
       </RowComponent>
       <View>
@@ -361,6 +361,7 @@ const styles = StyleSheet.create({
     marginVertical: 3,
     backgroundColor: colors.white,
     borderRadius: 8,
+    color: colors.dark
   },
   checkboxRow: {
     alignItems: 'center',

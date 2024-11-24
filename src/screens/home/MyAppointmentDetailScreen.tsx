@@ -571,7 +571,7 @@ const MyAppointmentDetailScreen = () => {
 
           <Text style={styles.label}>Lý do huỷ:</Text>
           <Text style={styles.value}>
-            {appointmentData.report?.reason || 'Không có'}
+            {appointmentData.cancelReason || 'Không có'}
           </Text>
 
           <Text style={styles.label}>Lịch trình:</Text>

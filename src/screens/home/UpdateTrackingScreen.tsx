@@ -66,7 +66,7 @@ const UpdateTrackingScreen = () => {
     },
     validationSchema,
     onSubmit:  values => {
-      
+      showLoading()
       apiCreateSchedule(scheduleId, photos, videos).then((res: any)=>{
         hideLoading();
         console.log(scheduleId, res)
@@ -103,7 +103,7 @@ const UpdateTrackingScreen = () => {
           />
         }>
         <SectionComponent>
-          <TextComponent text="Hình ảnh/video" type="title" />
+          <TextComponent text="Hình ảnh" type="title" />
           <AddImageComponent
           camera
             onSelected={(val: string | string[]) => selectetPetPhotoHandle(val)}

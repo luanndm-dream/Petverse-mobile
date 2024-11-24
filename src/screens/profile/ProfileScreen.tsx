@@ -111,7 +111,7 @@ const ProfileScreen = () => {
   };
 
   const openGalarryHandle = () => {
-    showLoading();
+    // showLoading();
     if (RESULTS.GRANTED) {
       ImagePicker.openPicker({}).then(image => {
         apiChangeAvatar(userId, image.path).then((res: any) => {

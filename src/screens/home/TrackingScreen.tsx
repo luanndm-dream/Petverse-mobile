@@ -56,15 +56,30 @@ const TrackingScreen = () => {
       ).then((res: any) => {
         if (res.statusCode === 200) {
           hideLoading();
-          setAppointmentData(res.data);
+          // Xử lý thêm ngày vào trackings
+          const processedSchedules = res.data.schedules.map(
+            (schedule: any) => ({
+              ...schedule,
+              records: schedule.records.map((record: any) => ({
+                ...record,
+                trackings: record.trackings.map((tracking: any) => ({
+                  ...tracking,
+                  date: schedule.date, // Gắn ngày tương ứng
+                })),
+              })),
+            }),
+          );
+
+          setAppointmentData({...res.data, schedules: processedSchedules});
+
           setSelectedDateIndex(0); // Auto-select first date
           if (
-            res.data.schedules[0] &&
-            res.data.schedules[0].records.length > 0
+            processedSchedules[0] &&
+            processedSchedules[0].records.length > 0
           ) {
-            setSelectedRecordIndex(0); // First record
+            setSelectedRecordIndex(0);
             setSelectedTrackings(
-              res.data.schedules[0].records[0].trackings || [],
+              processedSchedules[0].records[0].trackings || [],
             );
           }
         } else {
@@ -75,7 +90,7 @@ const TrackingScreen = () => {
   );
 
   const isDayComplete = (records: any[]) =>
-    records.every(record => record.trackings && record.trackings.length > 0);
+    records.every(record => record?.trackings && record?.trackings.length > 0);
 
   const renderDateItem = ({item, index}: {item: any; index: number}) => {
     const [day, month] = item.date.split('/');
@@ -87,9 +102,16 @@ const TrackingScreen = () => {
         style={[styles.dateItem, isSelected && styles.dateItemSelected]}
         onPress={() => {
           setSelectedDateIndex(index);
-          setSelectedRecordIndex(null);
-          setSelectedTrackings([]);
-        }}>
+          if (item.records.length > 0) {
+            setSelectedRecordIndex(0); // Auto chọn record đầu tiên
+            setSelectedTrackings(item.records[0].trackings || []); // Trackings của record đầu tiên
+            setSelectedScheduleId(item.records[0].scheduleId); // Cập nhật ScheduleId tương ứng
+          } else {
+            setSelectedRecordIndex(null);
+            setSelectedTrackings([]);
+          }
+        }}
+        >
         <View style={styles.dateContent}>
           <Text style={[styles.dayText, isSelected && styles.selectedText]}>
             {day}
@@ -111,7 +133,7 @@ const TrackingScreen = () => {
 
   const renderImageSlider = () => (
     <View style={styles.imageSliderContainer}>
-      {selectedTrackings.length > 0 ? (
+      {selectedTrackings?.length > 0 ? (
         <>
           <FlatList
             data={selectedTrackings}
@@ -122,6 +144,8 @@ const TrackingScreen = () => {
               const isVideo = item.type === 1;
               return (
                 <View style={styles.mediaWrapper}>
+                  <Text style={styles.dateText}>{item.date || 'Không xác định'}</Text>
+                  {/* Hiển thị ngày */}
                   {isVideo ? (
                     <VideoPlayer
                       video={{uri: item.url}}
@@ -219,6 +243,7 @@ const TrackingScreen = () => {
   );
 
   const handleReportAction = (scheduleId: number) => {
+    console.log(scheduleId);
     if (roleName === 'PetCenter') {
       navigation.navigate(STACK_NAVIGATOR_SCREENS.UPDATETRACKINGSCREEN, {
         scheduleId: scheduleId,
@@ -271,7 +296,7 @@ const TrackingScreen = () => {
       </Container>
       {selectedRecordIndex !== null &&
         selectedDateData &&
-        roleName === 'PetCenter' && 
+        roleName === 'PetCenter' &&
         !selectedDateData.records[selectedRecordIndex].trackings.length && (
           <View style={styles.buttonContainer}>
             <ButtonComponent
@@ -445,13 +470,28 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     backgroundColor: colors.white,
   },
+
+  videoPlayer: {
+    width: width,
+    height: 280,
+  },
+  dateText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: colors.white, // Sử dụng màu trắng để nổi bật trên hình ảnh
+    textAlign: 'center',
+    position: 'absolute',
+    top: 10, // Đặt text sát cạnh dưới của hình ảnh
+    zIndex: 2, // Đảm bảo text nằm trên cùng
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Thêm nền mờ cho text để dễ đọc
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4, // Làm bo góc cho nền text
+  },
   mediaWrapper: {
     width: width,
     height: 300,
     position: 'relative',
-  },
-  videoPlayer: {
-    width: width,
-    height: 280,
+    alignItems: 'center', // Căn giữa text và media
   },
 });

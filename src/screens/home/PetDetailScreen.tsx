@@ -45,7 +45,7 @@ const PetDetailScreen = () => {
     initialValues: {
       name: petData?.name || '',
       weight: petData?.weight?.toString() || '',
-      sterilized: petData?.sterilized === 1,
+      sterilized: petData?.sterilized || false,
       description: petData?.description || '',
     },
     enableReinitialize: true,
@@ -416,6 +416,7 @@ const styles = StyleSheet.create({
   textInput: {
     minWidth: 120,
     maxWidth: '50%',
+    color: colors.dark,
     fontSize: 16,
     borderBottomWidth: 2,
     borderBottomColor: colors.grey4,

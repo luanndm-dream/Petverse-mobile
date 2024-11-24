@@ -277,6 +277,7 @@ const ChatDetailScreen = () => {
               onChangeText={setNewMessage}
               multiline
               placeholderTextColor={colors.grey}
+              
             />
             {renderSendButton(!newMessage.trim(), () => sendMessage())}
           </View>

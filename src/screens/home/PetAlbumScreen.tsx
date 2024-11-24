@@ -44,6 +44,7 @@ const PetAlbumScreen = () => {
             thumbnail={require('../../assets/images/BannerVideo.png')} 
             style={[styles.photo, { backgroundColor: colors.grey3}]}
             resizeMode="cover"
+            onError={(error) => console.log(error)}
           />
         ) : (
           <Image source={{ uri: item.url }} style={styles.photo} />

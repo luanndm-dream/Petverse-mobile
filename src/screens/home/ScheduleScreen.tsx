@@ -288,6 +288,7 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
     fontSize: 16,
     backgroundColor: '#fff',
+    color: colors.dark
   },
   timeContainer: {
     flexDirection: 'row',

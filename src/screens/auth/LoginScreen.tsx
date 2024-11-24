@@ -162,7 +162,7 @@ const LoginScreen = () => {
                   onChange={() => setIsRemember(!isRemember)}
                 />
                 <SpaceComponent width={4} />
-                <TextComponent text="Remember me" />
+                <TextComponent text="Ghi nhớ tôi" />
               </RowComponent>
               <ButtonComponent
                 text="Quên mật khẩu?"
