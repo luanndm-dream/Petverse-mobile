@@ -219,13 +219,13 @@ const TrackingScreen = () => {
   );
 
   const handleReportAction = (scheduleId: number) => {
-    if (roleName === 'petCenter') {
+    if (roleName === 'PetCenter') {
       navigation.navigate(STACK_NAVIGATOR_SCREENS.UPDATETRACKINGSCREEN, {
         scheduleId: scheduleId,
       });
-    } else if (roleName === 'customer') {
+    } else if (roleName === 'Customer') {
       console.log('Report báo cáo cho khung giờ này');
-      // Thực hiện hành động report báo cáo cho customer
+      // Thực hiện hành động report báo cáo cho Customer
     }
   };
 
@@ -271,7 +271,7 @@ const TrackingScreen = () => {
       </Container>
       {selectedRecordIndex !== null &&
         selectedDateData &&
-        roleName === 'petCenter' && // Thêm điều kiện chỉ hiển thị cho petCenter
+        roleName === 'PetCenter' && 
         !selectedDateData.records[selectedRecordIndex].trackings.length && (
           <View style={styles.buttonContainer}>
             <ButtonComponent

@@ -39,6 +39,7 @@ const WorkProfileScreen = () => {
       getPetCenterJob();
     }, [petCenterId]),
   );
+  console.log(petCenterData)
 
   const editServiceHandle = () => {
     navigate(STACK_NAVIGATOR_SCREENS.SERVICESCREEN)
@@ -93,31 +94,36 @@ const WorkProfileScreen = () => {
           onPress={goBack}
         />
       }>
-      <SectionComponent>
-        {petCenterData ? (
-          <>
-            <RowComponent justify="flex-start" styles={styles.itemContainer} onPress={editServiceHandle}>
-              <EditServiceIcon width={40} height={40} />
-              <TextComponent
-                text="Tất cả dịch vụ"
-                size={18}
-                styles={{marginLeft: 24}}
-              />
-            </RowComponent>
-            <RowComponent justify="flex-start" styles={styles.itemContainer} onPress={managePetBreedingHandle}>
-              <PetBreedingIcon width={40} height={40} />
-              <TextComponent
-                text="Quản lí giống"
-                size={18}
-                styles={{marginLeft: 24}}
-              />
-            </RowComponent>
-            
-          </>
-        ) : (
-          renderCreateJob()
-        )}
-      </SectionComponent>
+     <SectionComponent>
+  {petCenterData.length === 0 ? (
+    renderCreateJob() // Nếu mảng rỗng, hiển thị "Tạo công việc"
+  ) : (
+    <>
+      <RowComponent
+        justify="flex-start"
+        styles={styles.itemContainer}
+        onPress={editServiceHandle}>
+        <EditServiceIcon width={40} height={40} />
+        <TextComponent
+          text="Tất cả dịch vụ"
+          size={18}
+          styles={{marginLeft: 24}}
+        />
+      </RowComponent>
+      <RowComponent
+        justify="flex-start"
+        styles={styles.itemContainer}
+        onPress={managePetBreedingHandle}>
+        <PetBreedingIcon width={40} height={40} />
+        <TextComponent
+          text="Quản lí giống"
+          size={18}
+          styles={{marginLeft: 24}}
+        />
+      </RowComponent>
+    </>
+  )}
+</SectionComponent>
     </Container>
   );
 };

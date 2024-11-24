@@ -38,4 +38,6 @@ export const STACK_NAVIGATOR_SCREENS = {
   REPORTSCREEN: 'ReportScreen',
   APPOINTMENTSTATUSSCREEN: 'AppointmentStatusScreen',
   PLACEFORPETSCREEN: 'PlaceForPetScreen',
+  REPORTAPPLICATIONSCREEN: 'ReportApplicationScreen',
+  REPORTAPPLICATIONDETAIL: 'ReportApplicationDetail',
 };

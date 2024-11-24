@@ -11,6 +11,7 @@ export async function apiGetCenterBreed(status: number) {
   const url = `CenterBreed`;
   const params = {
     Status: status,
+    pageSize: 1000
   };
   return protectedAxios.get(url, {params});
 }

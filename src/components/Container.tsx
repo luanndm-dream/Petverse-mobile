@@ -34,7 +34,9 @@ const Container = (props: Props) => {
   } = props;
 
   return (
-    <SafeAreaView style={[globalStyles.container]} onTouchStart={Keyboard.dismiss}>
+    <SafeAreaView style={[globalStyles.container]} 
+    // onTouchStart={Keyboard.dismiss}
+    >
       {/* <KeyboardAvoidingView onPress={Keyboard.dismiss}> */}
         <View style={[globalStyles.container]}>
           {(left || title || right) && (

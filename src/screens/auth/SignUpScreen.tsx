@@ -24,6 +24,7 @@ const SignUpScreen = () => {
     fullname: '',
     email: '',
     password: '',
+    confirmPassword: '',
     phoneNumber: '',
   };
   const validationSchema = Yup.object().shape({
@@ -36,6 +37,9 @@ const SignUpScreen = () => {
     password: Yup.string()
       .min(6, 'Mật khẩu phải ít nhất 6 ký tự')
       .required('Mật khẩu là bắt buộc'),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref('password')], 'Mật khẩu xác nhận không khớp')
+      .required('Xác nhận mật khẩu là bắt buộc'),
     phoneNumber: Yup.string()
       .matches(/^\d{10}$/, 'Số điện thoại phải là 10 chữ số')
       .required('Số điện thoại là bắt buộc'),
@@ -72,13 +76,13 @@ const SignUpScreen = () => {
   };
   return (
     <Container
-    isScroll={true}
+      isScroll={true}
       left={
         <View
           style={{
-            padding: 8,
-            backgroundColor: colors.white,
-            borderRadius: 8,
+            padding: 12,
+            // backgroundColor: colors.white,
+            // borderRadius: 8,
             marginTop: Platform.OS === 'android' ? 24 : 0,
           }}>
           <Entypo name="arrow-left" size={30} color={colors.grey} />
@@ -123,7 +127,7 @@ const SignUpScreen = () => {
           touched,
         }) => (
           <>
-            <SectionComponent>
+            <SectionComponent styles={{flex: 1}}>
               <TextComponent text="Họ và tên" type="title" />
               <InputComponent
                 value={values.fullname}
@@ -153,11 +157,22 @@ const SignUpScreen = () => {
               {errors.password && touched.password && (
                 <Text style={styles.errorText}>{errors.password}</Text>
               )}
+              <TextComponent text="Xác nhận mật khẩu" type="title" />
+              <InputComponent
+                value={values.confirmPassword}
+                onChange={handleChange('confirmPassword')}
+                placeholder="Xác nhận mật khẩu"
+                isPassword={true}
+              />
+              {errors.confirmPassword && touched.confirmPassword && (
+                <Text style={styles.errorText}>{errors.confirmPassword}</Text>
+              )}
               <TextComponent text="Số điện thoại" type="title" />
               <InputComponent
                 value={values.phoneNumber}
                 onChange={handleChange('phoneNumber')}
                 placeholder="Số điện thoại"
+                type='numeric'
               />
               {errors.phoneNumber && touched.phoneNumber && (
                 <Text style={styles.errorText}>{errors.phoneNumber}</Text>

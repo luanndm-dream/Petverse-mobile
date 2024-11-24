@@ -17,7 +17,7 @@ const TabNavigator = () => {
   const [unreadCount, setUnreadCount] = useState(0);
   const roleName = useAppSelector(state => state.auth.roleName);
   const id = useAppSelector(state =>
-    roleName === 'customer' ? state.auth.userId : state.auth.petCenterId,
+    roleName === 'Customer' ? state.auth.userId : state.auth.petCenterId,
   );
 
   useEffect(() => {

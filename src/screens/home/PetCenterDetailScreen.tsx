@@ -110,6 +110,8 @@ const ServicesTab = ({petCenterData}: any) => {
   const [selectedServiceName, setSelectedServiceName] = useState<string>('');
   const [serviceType, setServiceType] = useState();
   const [servicePrice, setServicePrice] = useState();
+  const roleName = useAppSelector((state) => state.auth.roleName)
+  const isPetCenter = roleName === 'PetCenter';
   return (
     <View style={styles.tabContainer}>
       <FlatList
@@ -161,9 +163,9 @@ const ServicesTab = ({petCenterData}: any) => {
         contentContainerStyle={styles.serviceList}
       />
       <ButtonComponent
-        text="Đặt dịch vụ"
+         text={isPetCenter ? 'Chỉ khách hàng đặt' : 'Đặt dịch vụ'}
         type="primary"
-        disable={!selectedService}
+        disable={!selectedService || roleName === 'PetCenter'} 
         onPress={() => {
           navigation.navigate(STACK_NAVIGATOR_SCREENS.APPOINMENTSCREEN, {
             petCenterServiceId: selectedService,

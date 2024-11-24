@@ -22,6 +22,7 @@ import {STACK_NAVIGATOR_SCREENS} from '@/constants/screens';
 import useLoading from '@/hook/useLoading';
 import Toast from 'react-native-toast-message';
 import firestore from '@react-native-firebase/firestore';
+import { priceFormater } from '@/utils/priceFormater';
 
 const MyAppointmentDetailScreen = () => {
   const userId = useAppSelector(state => state.auth.userId);
@@ -333,7 +334,7 @@ const MyAppointmentDetailScreen = () => {
       // Logic cho appointmentType là 0 (Dịch vụ thông thường)
       if (status === 0) {
         // Khi chưa nhận đơn
-        if (roleName === 'petCenter') {
+        if (roleName === 'PetCenter') {
           return (
             <RowComponent styles={{paddingHorizontal: 40}}>
               <ButtonComponent
@@ -349,7 +350,7 @@ const MyAppointmentDetailScreen = () => {
               />
             </RowComponent>
           );
-        } else if (roleName === 'customer') {
+        } else if (roleName === 'Customer') {
           return (
             <ButtonComponent
               text="Hủy lịch hẹn"
@@ -362,7 +363,7 @@ const MyAppointmentDetailScreen = () => {
         }
       } else if (status === 1) {
         // Khi đã nhận đơn
-        if (roleName === 'petCenter') {
+        if (roleName === 'PetCenter') {
           return (
             <RowComponent styles={{paddingHorizontal: 40}}>
               <ButtonComponent
@@ -378,7 +379,7 @@ const MyAppointmentDetailScreen = () => {
               />
             </RowComponent>
           );
-        } else if (roleName === 'customer') {
+        } else if (roleName === 'Customer') {
           return (
             <RowComponent styles={{paddingHorizontal: 40}}>
               <ButtonComponent
@@ -397,7 +398,7 @@ const MyAppointmentDetailScreen = () => {
         }
       } else if (status === 2) {
         // Khi hoàn thành
-        if (roleName === 'petCenter') {
+        if (roleName === 'PetCenter') {
           return (
             <ButtonComponent
               text="Xem lại báo cáo"
@@ -406,7 +407,7 @@ const MyAppointmentDetailScreen = () => {
               styles={styles.singleButton}
             />
           );
-        } else if (roleName === 'customer') {
+        } else if (roleName === 'Customer') {
           return (
             <RowComponent styles={{paddingHorizontal: 40}}>
               <ButtonComponent
@@ -428,7 +429,7 @@ const MyAppointmentDetailScreen = () => {
       // Logic cho appointmentType là 1 (Phối giống)
       if (status === 0) {
         // Khi chưa nhận đơn
-        if (roleName === 'petCenter') {
+        if (roleName === 'PetCenter') {
           return (
             <RowComponent styles={{paddingHorizontal: 40}}>
               <ButtonComponent
@@ -444,7 +445,7 @@ const MyAppointmentDetailScreen = () => {
               />
             </RowComponent>
           );
-        } else if (roleName === 'customer') {
+        } else if (roleName === 'Customer') {
           return (
             <ButtonComponent
               text="Hủy lịch hẹn"
@@ -457,7 +458,7 @@ const MyAppointmentDetailScreen = () => {
         }
       } else if (status === 1) {
         // Khi đã nhận đơn
-        if (roleName === 'petCenter') {
+        if (roleName === 'PetCenter') {
           return (
             <ButtonComponent
               text="Hoàn thành"
@@ -467,7 +468,7 @@ const MyAppointmentDetailScreen = () => {
               onPress={onCompleteHandle}
             />
           );
-        } else if (roleName === 'customer') {
+        } else if (roleName === 'Customer') {
           return (
             <ButtonComponent
               text="Report"
@@ -480,7 +481,7 @@ const MyAppointmentDetailScreen = () => {
         }
       } else if (status === 2) {
         // Khi hoàn thành
-        if (roleName === 'customer') {
+        if (roleName === 'Customer') {
           return (
             <ButtonComponent
               text="Report"
@@ -544,11 +545,20 @@ const MyAppointmentDetailScreen = () => {
             {appointmentType === 1 ? 'Phối giống' : 'Dịch vụ thú cưng'}
           </Text>
 
+          <Text style={styles.label}>Tên người dùng:</Text>
+          <Text style={styles.value}>{appointmentData.userName}</Text>
+
+          <Text style={styles.label}>Tên trung tâm:</Text>
+          <Text style={styles.value}>{appointmentData.centerName}</Text>
+
           <Text style={styles.label}>Ngày bắt đầu:</Text>
           <Text style={styles.value}>{appointmentData.startTime}</Text>
 
           <Text style={styles.label}>Ngày kết thúc:</Text>
           <Text style={styles.value}>{appointmentData.endTime}</Text>
+
+          <Text style={styles.label}>Số tiền:</Text>
+          <Text style={styles.value}>{priceFormater(appointmentData.amount)}</Text>
 
           <Text style={styles.label}>Trạng thái:</Text>
           <Text
@@ -559,11 +569,18 @@ const MyAppointmentDetailScreen = () => {
             {getStatusText(appointmentData.status)}
           </Text>
 
-          <Text style={styles.label}>Pet Center ID:</Text>
-          <Text style={styles.value}>{appointmentData.petCenterId}</Text>
+          <Text style={styles.label}>Lý do huỷ:</Text>
+          <Text style={styles.value}>
+            {appointmentData.report?.reason || 'Không có'}
+          </Text>
 
-          <Text style={styles.label}>User ID:</Text>
-          <Text style={styles.value}>{appointmentData.userId}</Text>
+          <Text style={styles.label}>Lịch trình:</Text>
+          {appointmentData.schedules && appointmentData.schedules.length > 0 ? (
+            <TextComponent text='Có lịch trình kèm theo' type='title' color={colors.red}/>
+          
+          ) : (
+            <TextComponent text='Không có lịch trình' type='title'/>
+          )}
         </View>
       </Container>
       <View style={styles.buttonContainer}>{renderButtons()}</View>

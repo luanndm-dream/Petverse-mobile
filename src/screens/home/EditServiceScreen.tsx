@@ -19,10 +19,10 @@ import Toast from 'react-native-toast-message';
 import useLoading from '@/hook/useLoading';
 const EditServiceScreen = () => {
   const {navigate, goBack} = useCustomNavigation();
-  const { showLoading, hideLoading } = useLoading();
+  const {showLoading, hideLoading} = useLoading();
   const route = useRoute<any>();
   const service = route?.params?.service;
-//   console.log(service);
+  console.log(service);
   const formik = useFormik({
     initialValues: {
       price: service.price.toString(),
@@ -44,76 +44,84 @@ const EditServiceScreen = () => {
         formik.values.price,
         formik.values.description,
         service.type,
-      ).then((res: any)=>{
+      ).then((res: any) => {
         if (res.statusCode === 200) {
-            hideLoading();
-            Toast.show({
-              type: 'success',
-              text1: 'Chỉnh sửa dịch vụ thành công',
-              text2: 'Petverse chúc bạn thật nhiều sức khoẻ!',
-            });
-            goBack();
-          } else {
-            hideLoading();
-            Toast.show({
-              type: 'error',
-              text1: 'Chỉnh sửa dịch vụ thất bại',
-              text2: `Xảy ra lỗi ${res.message}`,
-            });
-          }
-      })
+          hideLoading();
+          Toast.show({
+            type: 'success',
+            text1: 'Chỉnh sửa dịch vụ thành công',
+            text2: 'Petverse chúc bạn thật nhiều sức khoẻ!',
+          });
+          goBack();
+        } else {
+          hideLoading();
+          Toast.show({
+            type: 'error',
+            text1: 'Chỉnh sửa dịch vụ thất bại',
+            text2: `Xảy ra lỗi ${res.message}`,
+          });
+        }
+      });
     },
   });
   return (
-    <Container
-      title={service.name}
-      left={
-        <IconButtonComponent
-          name="chevron-left"
-          size={30}
-          color={colors.dark}
-          onPress={goBack}
-        />
-      }>
-      <SectionComponent>
-        <TextComponent text="Mô tả dịch vụ" required type="title" />
-        <InputComponent
-          placeholder="Mô tả dịch vụ của bạn"
-          onChange={formik.handleChange('description')}
-          value={formik.values.description}
-          multiline
-          allowClear
-          onBlur={formik.handleBlur('description')}
-        />
-        {formik.errors.description && formik.touched.description && (
-          <Text style={globalStyles.errorText}>
-            {typeof formik.errors.description === 'string'
-              ? formik.errors.description
-              : ''}
-          </Text>
-        )}
+    <>
+      <Container
+        title={service.name}
+        left={
+          <IconButtonComponent
+            name="chevron-left"
+            size={30}
+            color={colors.dark}
+            onPress={goBack}
+          />
+        }>
+        <SectionComponent>
+          <TextComponent text="Mô tả dịch vụ" required type="title" />
+          <InputComponent
+            placeholder="Mô tả dịch vụ của bạn"
+            onChange={formik.handleChange('description')}
+            value={formik.values.description}
+            multiline
+            allowClear
+            onBlur={formik.handleBlur('description')}
+          />
+          {formik.errors.description && formik.touched.description && (
+            <Text style={globalStyles.errorText}>
+              {typeof formik.errors.description === 'string'
+                ? formik.errors.description
+                : ''}
+            </Text>
+          )}
 
-        <TextComponent text="Giá" required type="title" />
-        <InputComponent
-          placeholder="Giá dịch vụ"
-          onChange={formik.handleChange('price')}
-          value={formik.values.price}
-          type="numeric"
-          onBlur={formik.handleBlur('price')}
-        />
-        {formik.errors.price && formik.touched.price && (
-          <Text style={globalStyles.errorText}>
-            {typeof formik.errors.price === 'string' ? formik.errors.price : ''}
-          </Text>
-        )}
-      </SectionComponent>
+          <TextComponent
+            text={service.type === 0 ? 'Giá (theo giờ)' : 'Giá'}
+            required
+            type="title"
+          />
+          <InputComponent
+            placeholder="Giá dịch vụ"
+            onChange={formik.handleChange('price')}
+            value={formik.values.price}
+            type="numeric"
+            onBlur={formik.handleBlur('price')}
+          />
+          {formik.errors.price && formik.touched.price && (
+            <Text style={globalStyles.errorText}>
+              {typeof formik.errors.price === 'string'
+                ? formik.errors.price
+                : ''}
+            </Text>
+          )}
+        </SectionComponent>
+      </Container>
       <ButtonComponent
         disable={!formik.isValid || !formik.dirty}
         text="Cập nhật"
         type="primary"
         onPress={formik.handleSubmit}
       />
-    </Container>
+    </>
   );
 };
 

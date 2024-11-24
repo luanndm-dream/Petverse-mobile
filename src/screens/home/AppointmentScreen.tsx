@@ -49,7 +49,8 @@ import {
   apiCreateServiceAppointment,
 } from '@/api/apiAppoinment';
 import firestore from '@react-native-firebase/firestore';
-import { addAppointmentInBreedingToFirestore } from '@/services/firestoreFunction';
+import {addAppointmentInBreedingToFirestore} from '@/services/firestoreFunction';
+import {apiGetUserByUserId} from '@/api/apiUser';
 
 const AppointmentScreen = () => {
   const route = useRoute<any>();
@@ -58,6 +59,7 @@ const AppointmentScreen = () => {
   const {petCenterServiceId, petCenterServiceName, type, price} = route.params;
   const {goBack, navigate} = useCustomNavigation();
   const userId = useAppSelector(state => state.auth.userId);
+  const [userData, setUserData] = useState<any>();
   const [isVisibleFromModal, setIsVisibleFromModal] = useState(false);
   const [isVisibleToModal, setIsVisibleToModal] = useState(false);
   const [isVisibleFromTimeModal, setIsVisibleFromTimeModal] = useState(false);
@@ -146,7 +148,6 @@ const AppointmentScreen = () => {
     }
   };
 
-  
   const validationSchema = Yup.object().shape({
     petId: Yup.string().required('Vui lòng chọn thú cưng'),
     fromDate: Yup.string().required('Vui lòng chọn ngày bắt đầu'),
@@ -258,6 +259,7 @@ const AppointmentScreen = () => {
       }
     },
   });
+
   useEffect(() => {
     if (petModal && modalPetRef) {
       modalPetRef.current?.open();
@@ -303,6 +305,9 @@ const AppointmentScreen = () => {
 
   useFocusEffect(
     useCallback(() => {
+      apiGetUserByUserId(userId).then((res: any) => {
+        setUserData(res.data);
+      });
       apiGetPetByUserId(userId).then((res: any) => {
         if (res.statusCode === 200) {
           hideLoading();
@@ -527,11 +532,23 @@ const AppointmentScreen = () => {
         <RowComponent
           justify="flex-end"
           styles={{marginRight: 24, marginBottom: 6}}>
+          {userData?.balance < calculatedPrice && (
+            <ButtonComponent
+              text="Nạp tiền "
+              type="link"
+              color={colors.primary}
+              onPress={() => navigate(STACK_NAVIGATOR_SCREENS.PAYMENTSCREEN)}
+            />
+          )}
           <TextComponent text="Giá tiền: " />
           <TextComponent text={`${formattedPrice} VNĐ`} type="title" />
         </RowComponent>
         <ButtonComponent
-          text="Đặt lịch"
+          text={
+            userData?.balance >= calculatedPrice
+              ? 'Đặt lịch'
+              : 'Số dư không đủ, vui lòng nạp tiền'
+          }
           type="primary"
           disable={!formik.isValid || !formik.dirty}
           onPress={formik.handleSubmit}

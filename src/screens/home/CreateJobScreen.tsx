@@ -61,24 +61,36 @@ const CreateJobScreen = () => {
     });
   }, []);
 
-  const handlePriceChange = (value: string, index: number) => {
-    const newValues = [...priceValues];
-    const newErrors = [...priceErrors];
+ const handlePriceChange = (value: string, index: number) => {
+  const newValues = [...priceValues];
+  const newErrors = [...priceErrors];
 
-    // Giới hạn số lượng ký tự tối đa là 10 và chỉ cho phép nhập số
-    if (/^\d{0,10}$/.test(value)) {
-      newValues[index] = value;
-      newErrors[index] = value.trim() === '' 
-        ? 'Giá là bắt buộc' 
-        : (value.length > 10 ? 'Giá là bắt buộc' : '');
-    } else {
-      newErrors[index] = 'Tối đa 10 chữ số';
-    }
+  // Loại bỏ dấu . để xử lý giá trị số thực
+  const rawValue = value.replace(/\./g, '');
 
-    setPriceValues(newValues);
-    setPriceErrors(newErrors);
-  };
+  // Kiểm tra và chỉ cho phép số
+  if (/^\d{0,10}$/.test(rawValue)) {
+    // Định dạng lại giá trị
+    const formattedValue = formatPrice(rawValue);
 
+    newValues[index] = formattedValue;
+    newErrors[index] = rawValue.trim() === '' 
+      ? 'Giá là bắt buộc' 
+      : rawValue.length > 10
+      ? 'Tối đa 10 chữ số'
+      : '';
+  } else {
+    newErrors[index] = 'Tối đa 10 chữ số';
+  }
+
+  setPriceValues(newValues);
+  setPriceErrors(newErrors);
+};
+
+// Hàm định dạng giá trị theo phần nghìn
+const formatPrice = (value: string): string => {
+  return value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+};
   const validateAllPrices = () => {
     const errors = priceValues.map(value => 
       value.trim() === '' 
@@ -88,14 +100,17 @@ const CreateJobScreen = () => {
     setPriceErrors(errors);
     return errors.every(error => error === '');
   };
+  
 
   const getPetCenterServiceData = () => {
     return servicesRegisted.map((service: any, index: number) => ({
       id: service.petCenterServiceId,
-      price: parseInt(priceValues[index], 10) || 0,
+      price: parseInt(priceValues[index].replace(/\./g, ''), 10) || 0,
       type: service.name === 'Huấn luyện' || service.name === 'Trông thú' ? 1 : 0,
     }));
   };
+
+  
   const formik = useFormik({
     initialValues: {
       description: '',
@@ -132,14 +147,15 @@ const CreateJobScreen = () => {
     },
   });
 
-  const handleSubmit = () => {
- 
-    formik.handleSubmit();
 
-    
+  
+  const handleSubmit = () => {
+    formik.handleSubmit();
     const allPricesValid = validateAllPrices();
     const petCenterService = getPetCenterServiceData();
   
+    
+
     if (allPricesValid && Object.keys(formik.errors).length === 0) {
       apiCreateJob(petCenterId as never,
         formik.values.description,
@@ -176,7 +192,9 @@ const CreateJobScreen = () => {
     <View style={styles.priceItem}>
       <RowComponent>
       <TextComponent text={item.name} color={colors.dark} />
-      {item.name === 'Bác sĩ thú y' && <TextComponent text='/trường hợp' type='title'/>}
+      {(item.name === 'Bác sĩ thú y' || item.name === 'Dịch vụ spa') && (
+  <TextComponent text="/trường hợp" type="title" />
+)}
       </RowComponent>
       <View>
         <RowComponent>
@@ -198,6 +216,7 @@ const CreateJobScreen = () => {
   );
 
   return (
+    <>
     <Container
       isScroll
       title="Tạo công việc"
@@ -321,13 +340,15 @@ const CreateJobScreen = () => {
           </Text>
         )}
       </SectionComponent>
-      <ButtonComponent
+     
+    </Container>
+    <ButtonComponent
         text="Tạo"
         type="primary"
         styles={{ marginVertical: 12 }}
         onPress={handleSubmit}
       />
-    </Container>
+   </>
   );
 };
 

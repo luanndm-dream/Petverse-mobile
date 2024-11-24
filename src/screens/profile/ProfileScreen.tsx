@@ -16,7 +16,7 @@ import {
   SectionComponent,
   TextComponent,
 } from '@/components';
-import {useAppSelector} from '@/redux';
+import {useAppDispatch, useAppSelector} from '@/redux';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {apiChangeAvatar, apiGetUserByUserId} from '@/api/apiUser';
 import {colors} from '@/constants/colors';
@@ -32,6 +32,8 @@ import {priceFormater} from '@/utils/priceFormater';
 import {STACK_NAVIGATOR_SCREENS} from '@/constants/screens';
 import {managerId} from '@/constants/app';
 import useLoading from '@/hook/useLoading';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { logoutAuth } from '@/redux/reducers';
 
 interface ReportFeature {
   id: string;
@@ -53,7 +55,7 @@ const ProfileScreen = () => {
   const [isVerify, setIsVerify] = useState(false);
   const [refreshFlag, setRefreshFlag] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
-
+  const dispatch = useAppDispatch();
   useEffect(() => {
     apiGetPetByUserId(userId).then((res: any) => {
       if (res.statusCode === 200) {
@@ -144,6 +146,27 @@ const ProfileScreen = () => {
       toUserId: managerData.id,
     });
   };
+
+  const logoutConfimHandle = async () => {
+    try {
+      await AsyncStorage.removeItem('auth'); // Xóa thông tin người dùng trong AsyncStorage
+      dispatch(logoutAuth()); // Dispatch action để reset Redux state
+      Toast.show({
+        type: 'success',
+        text1: 'Đăng xuất thành công',
+        text2: 'Hẹn gặp lại bạn lần sau!',
+      });
+    } catch (error) {
+      console.error('Đăng xuất thất bại:', error);
+      Toast.show({
+        type: 'error',
+        text1: 'Đăng xuất thất bại',
+        text2: 'Đã xảy ra lỗi trong quá trình đăng xuất.',
+      });
+    }
+  };
+
+
   const onLogoutHanble = () => {
     setIsVisible(!isVisible);
   };
@@ -319,7 +342,7 @@ const ProfileScreen = () => {
         leftTitle="Huỷ"
         onClose={() => setIsVisible(false)}
         onLeftPress={() => setIsVisible(false)}
-        onRightPress={() => {}}
+        onRightPress={logoutConfimHandle}
         rightTitle="Xác nhận"
         title="Đăng xuất"
       />

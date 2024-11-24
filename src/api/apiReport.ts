@@ -32,3 +32,18 @@ export async function apiCreateReport(
     },
   });
 }
+
+export async function apiGetMyReportById(id: string, roleName: string){
+  let url = 'Report'
+  const params = {
+    pageSize: 1000,
+    ...(roleName === 'Customer'? {userId: id} : {petCenterId: id})
+  }
+  return protectedAxios.get(url,{params})
+}
+
+export async function apiGetReportByReportId(reportId: number){
+  let url = `Report/${reportId}`
+ 
+  return protectedAxios.get(url)
+}

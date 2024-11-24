@@ -65,7 +65,7 @@ export async function apiGetMyAppointment(
   const url = 'Appointment';
   const params = {
     pageSize,
-    ...(role === 'customer' ? {userId: id} : {petCenterId: id}),
+    ...(role === 'Customer' ? {userId: id} : {petCenterId: id}),
   };
 
   return protectedAxios.get(url, {params});
@@ -84,7 +84,7 @@ export async function apiGetAppointmentByStatus(
     status,
     pageSize,
     pageIndex,
-    ...(role === 'customer' ? {userId: id} : {petCenterId: id}),
+    ...(role === 'Customer' ? {userId: id} : {petCenterId: id}),
   };
   return protectedAxios.get(url, {params});
 }

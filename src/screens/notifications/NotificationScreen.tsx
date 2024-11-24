@@ -20,6 +20,8 @@ import {colors} from '@/constants/colors';
 import moment from 'moment';
 import 'moment/locale/vi';
 import firestore from '@react-native-firebase/firestore';
+import { useNavigation } from '@react-navigation/native';
+import { STACK_NAVIGATOR_SCREENS } from '@/constants/screens';
 
 const NotificationItem = ({item, userId, onPress}: any) => {
   const fadeAnim = useRef(new Animated.Value(0.5)).current;
@@ -92,8 +94,9 @@ const NotificationItem = ({item, userId, onPress}: any) => {
 const NotificationScreen = () => {
   const roleName = useAppSelector(state => state.auth.roleName);
   const id = useAppSelector(state =>
-    roleName === 'customer' ? state.auth.userId : state.auth.petCenterId,
+    roleName === 'Customer' ? state.auth.userId : state.auth.petCenterId,
   );
+  const navigation = useNavigation<any>()
   const [notifications, setNotifications] = useState<any>([]);
   const [loading, setLoading] = useState(true);
 
@@ -153,6 +156,9 @@ const NotificationScreen = () => {
 
   const handleNotificationPress = (notification: any) => {
     markNotificationAsRead(notification, id as never);
+    navigation.navigate(STACK_NAVIGATOR_SCREENS.REPORTAPPLICATIONDETAIL,{
+      reportId: notification.reportId
+    })
   };
 
   const getUnreadCount = () => {

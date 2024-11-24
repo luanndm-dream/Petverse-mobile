@@ -214,7 +214,13 @@ const ChatDetailScreen = () => {
        style={{ transform: [{ rotate: '-45deg' }] }} />
     </TouchableOpacity>
   );
-
+  const getAvatar = (avatar: string | null) => {
+    if (avatar && avatar.trim() !== '') {
+      return {uri: avatar};
+    }
+    // Avatar mặc định từ mạng
+    return require('../../assets/images/DefaultAvatar.jpg')
+  };
   return (
     <SafeAreaView style={styles.safeArea}>
       <KeyboardAvoidingView
@@ -230,7 +236,7 @@ const ChatDetailScreen = () => {
                 size={32}
                 color={colors.dark}
               />
-              <Image source={{uri: avatar}} style={styles.avatar} />
+              <Image source={getAvatar(avatar)} style={styles.avatar} />
               <Text style={styles.title}>{name}</Text>
             </RowComponent>
           </TouchableOpacity>

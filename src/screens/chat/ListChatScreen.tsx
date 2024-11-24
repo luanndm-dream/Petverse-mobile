@@ -71,7 +71,7 @@ const ListChatScreen = () => {
                   (user: any) => user !== userId,
                 );
                 const userInfo = await fetchUserInfo(otherUserId);
-  
+
                 // Trong phần xử lý lastMessageData của useEffect
                 // Trong phần xử lý lastMessageData của useEffect
                 setChatData((prevChatData: any) => {
@@ -155,6 +155,7 @@ const ListChatScreen = () => {
     const lastMessageSentByMe =
       item.lastMessage && item.lastMessage.senderId === userId;
 
+
     return (
       <TouchableOpacity
         style={styles.chatItem}
@@ -169,16 +170,14 @@ const ListChatScreen = () => {
             toUserId: toUserId,
           });
         }}>
-        {item.avatar && (
-       <Image
-       source={
-         item.avatar && item.avatar !== null
-           ? {uri: item.avatar}
-           : require('../../assets/images/DefaultAvatar.jpg')
-       }
-       style={styles.avatar}
-     />
-        )}
+        <Image
+          source={
+            item.avatar
+              ? {uri: item.avatar}
+              : require('../../assets/images/DefaultAvatar.jpg')
+          }
+          style={styles.avatar}
+        />
         <View style={styles.chatContent}>
           <View style={styles.chatHeader}>
             <Text style={[styles.chatName, !item.isRead && styles.unreadText]}>
@@ -228,6 +227,11 @@ const ListChatScreen = () => {
         renderItem={renderChatItem}
         keyExtractor={item => item.id}
         contentContainerStyle={styles.chatList}
+        ListEmptyComponent={
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>Chưa có tin nhắn nào</Text>
+          </View>
+        }
       />
     </Container>
   );
@@ -309,5 +313,15 @@ const styles = StyleSheet.create({
     color: colors.primary, // hoặc màu khác để nổi bật
     fontWeight: '500',
     marginRight: 4,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 50,
+  },
+  emptyText: {
+    fontSize: 18,
+    color: colors.grey,
   },
 });

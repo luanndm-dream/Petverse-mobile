@@ -14,16 +14,16 @@ const AppNavigator = () => {
   useEffect(() => {
     checkLogin();
     console.log(auth.accessToken);
-    // const timeout = setTimeout(() => {
-    //   // setIsShowSplash(false);
-    // }, 1500);
+    const timeout = setTimeout(() => {
+      // setIsShowSplash(false);
+    }, 1500);
 
-    // return () => clearTimeout(timeout);
+    return () => clearTimeout(timeout);
   }, []);
 
   const checkLogin = async () => {
     const res = await getItem();
-    // res && dispatch(addAuth(JSON.parse(res)));
+    res && dispatch(addAuth(JSON.parse(res)));
   };
 
   return <>{auth.accessToken ? <MainNavigator /> : <AuthNavigator />}</>;

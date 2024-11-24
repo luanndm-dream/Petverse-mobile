@@ -57,10 +57,12 @@ const MyAppointmentScreen = () => {
     if (loading) return;
 
     setLoading(true);
+ 
+    console.log(roleName)
     try {
-      const id = roleName === 'customer' ? userId : petCenterId;
+      const id = roleName === 'Customer' ? userId : petCenterId;
       const response = await apiGetMyAppointment(
-        roleName,
+        roleName as never,
         PAGE_SIZE,
         id as never,
       );

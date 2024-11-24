@@ -13,7 +13,7 @@ export const profileFeatureData = [
     title: 'Báo cáo',
     backgroundColor: '#F3B580',
     iconName: "clock-outline",
-    screen: '',
+    screen: STACK_NAVIGATOR_SCREENS.REPORTAPPLICATIONSCREEN,
   },
   {
     id: 3,

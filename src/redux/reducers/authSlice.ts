@@ -2,30 +2,39 @@ import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {Platform} from 'react-native';
 
 interface AuthState {
-  accessToken: string;
-  refreshToken: string;
-  refreshTokenExpiryTime: string;
-  roleName: string;
+  accessToken?: string;
+  refreshToken?: string;
+  refreshTokenExpiryTime?: string;
+  roleName?: string;
   userId: string;
-  petCenterId?: string | null;
+  petCenterId?: string;
 }
 //thông tin user14
+// const initialState: AuthState = {
+//   accessToken:
+//     Platform.OS === 'android'
+//       ? 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjZiYWI0YmYyLTI0YzUtNGRlZS1hMmM1LTA4ZGNmN2ZmOTRiMSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6IjE2QGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6InBldGNlbnRlciIsImV4cCI6MTc2Mzg5NzYyOSwiaXNzIjoicGV0dmVyc2UtYXV0aC1hcGkiLCJhdWQiOiJwZXR2ZXJzZS1jbGllbnQifQ.PxUbY7hCntYf0mGfrowOQCq05CeaS8RftjuGPiIEKDc'
+//       : 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6Ijc4MmFhMzg3LTllZmMtNGEzNy05YThkLTA4ZGQwMDljZGVhMiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6IjIwQGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6ImN1c3RvbWVyIiwiZXhwIjoxNzYzOTAyNDM1LCJpc3MiOiJwZXR2ZXJzZS1hdXRoLWFwaSIsImF1ZCI6InBldHZlcnNlLWNsaWVudCJ9.0KAiL9OVBPXt2cHk2vVrWnyyT_PBtgstykCUNMzjwK0',
+//   refreshToken: '',
+//   refreshTokenExpiryTime: '',
+//   roleName: Platform.OS === 'android' ? 'petCenter' : 'Customer',
+//   userId:
+//     Platform.OS === 'android'
+//       ? '6bab4bf2-24c5-4dee-a2c5-08dcf7ff94b1'
+//       : '782aa387-9efc-4a37-9a8d-08dd009cdea2',
+//   petCenterId:
+//     Platform.OS === 'android'
+//       ? 'd4009399-360a-4b29-0c05-08dcf7f9ae4e'
+//       : undefined,
+// };
+
 const initialState: AuthState = {
-  accessToken:
-    Platform.OS === 'android'
-      ? 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjZiYWI0YmYyLTI0YzUtNGRlZS1hMmM1LTA4ZGNmN2ZmOTRiMSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6IjE2QGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6InBldGNlbnRlciIsImV4cCI6MTc2Mzg5NzYyOSwiaXNzIjoicGV0dmVyc2UtYXV0aC1hcGkiLCJhdWQiOiJwZXR2ZXJzZS1jbGllbnQifQ.PxUbY7hCntYf0mGfrowOQCq05CeaS8RftjuGPiIEKDc'
-      : 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6Ijc4MmFhMzg3LTllZmMtNGEzNy05YThkLTA4ZGQwMDljZGVhMiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6IjIwQGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6ImN1c3RvbWVyIiwiZXhwIjoxNzYzOTAyNDM1LCJpc3MiOiJwZXR2ZXJzZS1hdXRoLWFwaSIsImF1ZCI6InBldHZlcnNlLWNsaWVudCJ9.0KAiL9OVBPXt2cHk2vVrWnyyT_PBtgstykCUNMzjwK0',
-  refreshToken: '',
-  refreshTokenExpiryTime: '',
-  roleName: Platform.OS === 'android' ? 'petCenter' : 'customer',
-  userId:
-    Platform.OS === 'android'
-      ? '6bab4bf2-24c5-4dee-a2c5-08dcf7ff94b1'
-      : '782aa387-9efc-4a37-9a8d-08dd009cdea2',
-  petCenterId:
-    Platform.OS === 'android'
-      ? 'd4009399-360a-4b29-0c05-08dcf7f9ae4e'
-      : undefined,
+  accessToken: undefined,
+  refreshToken: undefined,
+  refreshTokenExpiryTime: undefined,
+  roleName: undefined,
+  userId: undefined || '',
+  petCenterId: undefined,
 };
 
 const authSlice = createSlice({
@@ -44,10 +53,18 @@ const authSlice = createSlice({
           ? action.payload.petCenterId
           : state.petCenterId;
     },
+    logoutAuth: (state) => {
+      state.accessToken = undefined;
+      state.refreshToken = undefined;
+      state.refreshTokenExpiryTime = undefined;
+      state.roleName = undefined;
+      state.userId = '';
+      state.petCenterId = undefined;
+    },
   },
 });
 
 // Xuất khẩu reducer và actions
 const {reducer, actions} = authSlice;
-export const {addAuth} = actions;
+export const {addAuth, logoutAuth} = actions;
 export default reducer;

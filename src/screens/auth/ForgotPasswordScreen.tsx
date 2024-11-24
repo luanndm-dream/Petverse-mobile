@@ -23,6 +23,8 @@ const ForgotPasswordScreen = () => {
   const initialValues = {
     email: '',
     newPassword: '',
+    confirmPassword: '', // Thêm confirmPassword
+
   };
   const validationSchema = Yup.object().shape({
     email: Yup.string()
@@ -31,6 +33,9 @@ const ForgotPasswordScreen = () => {
     newPassword: Yup.string()
       .min(6, 'Mật khẩu mới không hợp lệ')
       .required('Mật khẩu mới là bắt buộc'),
+      confirmPassword: Yup.string()
+      .oneOf([Yup.ref('newPassword')], 'Mật khẩu xác nhận không khớp')
+      .required('Mật khẩu xác nhận là bắt buộc'),
   });
 
   const forgotPasswordHandle = (email: string, newPassword: string) => {
@@ -64,7 +69,7 @@ const ForgotPasswordScreen = () => {
     <Container
       left={
         <View
-          style={{padding: 8, backgroundColor: colors.white, borderRadius: 8}}>
+          style={{ borderRadius: 8}}>
           <Entypo name="arrow-left" size={30} color={colors.grey} />
         </View>
       }
@@ -118,6 +123,20 @@ const ForgotPasswordScreen = () => {
               />
               {errors.newPassword && touched.newPassword && (
                 <Text style={styles.errorText}>{errors.newPassword}</Text>
+              )}
+                 <TextComponent
+                text="Xác nhận mật khẩu mới"
+                styles={{marginTop: 10}}
+              />
+              <InputComponent
+                value={values.confirmPassword}
+                onChange={handleChange('confirmPassword')}
+                onBlur={handleBlur('confirmPassword')}
+                placeholder="Xác nhận mật khẩu mới"
+                isPassword={true}
+              />
+              {errors.confirmPassword && touched.confirmPassword && (
+                <Text style={styles.errorText}>{errors.confirmPassword}</Text>
               )}
             </SectionComponent>
             <ButtonComponent

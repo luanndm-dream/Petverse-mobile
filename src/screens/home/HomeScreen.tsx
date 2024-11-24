@@ -26,16 +26,19 @@ import {useCustomNavigation} from '@/utils/navigation';
 import {PERMISSIONS, RESULTS, check, request} from 'react-native-permissions';
 import {STACK_NAVIGATOR_SCREENS} from '@/constants/screens';
 import {apiGetUserByUserId} from '@/api/apiUser';
-import {useAppSelector} from '@/redux';
+import {useAppDispatch, useAppSelector} from '@/redux';
 import useLoading from '@/hook/useLoading';
 import {apigetRole} from '@/api/apiRole';
 import {WorkProfileIcon, WorkTableIcon} from '@/assets/svgs';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
+import { addAuth } from '@/redux/reducers';
 // đảm bảo import icon đúng
 
 const HomeScreen = () => {
   const {goBack, navigate} = useCustomNavigation();
+  const dispatch = useAppDispatch();
+
   const navigation = useNavigation<any>();
   const {hideLoading, showLoading} = useLoading();
   const userId = useAppSelector(state => state.auth.userId);
@@ -43,8 +46,6 @@ const HomeScreen = () => {
   const [roles, setRoles] = useState([]);
   const [homeFeatureData, setHomeFeatureData] = useState(initialFeatureData);
   const [unreadCount, setUnreadCount] = useState(0);
-
-    console.log(unreadCount)
   const getPreviousMonth = () => {
     const now = new Date();
     const previousMonth = now.getMonth(); 
@@ -126,7 +127,7 @@ const HomeScreen = () => {
             console.log('Quyền truy cập bị từ chối');
           }
         }
-      } catch (error) {
+      } catch (error) {  
         console.error('Lỗi khi yêu cầu quyền camera: ', error);
       }
     };
@@ -141,7 +142,7 @@ const HomeScreen = () => {
         const userResponse: any = await apiGetUserByUserId(userId);
         if (userResponse.statusCode === 200) {
           setUserData(userResponse.data);
-
+          dispatch(addAuth(userResponse.data));
           // Lấy danh sách roles
           const roleResponse: any = await apigetRole();
           if (roleResponse.statusCode === 200) {
@@ -157,14 +158,14 @@ const HomeScreen = () => {
 
             const workFeature = {
               id: 5,
-              name: 'Làm việc',
+              name: 'Bàn làm việc Center',
               svg: WorkTableIcon,
               screen: STACK_NAVIGATOR_SCREENS.WORKPROFILESCREEN,
             };
 
             setHomeFeatureData(prevData => {
               const hasWorkFeature = prevData.some(
-                feature => feature.name === 'Làm việc',
+                feature => feature.name === 'Bàn làm việc Center',
               );
 
               if (isPetCenter && !hasWorkFeature) {
@@ -172,7 +173,7 @@ const HomeScreen = () => {
               }
 
               if (!isPetCenter && hasWorkFeature) {
-                return prevData.filter(feature => feature.name !== 'Làm việc');
+                return prevData.filter(feature => feature.name !== 'Bàn làm việc Center');
               }
 
               return prevData;
@@ -233,6 +234,11 @@ const HomeScreen = () => {
               backgroundColor={colors.primary}
               onPress={() => navigate(STACK_NAVIGATOR_SCREENS.LISTCHATSCREEN)}
             />
+             {unreadCount > 0 && (
+    <View style={styles.badge}>
+      <Text style={styles.badgeText}>{unreadCount}</Text>
+    </View>
+  )}
           </RowComponent>
           <ImageBackground
             source={require('../../assets/images/Banner.png')}
@@ -321,5 +327,21 @@ const styles = StyleSheet.create({
   },
   serviceItem: {
     marginBottom: 12,
+  },
+  badge: {
+    position: 'absolute',
+    top: 5,
+    right: 5,
+    backgroundColor: 'red',
+    borderRadius: 8,
+    minWidth: 16,
+    height: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  badgeText: {
+    color: 'white',
+    fontSize: 10,
+    fontWeight: 'bold',
   },
 });
