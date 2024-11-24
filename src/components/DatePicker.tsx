@@ -1,5 +1,5 @@
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import moment from 'moment';
 import {Modalize} from 'react-native-modalize';
 import ButtonComponent from './ButtonComponent';
@@ -12,10 +12,13 @@ interface Props {
   onConfirm: (val: string) => void;
   onCancel: () => void;
   isVisible?: boolean;
+  maxDateNow?: boolean;
 }
+
 const DatePicker = (props: Props) => {
-  const {onConfirm, value, defaultValue, isVisible, onCancel} = props;
+  const {onConfirm, value, defaultValue, isVisible, onCancel, maxDateNow} = props;
   const modalizeRef = useRef<Modalize>();
+  const today = moment();
 
   useEffect(() => {
     if (isVisible) {
@@ -43,9 +46,14 @@ const DatePicker = (props: Props) => {
     return data;
   };
 
-  const days = () => {
+  const getDaysInMonth = (yearVal: string, monthVal: string) => {
+    return moment(`${yearVal}-${monthVal}`, 'YYYY-MM').daysInMonth();
+  };
+
+  const generateDays = (yearVal: string, monthVal: string) => {
+    const maxDays = getDaysInMonth(yearVal, monthVal);
     let data = [];
-    for (let i = 1; i <= 31; i++) {
+    for (let i = 1; i <= maxDays; i++) {
       const formattedDay = i < 10 ? `0${i}` : i.toString();
       data.push({
         label: formattedDay,
@@ -57,7 +65,11 @@ const DatePicker = (props: Props) => {
 
   const years = () => {
     let data = [];
-    for (let i = 1900; i < 2100; i++) {
+    const currentYear = moment().year();
+    const startYear = 1900;
+    const endYear = maxDateNow ? currentYear : 2100;
+    
+    for (let i = startYear; i <= endYear; i++) {
       data.push({
         label: i.toString(),
         value: i.toString(),
@@ -72,12 +84,17 @@ const DatePicker = (props: Props) => {
   
   const defaultDate = () => {
     if (value && moment(value).isValid()) {
-      console.log(' value is Valid', value);
+      if (maxDateNow && moment(value).isAfter(today)) {
+        return today.toDate();
+      }
       return value;
-    }else{
-      // console.log('value input invalid')
     }
-    if (defaultValue && moment(defaultValue).isValid()) return defaultValue;
+    if (defaultValue && moment(defaultValue).isValid()) {
+      if (maxDateNow && moment(defaultValue).isAfter(today)) {
+        return today.toDate();
+      }
+      return defaultValue;
+    }
     return new Date();
   };
 
@@ -87,33 +104,84 @@ const DatePicker = (props: Props) => {
   let day = useRef(moment(date).format('DD'));
   let year = useRef(moment(date).format('YYYY'));
 
+  // State để quản lý danh sách ngày
+  const [daysList, setDaysList] = useState(() => 
+    generateDays(year.current, month.current)
+  );
+
   const monthIndex = months().findIndex(e => e.value === month.current);
-  const dayIndex = days().findIndex(e => e.value === day.current);
   const yearIndex = years().findIndex(e => e.value === year.current);
+  const dayIndex = Math.min(
+    daysList.findIndex(e => e.value === day.current),
+    daysList.length - 1
+  );
 
   const checkDate = () => {
-    const dayInMonths = moment(
-      `${year.current}-${month.current}`,
-      'YYYY-MM',
-    ).daysInMonth();
-    if (Number(day.current) > dayInMonths) {
-      dayRef.current?.scrollToIndex({
-        animated: false,
-        index: dayInMonths - 1,
-      });
+    if (maxDateNow) {
+      const selectedDate = moment(`${year.current}-${month.current}-${day.current}`, 'YYYY-MM-DD');
+      if (selectedDate.isAfter(today)) {
+        year.current = today.format('YYYY');
+        month.current = today.format('MM');
+        day.current = today.format('DD');
+        
+        yearRef.current?.scrollToIndex({
+          animated: true,
+          index: years().findIndex(e => e.value === year.current),
+        });
+        monthRef.current?.scrollToIndex({
+          animated: true,
+          index: months().findIndex(e => e.value === month.current),
+        });
+        
+        const newDays = generateDays(year.current, month.current);
+        setDaysList(newDays);
+        
+        setTimeout(() => {
+          dayRef.current?.scrollToIndex({
+            animated: true,
+            index: newDays.findIndex(e => e.value === day.current),
+          });
+        }, 0);
+        return;
+      }
     }
+
+    const maxDays = getDaysInMonth(year.current, month.current);
+    const currentDayNum = parseInt(day.current);
+    
+    if (currentDayNum > maxDays) {
+      day.current = maxDays.toString().padStart(2, '0');
+      const newDays = generateDays(year.current, month.current);
+      setDaysList(newDays);
+      
+      setTimeout(() => {
+        dayRef.current?.scrollToIndex({
+          animated: true,
+          index: newDays.findIndex(e => e.value === day.current),
+        });
+      }, 0);
+    }
+  };
+
+  const updateDaysList = () => {
+    const newDays = generateDays(year.current, month.current);
+    setDaysList(newDays);
   };
 
   const onMonthChange = (value: string, index?: number) => {
     month.current = value.toString();
+    updateDaysList();
     checkDate();
   };
+  
   const onDayChange = (value: string, index?: number) => {
     day.current = value.toString();
     checkDate();
   };
+  
   const onYearChange = (value: string, index?: number) => {
     year.current = value.toString();
+    updateDaysList();
     checkDate();
   };
 
@@ -123,83 +191,57 @@ const DatePicker = (props: Props) => {
       onClose={() => {
         onCancel?.();
       }}
-      adjustToContentHeight
-
-      >
-         <ScrollView scrollEnabled={false}>
-      <View
-        style={{
+      adjustToContentHeight>
+      <ScrollView scrollEnabled={false}>
+        <View style={{
           backgroundColor: 'white',
           bottom: 0,
-          //   flex: 1,
-          //   position: 'absolute',
           width: '100%',
           borderRadius: 10,
         }}>
-        <View
-          style={{
+          <View style={{
             flexDirection: 'row',
             justifyContent: 'space-between',
             marginHorizontal: 35,
             paddingTop: 10,
           }}>
-          <Text style={styles.title}>Ngày</Text>
-          <Text style={styles.title}>Tháng</Text>
-          <Text style={styles.title}>Năm</Text>
-        </View>
+            <Text style={styles.title}>Ngày</Text>
+            <Text style={styles.title}>Tháng</Text>
+            <Text style={styles.title}>Năm</Text>
+          </View>
 
-        <View style={styles.contentText}>
-          <WheelPicker
-            ref={dayRef}
-            data={days()}
-            index={dayIndex}
-            onChange={onDayChange}
-            // onScrollBeginDrag={() => {
-            //   onBeginDrag("day");
-            // }}
-            // onScrollEndDrag={() => {
-            //   onEndDrag("day");
-            // }}
-          />
-          <WheelPicker
-            ref={monthRef}
-            data={months()}
-            index={monthIndex}
-            onChange={onMonthChange}
-            // onScrollBeginDrag={() => {
-            //   onBeginDrag("month");
-            // }}
-            // onScrollEndDrag={() => {
-            //   onEndDrag("month");
-            // }}
-          />
-
-          <WheelPicker
-            ref={yearRef}
-            data={years()}
-            index={yearIndex}
-            onChange={onYearChange}
-            // onScrollBeginDrag={() => {
-            //   onBeginDrag("year");
-            // }}
-            // onScrollEndDrag={() => {
-            //   onEndDrag("year");
-            // }}
-          />
+          <View style={styles.contentText}>
+            <WheelPicker
+              ref={dayRef}
+              data={daysList}
+              index={dayIndex}
+              onChange={onDayChange}
+            />
+            <WheelPicker
+              ref={monthRef}
+              data={months()}
+              index={monthIndex}
+              onChange={onMonthChange}
+            />
+            <WheelPicker
+              ref={yearRef}
+              data={years()}
+              index={yearIndex}
+              onChange={onYearChange}
+            />
+          </View>
+          <View style={{paddingHorizontal: 13, paddingVertical: 10}}>
+            <ButtonComponent
+              text="Chọn"
+              type="primary"
+              onPress={() => {
+                const dateOutput = `${day.current}/${month.current}/${year.current}`;
+                onConfirm?.(dateOutput);
+                modalizeRef.current?.close();
+              }}
+            />
+          </View>
         </View>
-        <View style={{paddingHorizontal: 13, paddingVertical: 10}}>
-          <ButtonComponent
-            text="Chọn"
-            type="primary"
-            onPress={() => {
-              const dateOutput = `${day.current}/${month.current}/${year.current}`;
-              onConfirm?.(dateOutput);
-              modalizeRef.current?.close();
-            }}
-          />
-        </View>
-        
-      </View>
       </ScrollView>
     </Modalize>
   );

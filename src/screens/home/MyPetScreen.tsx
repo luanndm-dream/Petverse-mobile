@@ -71,7 +71,9 @@ const MyPetScreen = () => {
               console.log('Load pet fail');
             }
           })
-          .finally(() => {});
+          .finally(() => {
+            hideLoading()
+          });
       };
       getMyPets();
     }, [userId]),
@@ -138,6 +140,15 @@ const MyPetScreen = () => {
         data={pets}
         keyExtractor={(item: any) => item.id.toString()}
         renderItem={({item}) => renderPetItem(item)}
+        ListEmptyComponent={
+          <TextComponent
+            text="Bạn chưa có thú cưng nào, hãy thêm thú cưng mới!"
+            color={colors.grey}
+            size={16}
+            type="title"
+            styles={styles.emptyText}
+          />
+        }
       />
     </Container>
   );
@@ -199,5 +210,12 @@ const styles = StyleSheet.create({
     textShadowOffset: {width: 0, height: 1},
     textShadowRadius: 3,
     // backgroundColor: colors.primary
-  }
+  },
+  emptyText: {
+    flex: 1,
+    textAlign: 'center',
+    marginTop: 16,
+    color: colors.grey,
+  },
+
 });

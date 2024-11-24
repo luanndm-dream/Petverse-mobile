@@ -478,6 +478,7 @@ const AddPetScreen = () => {
         onConfirm={val => ageHandle(val)}
         isVisible={isVisibleModalAge}
         onCancel={() => setIsVisibleModalAge(false)}
+        maxDateNow={true}
       />
     </>
   );
