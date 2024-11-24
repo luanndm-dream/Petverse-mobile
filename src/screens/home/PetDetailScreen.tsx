@@ -58,7 +58,7 @@ const PetDetailScreen = () => {
       description: Yup.string().required('Giới thiệu không được bỏ trống'),
     }),
     onSubmit: vals => {
-      showLoading()
+      showLoading();
       apiUpdatePet(
         petId,
         vals.name,
@@ -67,8 +67,8 @@ const PetDetailScreen = () => {
         vals.sterilized,
       ).then((res: any) => {
         if (res.statusCode === 200) {
-          console.log(res)
-          setIsEdit(false)
+          console.log(res);
+          setIsEdit(false);
           hideLoading();
           Toast.show({
             type: 'success',
@@ -138,6 +138,7 @@ const PetDetailScreen = () => {
   const onPressIcon = (type: string) => {
     if (type === 'album') {
       navigation.navigate(STACK_NAVIGATOR_SCREENS.PETALBUMSCREEN, {
+        petId: petData.id,
         petName: petData.name,
         petPhotos: petData.petPhotos,
       });
@@ -253,7 +254,9 @@ const PetDetailScreen = () => {
             color={colors.dark}
             onPress={() => navigation.goBack()}
           />
-        }>
+        }
+       
+        >
         <ImageBackground
           source={require('../../assets/images/BannerAvatarPet.png')}
           style={styles.backgroundImage}>

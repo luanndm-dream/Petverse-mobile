@@ -40,6 +40,7 @@ import AppointmentStatusScreen from '@/screens/profile/AppointmentStatusScreen';
 import PlaceForPetScreen from '@/screens/home/PlaceForPetScreen';
 import ReportApplicationScreen from '@/screens/profile/ReportApplicationScreen';
 import ReportApplicationDetail from '@/screens/profile/ReportApplicationDetail';
+import EditPetAlbum from '@/screens/home/EditPetAlbum';
 
 const MainNavigator = () => {
   const Stack = createNativeStackNavigator();
@@ -87,6 +88,7 @@ const MainNavigator = () => {
           <Stack.Screen name='PlaceForPetScreen' component={PlaceForPetScreen}/> 
           <Stack.Screen name='ReportApplicationScreen' component={ReportApplicationScreen}/> 
           <Stack.Screen name='ReportApplicationDetail' component={ReportApplicationDetail}/> 
+          <Stack.Screen name='EditPetAlbum' component={EditPetAlbum}/>
           <Stack.Screen name="TestScreen" component={TestScreen}/>
         </Stack.Navigator>
   );

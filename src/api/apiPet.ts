@@ -90,3 +90,39 @@ export async function apiUpdatePet(
     },
   });
 }
+
+export async function apiUpdatePetAlbum(
+  petId: string,
+  PetPhotos?: any[],
+  PetVideos?: any[],
+  PetPhotoToDeleteId? : any[]
+) {
+  let url = `Pet/${petId}`;
+  const formData = new FormData();
+  formData.append('Id', petId);
+
+
+  if (PetPhotos) {
+    PetPhotos.forEach(photo => {
+      formData.append('PetPhotos', photo);
+    });
+  }
+  if (PetVideos) {
+    PetVideos.forEach(video => {
+      formData.append('PetVideos', video);
+    });
+  }
+  if (PetPhotoToDeleteId) {
+    PetPhotoToDeleteId.forEach(id => {
+      formData.append('PetPhotosToDelete', id);
+    });
+  }
+
+
+
+  return protectedAxios.put(url, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+}
