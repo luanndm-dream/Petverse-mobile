@@ -35,3 +35,9 @@ export async function apiPostApplication(
     },
   });
 }
+
+export async function apiGetMyApplicationByUserId(userId: string) {
+  let url = `Application/Status/${userId}`
+
+  return protectedAxios(url)
+}

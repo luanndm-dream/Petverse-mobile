@@ -69,18 +69,18 @@ const TrackingScreen = () => {
               })),
             }),
           );
-
+  
           setAppointmentData({...res.data, schedules: processedSchedules});
-
+  
           setSelectedDateIndex(0); // Auto-select first date
           if (
             processedSchedules[0] &&
             processedSchedules[0].records.length > 0
           ) {
+            const firstRecord = processedSchedules[0].records[0];
             setSelectedRecordIndex(0);
-            setSelectedTrackings(
-              processedSchedules[0].records[0].trackings || [],
-            );
+            setSelectedTrackings(firstRecord.trackings || []);
+            setSelectedScheduleId(firstRecord.scheduleId); // Gán scheduleId mặc định
           }
         } else {
           console.log('get appointment detail failed', res);

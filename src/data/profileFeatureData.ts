@@ -1,3 +1,4 @@
+import { colors } from "@/constants/colors";
 import { STACK_NAVIGATOR_SCREENS } from "@/constants/screens";
 
 export const profileFeatureData = [
@@ -31,13 +32,28 @@ export const profileFeatureData = [
   },
   {
     id: 5,
-    title: 'Chính sách & bảo mật',
+    title: 'Điều khoản & điều kiện',
     backgroundColor: '#ffda00',
-    iconName: "book-open",
+    iconName: "security",
     screen: STACK_NAVIGATOR_SCREENS.POLICYSCREEN,
   },
   {
     id: 6,
+    title: 'Chỉnh sách & bảo mật',
+    backgroundColor: colors.green,
+    iconName: "book-open",
+    screen: STACK_NAVIGATOR_SCREENS.POLICYSCREEN,
+  },
+ 
+  {
+    id: 7,
+    title: 'Đổi mật khẩu',
+    backgroundColor: colors.orange,
+    iconName: "lock-reset",
+    screen: STACK_NAVIGATOR_SCREENS.ABOUTUSSCREEN,
+  },
+  {
+    id: 8,
     title: 'Về chúng tôi',
     backgroundColor: '#3ea2f5',
     iconName: "information",

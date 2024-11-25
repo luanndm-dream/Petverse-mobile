@@ -15,7 +15,8 @@ export async function apiGetPetCenterByPetCenterId(petCenterId: string) {
 export async function apiGetPetCenterByPetServiceId(petServiceId: string) {
   const url = `PetCenter`;
   const params = {
-    PetServiceId: petServiceId
+    PetServiceId: petServiceId,
+    pageSize: 1000
   }
   return protectedAxios.get(url, {params});
 }

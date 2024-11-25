@@ -37,6 +37,7 @@ import {useAppSelector} from '@/redux';
 import {apiPostApplication} from '@/api/apiApplication';
 import Toast from 'react-native-toast-message';
 import { mediaUpload } from '@/utils/mediaUpload';
+import { STACK_NAVIGATOR_SCREENS } from '@/constants/screens';
 
 const EmployeeRegistrationScreen = () => {
   const [isVisibleImage, setIsVisibleImage] = useState(false);
@@ -147,6 +148,12 @@ const EmployeeRegistrationScreen = () => {
     }
     return;
   };
+
+
+  const onMyApplicationHandle = () => {
+    navigate(STACK_NAVIGATOR_SCREENS.MYAPPLICATIONSCREEN)
+  }
+
   const removeImage = (index: any) => {
     setSelectedCertifications(prev => prev.filter((_, i) => i !== index));
   };
@@ -249,7 +256,16 @@ const EmployeeRegistrationScreen = () => {
           color={colors.dark}
           onPress={goBack}
         />
-      }>
+      }
+      right={
+        <IconButtonComponent
+          name="file-clock"
+          size={30}
+          color={colors.grey}
+          onPress={onMyApplicationHandle}
+        />
+      }
+      >
       <SectionComponent>
         <TextComponent text="Hình ảnh" type="title" />
         <RowComponent justify="flex-start" styles={{marginBottom: 16}}>
@@ -306,6 +322,7 @@ const EmployeeRegistrationScreen = () => {
           onBlur={formik.handleBlur('phoneNumber')}
           value={formik.values.phoneNumber}
           placeholder="Số điện thoại"
+          type='numeric'
         />
         {formik.errors.phoneNumber && formik.touched.phoneNumber && (
           <Text style={styles.errorText}>{formik.errors.phoneNumber}</Text>

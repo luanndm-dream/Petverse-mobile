@@ -57,16 +57,12 @@ const ProfileScreen = () => {
   const [showTooltip, setShowTooltip] = useState(false);
   const dispatch = useAppDispatch();
   useEffect(() => {
-    apiGetPetByUserId(userId).then((res: any) => {
-      if (res.statusCode === 200) {
-        setMyPetData(res?.data?.items);
-      }
-    });
-    apiGetUserByUserId(managerId).then((res: any) => {
-      if (res.statusCode === 200) {
-        setManagerData(res?.data);
-      }
-    });
+   
+    // apiGetUserByUserId(managerId).then((res: any) => {
+    //   if (res.statusCode === 200) {
+    //     setManagerData(res?.data);
+    //   }
+    // });
     if (petCenterId) {
       apiGetPetCenterByPetCenterId(petCenterId).then((res: any) => {
         if (res.statusCode === 200) {
@@ -78,16 +74,39 @@ const ProfileScreen = () => {
 
   useFocusEffect(
     useCallback(() => {
-      apiGetUserByUserId(userId).then((res: any) => {
-        if (res.statusCode === 200) {
-          setUserData(res.data);
-          setIsVerify(
-            !!res.data.avatar && !!res.data.address && !!res.data.phoneNumber,
-          );
-        } else {
-          console.log('lay du lieu user that bại');
+      // Hàm fetch data
+      const fetchData = async () => {
+        try {
+          // Chạy song song 2 API
+          const [petResponse, userResponse] :any = await Promise.all([
+            apiGetPetByUserId(userId),
+            apiGetUserByUserId(userId),
+          ]);
+  
+          // Xử lý kết quả trả về từ API pet
+          if (petResponse.statusCode === 200) {
+            setMyPetData(petResponse?.data?.items);
+          } else {
+            console.error('Lấy dữ liệu pet thất bại');
+          }
+  
+          // Xử lý kết quả trả về từ API user
+          if (userResponse.statusCode === 200) {
+            const userData = userResponse.data;
+            setUserData(userData);
+            setIsVerify(
+              !!userData.avatar && !!userData.address && !!userData.phoneNumber,
+            );
+          } else {
+            console.error('Lấy dữ liệu user thất bại');
+          }
+        } catch (error) {
+          console.error('Lỗi khi fetch data:', error);
         }
-      });
+      };
+  
+      // Gọi fetchData
+      fetchData();
     }, [userId, refreshFlag]),
   );
   const requestGalleryPermission = async () => {

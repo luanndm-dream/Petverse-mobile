@@ -22,7 +22,13 @@ const EditServiceScreen = () => {
   const {showLoading, hideLoading} = useLoading();
   const route = useRoute<any>();
   const service = route?.params?.service;
-  console.log(service);
+
+  const formatVND = (value: string | number) => {
+    if (!value || isNaN(Number(value))) return ''; // Trả về chuỗi rỗng nếu không hợp lệ
+    return Number(value)
+      .toFixed(0)
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ','); // Thêm dấu phân cách hàng nghìn
+  };
   const formik = useFormik({
     initialValues: {
       price: service.price.toString(),
@@ -45,6 +51,7 @@ const EditServiceScreen = () => {
         formik.values.description,
         service.type,
       ).then((res: any) => {
+        showLoading()
         if (res.statusCode === 200) {
           hideLoading();
           Toast.show({
@@ -95,14 +102,24 @@ const EditServiceScreen = () => {
           )}
 
           <TextComponent
-            text={service.type === 0 ? 'Giá (theo giờ)' : 'Giá'}
+            text={service.type === 0 ? 'Giá (theo giờ)' : 'Giá (theo case)'}
             required
             type="title"
           />
           <InputComponent
             placeholder="Giá dịch vụ"
-            onChange={formik.handleChange('price')}
-            value={formik.values.price}
+            onChange={value => {
+              // Loại bỏ các ký tự không phải số
+              const numericValue = value.replace(/[^0-9]/g, '');
+              formik.setFieldValue(
+                'price',
+                numericValue ? Number(numericValue) : 0,
+              ); // Lưu giá trị thực (0 nếu trống)
+
+              // Cập nhật giá trị hiển thị
+              formik.handleChange('price')(numericValue);
+            }}
+            value={formik.values.price ? formatVND(formik.values.price) : ''} // Format giá trị hiển thị
             type="numeric"
             onBlur={formik.handleBlur('price')}
           />

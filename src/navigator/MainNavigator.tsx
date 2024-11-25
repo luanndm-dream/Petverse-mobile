@@ -41,6 +41,7 @@ import PlaceForPetScreen from '@/screens/home/PlaceForPetScreen';
 import ReportApplicationScreen from '@/screens/profile/ReportApplicationScreen';
 import ReportApplicationDetail from '@/screens/profile/ReportApplicationDetail';
 import EditPetAlbum from '@/screens/home/EditPetAlbum';
+import MyApplicationScreen from '@/screens/home/MyApplicationScreen';
 
 const MainNavigator = () => {
   const Stack = createNativeStackNavigator();
@@ -89,6 +90,7 @@ const MainNavigator = () => {
           <Stack.Screen name='ReportApplicationScreen' component={ReportApplicationScreen}/> 
           <Stack.Screen name='ReportApplicationDetail' component={ReportApplicationDetail}/> 
           <Stack.Screen name='EditPetAlbum' component={EditPetAlbum}/>
+          <Stack.Screen name='MyApplicationScreen' component={MyApplicationScreen}/>
           <Stack.Screen name="TestScreen" component={TestScreen}/>
         </Stack.Navigator>
   );

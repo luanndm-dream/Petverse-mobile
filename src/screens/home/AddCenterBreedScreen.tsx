@@ -28,10 +28,11 @@ const AddCenterBreedScreen = () => {
   const [spicies, setSpicies] = useState<SelectModel[]>([]);
   const petCenterId = useAppSelector(state => state.auth.petCenterId) as never;
 
-  const formatVND = (value: number | string) => {
+  const formatVND = (value: string | number) => {
+    if (!value || isNaN(Number(value))) return '0'; // Trả về '0' nếu không hợp lệ
     return Number(value)
       .toFixed(0)
-      .replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' VND';
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ','); // Thêm dấu phân cách hàng nghìn
   };
 
   useEffect(() => {
@@ -79,7 +80,7 @@ const AddCenterBreedScreen = () => {
     },
     validationSchema: validationSchema,
     onSubmit: val => {
-      showLoading()
+      showLoading();
       apiCreateCenterBreed(
         petCenterId,
         val.speciesId,
@@ -88,106 +89,116 @@ const AddCenterBreedScreen = () => {
         val.price,
         val.images,
       ).then((res: any) => {
-        if(res.statusCode === 200){
-            hideLoading();
-            Toast.show({
-              type: 'success',
-              text1: 'Tạo giống thành công',
-              text2: 'Vui lòng chờ quản lí xét duyệt giống!',
-            });
-            goBack();
-          } else {
-            hideLoading();
-            Toast.show({
-              type: 'error',
-              text1: 'Tạo giống thất bại',
-              text2: `Xảy ra lỗi ${res.message}`,
-            });
-            
+        if (res.statusCode === 200) {
+          hideLoading();
+          Toast.show({
+            type: 'success',
+            text1: 'Tạo giống thành công',
+            text2: 'Vui lòng chờ quản lí xét duyệt giống!',
+          });
+          goBack();
+        } else {
+          hideLoading();
+          Toast.show({
+            type: 'error',
+            text1: 'Tạo giống thất bại',
+            text2: `Xảy ra lỗi ${res.message}`,
+          });
         }
       });
     },
   });
   return (
     <>
-    <Container
-     isScroll
-      title="Thêm mới giống"
-      left={
-        <IconButtonComponent
-          name="chevron-left"
-          size={30}
-          color={colors.dark}
-          onPress={goBack}
-        />
-      }>
-      <SectionComponent styles={{flex: 1}}>
-        <TextComponent text="Loại giống" type="title" required />
-        <DropdownPicker
-          values={spicies}
-          onSelect={(selectedSpecies: string | string[]) => {
-            formik.setFieldValue('speciesId', selectedSpecies);
-          }}
-          placeholder="Chọn giống"
-        />
-        {formik.errors.speciesId  && (
-          <Text style={globalStyles.errorText}>{formik.errors.speciesId}</Text>
-        )}
-        <TextComponent text="Tên giống" type="title" required />
-        <InputComponent
-          onChange={formik.handleChange('name')}
-          value={formik.values.name}
-          onBlur={formik.handleBlur('name')}
-          placeholder="Nhập tên giống"
-        />
-        {formik.errors.name && formik.touched.name && (
-          <Text style={globalStyles.errorText}>{formik.errors.name}</Text>
-        )}
-        <TextComponent text="Mô tả giống" type="title" required />
-        <InputComponent
-          onChange={formik.handleChange('description')}
-          value={formik.values.description}
-          onBlur={formik.handleBlur('description')}
-          placeholder="Mô tả giống"
-          multiline
-          maxLength={300}
-          allowClear
-        />
-        {formik.errors.description && formik.touched.description && (
-          <Text style={globalStyles.errorText}>
-            {formik.errors.description}
-          </Text>
-        )}
+      <Container
+        isScroll
+        title="Thêm mới giống"
+        left={
+          <IconButtonComponent
+            name="chevron-left"
+            size={30}
+            color={colors.dark}
+            onPress={goBack}
+          />
+        }>
+        <SectionComponent styles={{flex: 1}}>
+          <TextComponent text="Loại giống" type="title" required />
+          <DropdownPicker
+            values={spicies}
+            onSelect={(selectedSpecies: string | string[]) => {
+              formik.setFieldValue('speciesId', selectedSpecies);
+            }}
+            placeholder="Chọn giống"
+          />
+          {formik.errors.speciesId && (
+            <Text style={globalStyles.errorText}>
+              {formik.errors.speciesId}
+            </Text>
+          )}
+          <TextComponent text="Tên giống" type="title" required />
+          <InputComponent
+            onChange={formik.handleChange('name')}
+            value={formik.values.name}
+            onBlur={formik.handleBlur('name')}
+            placeholder="Nhập tên giống"
+          />
+          {formik.errors.name && formik.touched.name && (
+            <Text style={globalStyles.errorText}>{formik.errors.name}</Text>
+          )}
+          <TextComponent text="Mô tả giống" type="title" required />
+          <InputComponent
+            onChange={formik.handleChange('description')}
+            value={formik.values.description}
+            onBlur={formik.handleBlur('description')}
+            placeholder="Mô tả giống"
+            multiline
+            maxLength={300}
+            allowClear
+          />
+          {formik.errors.description && formik.touched.description && (
+            <Text style={globalStyles.errorText}>
+              {formik.errors.description}
+            </Text>
+          )}
 
-        <TextComponent text="Giá" type="title" required />
-        <InputComponent
-          onChange={formik.handleChange('price')}
-          value={formik.values.price.toString()}
-          onBlur={formik.handleBlur('price')}
-          placeholder="Giá"
-          type="numeric"
-        />
-        {formik.errors.price && formik.touched.price && (
-          <Text style={globalStyles.errorText}>{formik.errors.price}</Text>
-        )}
-        <TextComponent text="Giấy chứng nhận" type="title" required />
-        <AddImageComponent
-          onSelected={(url: string | string[]) => {
-            formik.setFieldValue('images', Array.isArray(url) ? url : [url]);
-          }}
-        />
-        {formik.errors.images && formik.touched.images && (
-          <Text style={globalStyles.errorText}>{formik.errors.images}</Text>
-        )}
-      </SectionComponent>
-     
-    </Container>
-     <ButtonComponent
-       text="Thêm mới"
-       type="primary"
-       onPress={formik.handleSubmit}
-     />
-     </>
+          <TextComponent text="Giá" type="title" required />
+          <InputComponent
+            onChange={value => {
+              // Loại bỏ ký tự không phải số trước khi lưu
+              const numericValue = value.replace(/[^0-9]/g, '');
+              formik.setFieldValue(
+                'price',
+                numericValue ? Number(numericValue) : 0,
+              ); // Lưu giá trị thật (0 nếu trống)
+
+              // Format giá trị hiển thị
+              formik.handleChange('price')(numericValue);
+            }}
+            value={formik.values.price ? formatVND(formik.values.price) : ''} // Format giá trị nếu có, ngược lại để trống
+            onBlur={formik.handleBlur('price')}
+            placeholder="Giá"
+            type="numeric"
+          />
+          {formik.errors.price && formik.touched.price && (
+            <Text style={globalStyles.errorText}>{formik.errors.price}</Text>
+          )}
+          <TextComponent text="Giấy chứng nhận" type="title" required />
+          <AddImageComponent
+            onSelected={(url: string | string[]) => {
+              formik.setFieldValue('images', Array.isArray(url) ? url : [url]);
+            }}
+          />
+          {formik.errors.images && formik.touched.images && (
+            <Text style={globalStyles.errorText}>{formik.errors.images}</Text>
+          )}
+        </SectionComponent>
+      </Container>
+      <ButtonComponent
+        text="Thêm mới"
+        type="primary"
+        onPress={formik.handleSubmit}
+      />
+    </>
   );
 };
 
