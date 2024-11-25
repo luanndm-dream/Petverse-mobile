@@ -28,8 +28,9 @@ const PaymentScreen = () => {
   const {goBack, navigate} = useCustomNavigation();
   const {showLoading, hideLoading} = useLoading()
   const navigation = useNavigation<any>();
-  const [amount, setAmount] = useState('');
-  const [selectedAmount, setSelectedAmount] = useState(null);
+  const [amount, setAmount] = useState(''); // Giá trị gốc
+  const [formattedAmount, setFormattedAmount] = useState('');
+  const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
   const predefinedAmounts = [
     {value: 50000, label: '50.000₫'},
@@ -40,10 +41,22 @@ const PaymentScreen = () => {
     {value: 2000000, label: '2.000.000₫'},
   ];
 
-  const handleSelectAmount = (value: any) => {
+  const handleSelectAmount = (value: number) => {
     setSelectedAmount(value);
-    setAmount(value.toString());
+    setAmount(value.toString()); // Lưu giá trị gốc
+    setFormattedAmount(formatNumber(value)); // Lưu giá trị định dạng
   };
+
+
+  const handleInputChange = (input: string) => {
+    // Xóa ký tự không phải số và lưu giá trị gốc
+    const numericValue = input.replace(/\D/g, '');
+    setAmount(numericValue);
+
+    // Định dạng giá trị
+    setFormattedAmount(formatNumber(numericValue));
+  };
+
 
   const handleSelectPaymentMethod = (id: any) => {
     setSelectedPaymentMethod(id);
@@ -95,8 +108,8 @@ const PaymentScreen = () => {
             <View style={styles.inputContainer}>
               <TextInput
                 style={styles.input}
-                value={amount}
-                onChangeText={setAmount}
+                value={formattedAmount}
+                onChangeText={handleInputChange} 
                 keyboardType="numeric"
                 placeholder="Nhập số tiền"
                 placeholderTextColor={colors.grey}
@@ -200,7 +213,7 @@ const styles = StyleSheet.create({
   },
   currency: {
     fontSize: 16,
-    color: colors.dark,
+    color: colors.grey,
     fontWeight: '500',
   },
   amountGrid: {
