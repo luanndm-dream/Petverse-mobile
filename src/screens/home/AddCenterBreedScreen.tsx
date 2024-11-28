@@ -57,13 +57,15 @@ const AddCenterBreedScreen = () => {
       .min(1, 'Vui lòng chọn loại thú cưng hợp lệ'),
     name: Yup.string()
       .required('Vui lòng nhập tên')
-      .min(3, 'Tên phải có ít nhất 3 ký tự'),
+      .min(3, 'Tên phải có ít nhất 3 ký tự')
+      .max(30,'Tên tối đa 30 ký tự'),
     description: Yup.string()
       .required('Vui lòng nhập mô tả')
-      .max(300, 'Mô tả không được vượt quá 300 ký tự'),
+      .min(10,'Mô tả phải nhiều hơn 10 ký tự')
+      .max(200, 'Mô tả không được vượt quá 300 ký tự'),
     price: Yup.number()
       .required('Vui lòng nhập giá')
-      .min(1, 'Giá phải lớn hơn 0')
+      .min(1000, 'Giá phải lớn hơn 1000')
       .max(100000000, 'Giá phải nhỏ hơn 100 triệu'),
     images: Yup.array()
       .of(Yup.string().required('Hình ảnh không hợp lệ'))

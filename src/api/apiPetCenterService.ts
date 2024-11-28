@@ -1,22 +1,28 @@
 import {protectedAxios} from './apiConfiguration';
 
+export async function apiGetPetCenterServiceByPetServiceId(
+  petcenterServiceId: number,
+) {
+  let url = `PetCenterService/${petcenterServiceId}`;
+  return protectedAxios.get(url);
+}
+
 export async function apiUpdatePetCenterService(
   PetCenterServiceId: string,
-  Id: string,
   Price: number,
   Description: string,
   Type: number,
+  Schedule: any,
 ) {
   const url = `PetCenterService/${PetCenterServiceId}`;
-  const formData = new FormData();
-  formData.append('Id', Id);
-  formData.append('Price', Price),
-  formData.append('Description', Description),
-  formData.append('Type', Type);
 
-  return protectedAxios.put(url, formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
+  const sendData = {
+    id: PetCenterServiceId,
+    price: Price,
+    description: Description,
+    type: Type,
+    schedule: Schedule,
+  };
+
+  return protectedAxios.put(url, sendData);
 }

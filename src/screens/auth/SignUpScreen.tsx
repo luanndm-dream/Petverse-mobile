@@ -30,9 +30,11 @@ const SignUpScreen = () => {
   const validationSchema = Yup.object().shape({
     fullname: Yup.string()
       .min(3, 'Họ tên phải ít nhất 3 ký tự')
+      .max(50, 'Họ tên không được vượt quá 50 ký tự')
       .required('Họ tên là bắt buộc'),
     email: Yup.string()
       .email('Email không hợp lệ')
+      .max(50, 'Email không được vượt quá 50 ký tự')
       .required('Email là bắt buộc'),
     password: Yup.string()
       .min(6, 'Mật khẩu phải ít nhất 6 ký tự')

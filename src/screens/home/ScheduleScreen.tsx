@@ -5,6 +5,7 @@ import {
   FlatList,
   TouchableOpacity,
   Alert,
+  Keyboard,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {
@@ -35,12 +36,20 @@ const ScheduleScreen: React.FC = () => {
   const [description, setDescription] = useState<string>('');
   const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
 
+
+  useEffect(() => {
+    const existingData = route.params?.scheduleData;
+    if (existingData && existingData.length > 0 && timeSlots.length === 0) {
+      setTimeSlots(existingData); // Giữ lại dữ liệu đã có nếu có
+    }
+  }, [route.params]);
+
   const handleTimeConfirm = (time: string): void => {
     setSelectedTime(time);
     setIsTimePickerVisible(false);
   };
 
-  
+
 
   const handleAddTimeSlot = (): void => {
     if (!selectedTime) {
@@ -64,7 +73,7 @@ const ScheduleScreen: React.FC = () => {
   };
 
   const handleDeleteTimeSlot = (id: string): void => {
-    console.log('Deleting slot with id:', id); // Thêm log để debug
+    console.log('Before delete:', timeSlots); // Kiểm tra trước
     Alert.alert('Xác nhận xóa', 'Bạn có chắc chắn muốn xóa khung giờ này?', [
       {
         text: 'Hủy',
@@ -76,69 +85,67 @@ const ScheduleScreen: React.FC = () => {
         onPress: () => {
           setTimeSlots(prevSlots => {
             const newSlots = prevSlots.filter(slot => slot.id !== id);
-            console.log('New slots after deletion:', newSlots); // Thêm log để debug
+            console.log('After delete:', newSlots); // Kiểm tra sau
             return newSlots;
           });
         },
       },
     ]);
   };
+
   const handleGoBackWithData = (): void => {
     const onGoBack = route.params?.onGoBack;
-    if (onGoBack) {
-      onGoBack(timeSlots); // Gọi callback với dữ liệu timeSlots
+    if (typeof onGoBack === 'function') {
+      onGoBack(timeSlots); // Gửi dữ liệu qua callback
     }
     navigation.goBack();
   };
 
-  useEffect(() => {
-    const existingData = route.params?.scheduleData;
-    if (existingData && existingData.length > 0 && timeSlots.length === 0) {
-      setTimeSlots(existingData); // Giữ lại dữ liệu đã có nếu có
-    }
-  }, [route.params, timeSlots.length]);
-
-  const renderTimeSlot = ({item}: {item: TimeSlot}): React.ReactElement => (
-    <View style={styles.timeSlotItem}>
-      <RowComponent justify="space-between">
-        <View style={styles.timeContainer}>
-          <IconButtonComponent name="clock" size={20} color={colors.primary} />
+  const renderTimeSlot = ({item}: {item: TimeSlot}): React.ReactElement => {
+    console.log('Rendering slot:', item); // Thêm log để kiểm tra
+    return (
+      <View style={styles.timeSlotItem}>
+        <RowComponent justify="space-between">
+          <View style={styles.timeContainer}>
+            <IconButtonComponent name="clock" size={20} color={colors.primary} />
+            <TextComponent
+              text={item.time}
+              type="title"
+              styles={styles.timeText}
+            />
+          </View>
+  
+          <IconButtonComponent
+            name="trash-can"
+            size={20}
+            color={colors.red}
+            onPress={() => handleDeleteTimeSlot(item.id)}
+          />
+        </RowComponent>
+        <View style={styles.descriptionContainer}>
           <TextComponent
-            text={item.time}
-            type="title"
-            styles={styles.timeText}
+            text={item.description}
+            styles={styles.descriptionText}
           />
         </View>
-
-        <IconButtonComponent
-          name="trash-can"
-          size={20}
-          color={colors.red}
-          onPress={() => handleDeleteTimeSlot(item.id)}
-        />
-      </RowComponent>
-      <View style={styles.descriptionContainer}>
-        <TextComponent
-          text={item.description}
-          styles={styles.descriptionText}
-        />
       </View>
-    </View>
-  );
+    );
+  };
 
   return (
     <>
       <Container
+        
         title="Tạo lịch theo dõi"
         left={
           <IconButtonComponent
             name="chevron-left"
             size={30}
             color={colors.dark}
-              onPress={handleGoBackWithData}
+            onPress={handleGoBackWithData}
           />
         }>
-        <View style={styles.formContainer}>
+        <View style={styles.formContainer} onTouchStart={()=>Keyboard.dismiss()}>
           <View style={styles.inputSection}>
             <TextComponent
               text="Giờ theo dõi"
@@ -193,8 +200,9 @@ const ScheduleScreen: React.FC = () => {
           <View style={styles.listContainer}>
             <FlatList
               data={timeSlots}
-              keyExtractor={item => item.id}
+              keyExtractor={item => item.id} 
               renderItem={renderTimeSlot}
+              extraData={timeSlots} 
               ListEmptyComponent={
                 <View style={styles.emptyContainer}>
                   <IconButtonComponent
@@ -208,8 +216,6 @@ const ScheduleScreen: React.FC = () => {
                   />
                 </View>
               }
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.listContent}
             />
           </View>
         </View>
@@ -226,7 +232,7 @@ const ScheduleScreen: React.FC = () => {
 const styles = StyleSheet.create({
   formContainer: {
     flex: 1,
-    padding: 16,
+    paddingHorizontal: 16,
   },
   inputSection: {
     backgroundColor: '#fff',
@@ -288,7 +294,7 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
     fontSize: 16,
     backgroundColor: '#fff',
-    color: colors.dark
+    color: colors.dark,
   },
   timeContainer: {
     flexDirection: 'row',

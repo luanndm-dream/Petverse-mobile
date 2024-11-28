@@ -63,24 +63,42 @@ const PaymentScreen = () => {
   };
 
   const handlePayment = () => {
-    showLoading()
-    apiCreatePayment(userId, 'Nạp tiền', 'Nạp tiền', Number(amount)).then(
+    const numericAmount = Number(amount);
+    if (numericAmount < 2000) {
+      Toast.show({
+        type: 'error',
+        text1: 'Số tiền không hợp lệ',
+        text2: 'Số tiền nạp tối thiểu là 2.000₫',
+      });
+      return;
+    }
+    if (numericAmount > 100000000) {
+      Toast.show({
+        type: 'error',
+        text1: 'Số tiền không hợp lệ',
+        text2: 'Số tiền nạp tối đa là 100.000.000₫',
+      });
+      return;
+    }
+  
+    showLoading();
+    apiCreatePayment(userId, 'Nạp tiền', 'Nạp tiền', numericAmount).then(
       (res: any) => {
         if (res.statusCode === 200) {
-          hideLoading()
+          hideLoading();
           const checkoutUrl = res.data.checkoutUrl;
-          const paymentId = res.data.id
+          const paymentId = res.data.id;
           navigation.navigate(STACK_NAVIGATOR_SCREENS.CHECKOUTSCREEN, {
             checkoutUrl,
-            paymentId
+            paymentId,
           });
-        }else{
-          hideLoading()
+        } else {
+          hideLoading();
           Toast.show({
             type: 'error',
             text1: 'Thanh toán thất bại',
-            text2: `Xảy ra lỗi khi thanh toán ${res.message}`,
-          }); 
+            text2: `Xảy ra lỗi khi thanh toán: ${res.message}`,
+          });
         }
       },
     );

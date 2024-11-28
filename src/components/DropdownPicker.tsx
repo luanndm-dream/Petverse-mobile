@@ -206,7 +206,7 @@ export default DropdownPicker;
 
 const styles = StyleSheet.create({
   itemContainer: {
-    marginBottom: 20,
+    marginBottom: 12,
   },
   selectedItem: {
     borderWidth: 0.5,

@@ -183,12 +183,14 @@ const EmployeeRegistrationScreen = () => {
     validationSchema: Yup.object().shape({
       name: Yup.string()
         .min(3, 'Tên phải lớn hơn 3 ký tự')
+        .max(30, 'Tên chỉ tối đa 30 ký tự')
         .required('Tên là bắt buộc'),
       phoneNumber: Yup.string()
         .length(10, 'Số điện thoại bao gồm 10 số')
         .required('Số điện thoại là bắt buộc'),
       address: Yup.string()
         .min(12, 'Địa chỉ phải lớn hơn 12 ký tự')
+        .max(200, 'Địa chỉ tối đa được 200 ký tự')
         .required('Địa chỉ là bắt buộc'),
       avatar: Yup.string().required('Avatar là bắt buộc'),
       description: Yup.string()

@@ -73,7 +73,11 @@ const ServiceScreen = () => {
       <View style={styles.textContainer}>
         <Text style={styles.serviceName}>{item.name}</Text>
         <Text style={styles.serviceDescription}>Mô tả: {item.description}</Text>
-        <Text style={styles.servicePrice}>Giá: {priceFormater(item.price)} VND</Text>
+        <Text style={styles.servicePrice}>
+        Giá: {priceFormater(item.price)} VND
+        {item.type === 1 ? ' /giờ' : '/lần'}
+      </Text>
+      
       </View>
     </TouchableOpacity>
   );

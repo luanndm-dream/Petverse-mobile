@@ -51,6 +51,7 @@ import {
 import firestore from '@react-native-firebase/firestore';
 import {addAppointmentInBreedingToFirestore} from '@/services/firestoreFunction';
 import {apiGetUserByUserId} from '@/api/apiUser';
+import {apiGetPetCenterServiceByPetServiceId} from '@/api/apiPetCenterService';
 
 const AppointmentScreen = () => {
   const route = useRoute<any>();
@@ -91,16 +92,17 @@ const AppointmentScreen = () => {
     }
   }, [selectedPet, petCenterServiceId, historyBreed]);
 
-  const handleScheduleData = (timeSlots: any) => {
-    setScheduleData(timeSlots);
-  };
-
-  const handleDeleteSchedule = (index: number) => {
-    const newScheduleData = [...scheduleData];
-    newScheduleData.splice(index, 1);
-    setScheduleData(newScheduleData);
-  };
-
+  useEffect(() => {
+    apiGetPetCenterServiceByPetServiceId(petCenterServiceId).then(
+      (res: any) => {
+        if (res.statusCode === 200) {
+          setScheduleData(res.data.schedule);
+        } else {
+          console.log('Không tìm thấy schdule cho service này');
+        }
+      },
+    );
+  }, []);
   useFocusEffect(
     useCallback(() => {
       apiGetPetByUserId(userId).then((res: any) => {
@@ -114,6 +116,12 @@ const AppointmentScreen = () => {
       });
     }, [userId]),
   );
+
+  const formattedSchedules = scheduleData.map((item: any) => ({
+    time: moment(item.time, 'HH:mm').format('HH:mm'), // Chỉ giữ giờ
+    description: item.description,
+  }));
+  
 
   const handleToDateConfirm = (date: any) => {
     const fromDate = moment(formik.values.fromDate, 'DD/MM/YYYY');
@@ -148,6 +156,7 @@ const AppointmentScreen = () => {
     }
   };
 
+
   const validationSchema = Yup.object().shape({
     petId: Yup.string().required('Vui lòng chọn thú cưng'),
     fromDate: Yup.string().required('Vui lòng chọn ngày bắt đầu'),
@@ -180,7 +189,7 @@ const AppointmentScreen = () => {
       if (values.fromDate && values.fromTime) {
         switch (type) {
           case 0:
-            // Cố ý gán startTime và endTime bằng nhau
+          
             startTime = `${values.fromDate} ${values.fromTime}`;
             endTime = `${values.fromDate} ${values.fromTime}`;
             break;
@@ -190,10 +199,7 @@ const AppointmentScreen = () => {
             break;
         }
       }
-      const formattedScheduleData = scheduleData.map(({time, description}) => ({
-        time,
-        description,
-      }));
+      
       showLoading();
       console.log(petCenterServiceName);
       if (petCenterServiceName.includes('phối')) {
@@ -230,6 +236,7 @@ const AppointmentScreen = () => {
           }
         });
       } else {
+        console.log(formattedSchedules)
         apiCreateServiceAppointment(
           userId,
           selectedPet.id,
@@ -237,7 +244,7 @@ const AppointmentScreen = () => {
           calculatedPrice,
           startTime,
           endTime,
-          formattedScheduleData,
+          formattedSchedules,
         ).then((res: any) => {
           if (res.statusCode === 200) {
             hideLoading();
@@ -493,38 +500,21 @@ const AppointmentScreen = () => {
                   )}
                 </View>
               </RowComponent>
-              <RowComponent justify="flex-start">
-                <TextComponent text="Tạo lịch theo dõi?" type="title" />
-                <IconButtonComponent
-                  name="plus-circle"
-                  color={colors.primary}
-                  onPress={() =>
-                    navigation.navigate(
-                      STACK_NAVIGATOR_SCREENS.SCHEDULESCREEN,
-                      {
-                        onGoBack: handleScheduleData,
-                        scheduleData,
-                      },
-                    )
-                  }
-                />
-              </RowComponent>
-              {scheduleData.length > 0 && (
-                <View>
-                  {scheduleData.map((item: any, index) => (
-                    <View key={index} style={styles.scheduleItem}>
-                      <TextComponent
-                        text={`${item.time} - ${item.description}`}
-                      />
-                      <TouchableOpacity
-                        onPress={() => handleDeleteSchedule(index)}
-                        style={styles.deleteButton}>
-                        <Trash size={20} color={colors.red} />
-                      </TouchableOpacity>
-                    </View>
-                  ))}
-                </View>
-              )}
+              {type === 1 && scheduleData.length > 0 && (
+  <>
+    <TextComponent text="Lịch theo dõi báo cáo" type="title" />
+    <View style={styles.scheduleGrid}>
+      {scheduleData.map((item: any, index) => (
+        <View key={index} style={styles.scheduleItem}>
+          <TextComponent
+            text={`${item.time} - ${item.description}`}
+            styles={{textAlign: 'center'}}
+          />
+        </View>
+      ))}
+    </View>
+  </>
+)}
             </>
           )}
         </SectionComponent>
@@ -647,6 +637,7 @@ const AppointmentScreen = () => {
       <DatePicker
         isVisible={isVisibleFromModal}
         onCancel={() => setIsVisibleFromModal(false)}
+        minDateNow
         onConfirm={date => {
           formik.setFieldValue('fromDate', date);
           setIsVisibleFromModal(false);
@@ -654,6 +645,7 @@ const AppointmentScreen = () => {
       />
 
       <DatePicker
+        minDateNow
         isVisible={isVisibleToModal}
         onCancel={() => setIsVisibleToModal(false)}
         onConfirm={handleToDateConfirm}
@@ -835,15 +827,21 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666666',
   },
+  scheduleGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap', // Đảm bảo nội dung tự động xuống hàng khi hết chỗ
+    justifyContent: 'flex-start', // Canh trái
+    marginVertical: 8,
+  },
   scheduleItem: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 8,
+    paddingVertical: 16,
     paddingHorizontal: 12,
+    marginRight: 12,
     backgroundColor: '#f9f9f9',
     borderRadius: 8,
-    marginVertical: 4,
+    marginVertical: 6,
   },
   deleteButton: {
     padding: 4,

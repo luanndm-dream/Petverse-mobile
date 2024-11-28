@@ -1,91 +1,151 @@
-import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React, {useCallback, useState} from 'react';
+import React, { useCallback, useState } from 'react';
+import {
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  Dimensions,
+} from 'react-native';
 import {
   Container,
   IconButtonComponent,
-  RowComponent,
   SectionComponent,
   TextComponent,
 } from '@/components';
-import {colors} from '@/constants/colors';
-import {useCustomNavigation} from '@/utils/navigation';
+import { colors } from '@/constants/colors';
+import { useCustomNavigation } from '@/utils/navigation';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {useFocusEffect} from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
 import useLoading from '@/hook/useLoading';
-import {apiGetJobByPetCenterId} from '@/api/apiJob';
-import {STACK_NAVIGATOR_SCREENS} from '@/constants/screens';
-import {useAppSelector} from '@/redux';
-import {EditServiceIcon, PetBreedingIcon} from '@/assets/svgs';
+import { apiGetJobByPetCenterId } from '@/api/apiJob';
+import { STACK_NAVIGATOR_SCREENS } from '@/constants/screens';
+import { useAppSelector } from '@/redux';
+import { EditServiceIcon, PetBreedingIcon } from '@/assets/svgs';
+import LinearGradient from 'react-native-linear-gradient';
+
+const { width } = Dimensions.get('window');
 
 const WorkProfileScreen = () => {
-  const {navigate, goBack} = useCustomNavigation();
-  const {showLoading, hideLoading} = useLoading();
+  const { navigate, goBack } = useCustomNavigation();
+  const { showLoading, hideLoading } = useLoading();
   const petCenterId = useAppSelector(state => state.auth.petCenterId);
   const [petCenterData, setPetCenterData] = useState([]);
+  
   useFocusEffect(
     useCallback(() => {
       const getPetCenterJob = async () => {
         showLoading();
-        await apiGetJobByPetCenterId(petCenterId as never).then((res: any) => {
+        try {
+          const res:any = await apiGetJobByPetCenterId(petCenterId as never);
           if (res.statusCode === 200) {
-            hideLoading();
             setPetCenterData(res.data);
           } else {
-            hideLoading();
-            console.log('loading working profile fail');
+            console.log('Loading working profile failed');
           }
-        });
+        } catch (error) {
+          console.error('Error fetching pet center jobs:', error);
+        } finally {
+          hideLoading();
+        }
       };
       getPetCenterJob();
     }, [petCenterId]),
   );
-  console.log(petCenterData)
 
-  const editServiceHandle = () => {
-    navigate(STACK_NAVIGATOR_SCREENS.SERVICESCREEN)
-  }
+  const renderMenuItem = (
+    icon: React.ReactNode, 
+    title: string, 
+    subtitle: string, 
+    onPress: () => void,
+    gradientColors: string[]
+  ) => (
+    <TouchableOpacity 
+      style={styles.menuItemContainer} 
+      onPress={onPress}
+      activeOpacity={0.8}
+    >
+      <LinearGradient
+        colors={gradientColors}
+        style={styles.menuItemGradient}
+        start={{x: 0, y: 0}}
+        end={{x: 1, y: 0}}
+      >
+        <View style={styles.menuItemContent}>
+          <View style={styles.iconContainer}>
+            {icon}
+          </View>
+          <View style={styles.textContainer}>
+            <TextComponent
+              text={title}
+              size={18}
+              color={colors.white}
+              type='title'
+            />
+            <TextComponent
+              text={subtitle}
+              size={14}
+              color={colors.white}
+              styles={{opacity: 0.7, marginTop: 5}}
+            />
+          </View>
+          <MaterialCommunityIcons
+            name="chevron-right"
+            size={26}
+            color={colors.white}
+          />
+        </View>
+      </LinearGradient>
+    </TouchableOpacity>
+  );
 
-  const managePetBreedingHandle = () => {
-    navigate(STACK_NAVIGATOR_SCREENS.MANAGEPETBREEDINGSCREEN)
-  }
-
-  const createJobHandle = () => {
-    navigate(STACK_NAVIGATOR_SCREENS.CREATEJOBSCREEN);
-  };
-  
   const renderCreateJob = () => {
     return (
-      <>
+      <View style={styles.emptyStateContainer}>
         <Image
           source={require('../../assets/images/FindJobBanner.jpg')}
           style={styles.image}
         />
         <TextComponent
-          text="Chưa tìm thấy công việc của bạn, vui lòng tạo công việc"
-          styles={styles.description}
+          text="Chưa tìm thấy công việc của bạn"
+          styles={styles.titleDescription}
+          type="title"
+        />
+        <TextComponent
+          text="Vui lòng tạo công việc để bắt đầu"
+          styles={styles.subtitleDescription}
           type="description"
         />
-        <TouchableOpacity style={styles.container} onPress={createJobHandle}>
-          <RowComponent>
+        <TouchableOpacity 
+          style={styles.createJobContainer} 
+          onPress={() => navigate(STACK_NAVIGATOR_SCREENS.CREATEJOBSCREEN)}
+        >
+          <LinearGradient
+            colors={['#FFC107', '#FF9800']}
+            style={styles.createJobGradient}
+            start={{x: 0, y: 0}}
+            end={{x: 1, y: 0}}
+          >
             <MaterialCommunityIcons
               name="paw"
               size={24}
-              color={colors.orange}
-              style={{marginRight: 20}}
+              color={colors.white}
+              style={{marginRight: 12}}
             />
             <TextComponent
               text="Tạo công việc"
-              color={colors.orange}
-              size={24}
+              color={colors.white}
+              size={16}
+              type='title'
             />
-          </RowComponent>
+          </LinearGradient>
         </TouchableOpacity>
-      </>
+      </View>
     );
   };
+
   return (
     <Container
-      title="Quản lí công việc"
+      title="Quản lý công việc"
       left={
         <IconButtonComponent
           name="chevron-left"
@@ -93,37 +153,37 @@ const WorkProfileScreen = () => {
           color={colors.dark}
           onPress={goBack}
         />
-      }>
+      }
+    >
      <SectionComponent>
-  {petCenterData.length === 0 ? (
-    renderCreateJob() // Nếu mảng rỗng, hiển thị "Tạo công việc"
-  ) : (
-    <>
-      <RowComponent
-        justify="flex-start"
-        styles={styles.itemContainer}
-        onPress={editServiceHandle}>
-        <EditServiceIcon width={40} height={40} />
-        <TextComponent
-          text="Tất cả dịch vụ"
-          size={18}
-          styles={{marginLeft: 24}}
-        />
-      </RowComponent>
-      <RowComponent
-        justify="flex-start"
-        styles={styles.itemContainer}
-        onPress={managePetBreedingHandle}>
-        <PetBreedingIcon width={40} height={40} />
-        <TextComponent
-          text="Quản lí giống"
-          size={18}
-          styles={{marginLeft: 24}}
-        />
-      </RowComponent>
-    </>
-  )}
-</SectionComponent>
+        {petCenterData.length === 0 ? (
+          renderCreateJob()
+        ) : (
+          <>
+            {renderMenuItem(
+              <EditServiceIcon width={45} height={45} />,
+              "Quản lý dịch vụ",
+              "Quản lý và chỉnh sửa dịch vụ của bạn",
+              () => navigate(STACK_NAVIGATOR_SCREENS.SERVICESCREEN),
+              ['#4A6BFF', '#8A4FFF'] 
+            )}
+            {renderMenuItem(
+              <PetBreedingIcon width={45} height={45} />,
+              "Quản lí giống",
+              "Theo dõi và quản lí nguồn giống",
+              () => navigate(STACK_NAVIGATOR_SCREENS.MANAGEPETBREEDINGSCREEN),
+              ['#00BCD4', '#2196F3'] 
+            )}
+             {renderMenuItem(
+              <PetBreedingIcon width={45} height={45} />,
+              "Chỉnh sửa công việc",
+              "Theo dõi và quản lý hoạt động sinh sản",
+              () => navigate(STACK_NAVIGATOR_SCREENS.MANAGEPETBREEDINGSCREEN),
+              ['#4CAF50', '#81C784'] 
+            )}
+          </>
+        )}
+     </SectionComponent>
     </Container>
   );
 };
@@ -131,32 +191,66 @@ const WorkProfileScreen = () => {
 export default WorkProfileScreen;
 
 const styles = StyleSheet.create({
-  container: {
-    justifyContent: 'center',
+  emptyStateContainer: {
     alignItems: 'center',
-    height: 65,
-    backgroundColor: '#F8E8BD',
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: '#E8B86D',
-    borderStyle: 'dashed',
+    paddingVertical: 20,
   },
   image: {
-    height: 200,
-    width: 200,
-    borderRadius: 12,
-    alignSelf: 'center',
-    marginVertical: 24,
+    width: 250,
+    height: 250,
+    borderRadius: 20,
+    marginBottom: 20,
   },
-  description: {
-    paddingVertical: 12,
+  titleDescription: {
+    fontSize: 20,
+    marginBottom: 10,
+    color: colors.dark,
+    fontWeight: 'bold',
+  },
+  subtitleDescription: {
+    fontSize: 16,
+    marginBottom: 20,
+    color: colors.grey,
     textAlign: 'center',
   },
-  itemContainer: {
-    paddingVertical: 12,
-    marginVertical: 8,
-    backgroundColor: colors.white,
-    borderRadius: 8,
-    paddingHorizontal: 6,
+  menuItemContainer: {
+    marginVertical: 10,
+    borderRadius: 15,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
+  },
+  menuItemGradient: {
+    width: '100%',
+    paddingVertical: 15,
+    paddingHorizontal: 15,
+  },
+  menuItemContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  iconContainer: {
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    borderRadius: 12,
+    padding: 8,
+    marginRight: 15,
+  },
+  textContainer: {
+    flex: 1,
+  },
+  createJobContainer: {
+    width: '80%',
+    borderRadius: 15,
+    overflow: 'hidden',
+  },
+  createJobGradient: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 15,
+    paddingHorizontal: 20,
   },
 });

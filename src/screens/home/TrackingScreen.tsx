@@ -46,7 +46,7 @@ const TrackingScreen = () => {
   const [selectedTrackings, setSelectedTrackings] = useState<any[]>([]);
   const [activeSlide, setActiveSlide] = useState(0);
   const [selectedScheduleId, setSelectedScheduleId] = useState();
-
+  console.log(appointmentId);
   useFocusEffect(
     useCallback(() => {
       showLoading();
@@ -69,9 +69,9 @@ const TrackingScreen = () => {
               })),
             }),
           );
-  
+
           setAppointmentData({...res.data, schedules: processedSchedules});
-  
+
           setSelectedDateIndex(0); // Auto-select first date
           if (
             processedSchedules[0] &&
@@ -110,8 +110,7 @@ const TrackingScreen = () => {
             setSelectedRecordIndex(null);
             setSelectedTrackings([]);
           }
-        }}
-        >
+        }}>
         <View style={styles.dateContent}>
           <Text style={[styles.dayText, isSelected && styles.selectedText]}>
             {day}
@@ -144,7 +143,9 @@ const TrackingScreen = () => {
               const isVideo = item.type === 1;
               return (
                 <View style={styles.mediaWrapper}>
-                  <Text style={styles.dateText}>{item.date || 'Không xác định'}</Text>
+                  <Text style={styles.dateText}>
+                    {item.date || 'Không xác định'}
+                  </Text>
                   {/* Hiển thị ngày */}
                   {isVideo ? (
                     <VideoPlayer
@@ -293,10 +294,18 @@ const TrackingScreen = () => {
             {selectedDateData && renderRecords(selectedDateData.records)}
           </View>
         </ScrollView>
+        {roleName === 'PetCenter' && appointmentData.status === 2 && (
+  <View style={styles.completedMessageContainer}>
+    <Text style={styles.completedMessageText}>
+      Lịch hẹn đã hoàn thành, không thể tạo thêm báo cáo.
+    </Text>
+  </View>
+)}
       </Container>
       {selectedRecordIndex !== null &&
         selectedDateData &&
         roleName === 'PetCenter' &&
+        appointmentData.status !== 2 &&
         !selectedDateData.records[selectedRecordIndex].trackings.length && (
           <View style={styles.buttonContainer}>
             <ButtonComponent
@@ -493,5 +502,19 @@ const styles = StyleSheet.create({
     height: 300,
     position: 'relative',
     alignItems: 'center', // Căn giữa text và media
+  },
+  completedMessageContainer: {
+    paddingVertical: 16,
+    paddingHorizontal: 12,
+    backgroundColor: colors.green,
+    borderRadius: 8,
+    margin: 16,
+    alignItems: 'center',
+  },
+  completedMessageText: {
+    color: colors.white,
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });

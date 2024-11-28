@@ -23,7 +23,6 @@ import {colors} from '@/constants/colors';
 import {useCustomNavigation} from '@/utils/navigation';
 import {
   apiCreatePet,
-  apiGetPetByUserId,
   apiGetPetBreed,
   apiGetPetSpecies,
 } from '@/api/apiPet';
@@ -206,12 +205,13 @@ const AddPetScreen = () => {
     validationSchema: Yup.object().shape({
       petName: Yup.string()
         .min(3, 'Tên thú cưng phải trên 3 ký tự')
+        .max(30, 'Tên thú cưng không được vượt quá 30 ký tự')
         .required('Tên thú cưng là bắt buộc'),
       species: Yup.number()
         .min(0, 'Vui lòng chọn')
         .required('Loại thú cưng là bắt buộc'),
       breed: Yup.number()
-        .min(1, 'Vui lòng chọn')
+        .min(1, 'Vui lòng chọn giống')
         .required('Giống thú cưng là bắt buộc'),
       age: Yup.string().required('Ngày sinh là bắt buộc'),
       weight: Yup.number().required('Cân nặng là bắt buộc'),

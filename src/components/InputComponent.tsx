@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
     width: '100%',
     minHeight: 56,
     backgroundColor: colors.white,
-    marginBottom: 16,
+    marginBottom: 12,
     paddingVertical: 8,
     paddingHorizontal: 15,
   },

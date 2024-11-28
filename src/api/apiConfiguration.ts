@@ -71,17 +71,18 @@ publicAxios.interceptors.response.use(
     // console.log('response api', responseObj)
     return responseObj;
 },
-  (error) => {
-    const fieldErrors = error.response?.data?.errors || {};
-    const message = error.response?.data?.message || error.message;
-    const errorFields = Object.keys(fieldErrors).map(field => ({
-      field,
-      message: fieldErrors[field].join(", ")
-    }));
+(error) => {
+    
+  const fieldErrors = error.response?.data?.errors || {};
+  const message = error.response?.data?.message || error.message;
+  const errorFields = Object.keys(fieldErrors).map(field => ({
+    field,
+    message: fieldErrors[field].join(", ")
+  }));
 
-    console.log(`Public API Error: ${message} + ${error}`);
-    return { api: "public", error: message };
-  }
+  console.log(`Public API Error: ${message} + ${error}` );
+  return { api: "public", message };
+}
 );
 
 // Interceptor for protectedAxios
