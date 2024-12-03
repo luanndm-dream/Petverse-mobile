@@ -270,7 +270,7 @@ const AddPetScreen = () => {
         isScroll={true}
       >
         <SectionComponent>
-          <TextComponent text="Ảnh đại diện" type="title" />
+          <TextComponent text="Ảnh đại diện" type="title" required/>
 
           <RowComponent justify="flex-start" styles={{marginBottom: 16}}>
             <TouchableOpacity
@@ -307,7 +307,7 @@ const AddPetScreen = () => {
           {formik.errors.avatar && formik.touched.avatar && (
             <Text style={styles.errorText}>{formik.errors.avatar}</Text>
           )}
-          <TextComponent text="Tên thú cưng" type="title" />
+          <TextComponent text="Tên thú cưng" type="title" required/>
           <InputComponent
             onChange={formik.handleChange('petName')}
             value={formik.values.petName}
@@ -352,20 +352,23 @@ const AddPetScreen = () => {
             )}
           </View>
 
-          <TextComponent text="Giống" type="title" />
+          <TextComponent text="Giống" type="title" required/>
           <DropdownPicker
             canPress={formik.values.species > 0 ? true : false}
             multible={false}
             placeholder="Chọn giống"
             values={petSubType}
             onSelect={(selectedPetSubType: string | string[]) => {
-              formik.setFieldValue('breed', selectedPetSubType);
+              formik.setFieldValue('breed', selectedPetSubType || 0); 
+              formik.setFieldTouched('breed', true);
             }}
+            formik={formik}
+            validateField='breed'
           />
           {formik.errors.breed && formik.touched.breed && (
             <Text style={styles.errorText}>{formik.errors.breed}</Text>
           )}
-          <TextComponent text="Ngày sinh" type="title" />
+          <TextComponent text="Ngày sinh" type="title" required/>
           <RowComponent
             styles={[
               globalStyles.inputContainer,
@@ -468,7 +471,7 @@ const AddPetScreen = () => {
           />
         </SectionComponent>
         <ButtonComponent
-          text="Tạo thú cưng"
+          text="Thêm thú cưng"
           type="primary"
           onPress={formik.handleSubmit}
         />

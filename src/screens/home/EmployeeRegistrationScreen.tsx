@@ -36,8 +36,8 @@ import useLoading from '@/hook/useLoading';
 import {useAppSelector} from '@/redux';
 import {apiPostApplication} from '@/api/apiApplication';
 import Toast from 'react-native-toast-message';
-import { mediaUpload } from '@/utils/mediaUpload';
-import { STACK_NAVIGATOR_SCREENS } from '@/constants/screens';
+import {mediaUpload} from '@/utils/mediaUpload';
+import {STACK_NAVIGATOR_SCREENS} from '@/constants/screens';
 
 const EmployeeRegistrationScreen = () => {
   const [isVisibleImage, setIsVisibleImage] = useState(false);
@@ -135,7 +135,7 @@ const EmployeeRegistrationScreen = () => {
           multiple: true,
         }).then(images => {
           if (selectedCertifications.length + images.length <= 4) {
-            setSelectedCertifications( prev => [...prev, ...images]);
+            setSelectedCertifications(prev => [...prev, ...images]);
           } else {
             Alert.alert(
               'Giới hạn ảnh',
@@ -149,10 +149,9 @@ const EmployeeRegistrationScreen = () => {
     return;
   };
 
-
   const onMyApplicationHandle = () => {
-    navigate(STACK_NAVIGATOR_SCREENS.MYAPPLICATIONSCREEN)
-  }
+    navigate(STACK_NAVIGATOR_SCREENS.MYAPPLICATIONSCREEN);
+  };
 
   const removeImage = (index: any) => {
     setSelectedCertifications(prev => prev.filter((_, i) => i !== index));
@@ -186,6 +185,7 @@ const EmployeeRegistrationScreen = () => {
         .max(30, 'Tên chỉ tối đa 30 ký tự')
         .required('Tên là bắt buộc'),
       phoneNumber: Yup.string()
+        .matches(/^\d+$/, 'Số điện thoại chỉ được chứa ký tự số')
         .length(10, 'Số điện thoại bao gồm 10 số')
         .required('Số điện thoại là bắt buộc'),
       address: Yup.string()
@@ -202,7 +202,6 @@ const EmployeeRegistrationScreen = () => {
         .required('Dịch vụ thú cưng là bắt buộc'),
     }),
     onSubmit: values => {
-      
       const certifications: any[] = [];
       if (selectedCertifications) {
         selectedCertifications.forEach(item => {
@@ -211,215 +210,269 @@ const EmployeeRegistrationScreen = () => {
         });
       }
       // console.log('certifications',certifications, 'mediaUpload(values.avatar) 1', mediaUpload(values.avatar) )
-      showLoading()
-        apiPostApplication(
-          userId,
-          values.name,
-          values.phoneNumber,
-          values.address,
-          mediaUpload(values.avatar),
-          values.description,
-          values.services,
-          certifications
-        ).then((res:any) =>{
-          console.log('res', mediaUpload(values.avatar))
-          if(res.statusCode === 200){
-            hideLoading()
-           
-            Toast.show({
-              type: 'success',
-              text1: 'Đăng ký đơn thành công',
-              text2: 'Vui lòng chờ phản hồi từ quản lí!',
-            });
-            goBack();
-          }else {
-            hideLoading();
-            Toast.show({
-              type: 'error',
-              text1: 'Đăng ký đơn thất bại',
-              text2: `Xảy ra lỗi ${res.message}`,
-            });
-          }
-        })
-        
-      }
+      showLoading();
+      apiPostApplication(
+        userId,
+        values.name,
+        values.phoneNumber,
+        values.address,
+        mediaUpload(values.avatar),
+        values.description,
+        values.services,
+        certifications,
+      ).then((res: any) => {
+        console.log('res', mediaUpload(values.avatar));
+        if (res.statusCode === 200) {
+          hideLoading();
+
+          Toast.show({
+            type: 'success',
+            text1: 'Đăng ký đơn thành công',
+            text2: 'Vui lòng chờ phản hồi từ quản lí!',
+          });
+          goBack();
+        } else {
+          hideLoading();
+          Toast.show({
+            type: 'error',
+            text1: 'Đăng ký đơn thất bại',
+            text2: `Xảy ra lỗi ${res.message}`,
+          });
+        }
+      });
     },
-  );
+  });
 
- 
   return (
-    <Container
-      title="Đăng ký nhân viên"
-      isScroll={true}
-      left={
-        <IconButtonComponent
-          name="chevron-left"
-          size={30}
-          color={colors.dark}
-          onPress={goBack}
-        />
-      }
-      right={
-        <IconButtonComponent
-          name="file-clock"
-          size={30}
-          color={colors.grey}
-          onPress={onMyApplicationHandle}
-        />
-      }
-      >
-      <SectionComponent>
-        <TextComponent text="Hình ảnh" type="title" />
-        <RowComponent justify="flex-start" styles={{marginBottom: 16}}>
-          <TouchableOpacity
-            style={
-              avatar
-                ? {
-                    width: 60,
-                    height: 60,
-                    borderRadius: 30,
-                    borderWidth: 0.5,
-                  }
-                : styles.imageAvtContainer
-            }
-            onPress={() => {
-              setIsVisibleImage(true), setType('avatar');
-            }}>
-            {avatar ? (
-              <View>
-                <Image
-                  source={{uri: avatar}}
-                  style={styles.avatar}
-                  resizeMode="contain"
-                />
-              </View>
-            ) : (
-              <AddCircle size={12} color={colors.primary} />
-            )}
-          </TouchableOpacity>
-          <TextComponent
-            text="Đây sẽ là ảnh đại diện của trung tâm bạn, hãy chọn ảnh sao cho phù hợp nhất!"
-            numOfLine={2}
-            type="description"
-            styles={{paddingLeft: 20, flexWrap: 'wrap', maxWidth: '80%'}}
+    <>
+      <Container
+        title="Đăng ký nhân viên"
+        isScroll={true}
+        left={
+          <IconButtonComponent
+            name="chevron-left"
+            size={30}
+            color={colors.dark}
+            onPress={goBack}
           />
-        </RowComponent>
-        {formik.errors.avatar && formik.touched.avatar && (
-          <Text style={styles.errorText}>{formik.errors.avatar}</Text>
-        )}
-        <TextComponent text="Tên trung tâm" type="title" required />
-        <InputComponent
-          onChange={formik.handleChange('name')}
-          onBlur={formik.handleBlur('name')}
-          value={formik.values.name}
-          placeholder="Tên trung tâm "
-        />
-        {formik.errors.name && formik.touched.name && (
-          <Text style={styles.errorText}>{formik.errors.name}</Text>
-        )}
-
-        <TextComponent text="Số điện thoại" type="title" required />
-        <InputComponent
-          onChange={formik.handleChange('phoneNumber')}
-          onBlur={formik.handleBlur('phoneNumber')}
-          value={formik.values.phoneNumber}
-          placeholder="Số điện thoại"
-          type='numeric'
-        />
-        {formik.errors.phoneNumber && formik.touched.phoneNumber && (
-          <Text style={styles.errorText}>{formik.errors.phoneNumber}</Text>
-        )}
-
-        <TextComponent text="Địa chỉ" type="title" required />
-        <InputComponent
-          onChange={formik.handleChange('address')}
-          onBlur={formik.handleBlur('address')}
-          value={formik.values.address}
-          placeholder="Địa chỉ"
-        />
-        {formik.errors.address && formik.touched.address && (
-          <Text style={styles.errorText}>{formik.errors.address}</Text>
-        )}
-
-        <TextComponent text="Hồ sơ/chứng nhận" type="title" />
-        <View style={styles.imageContainer}>
-          <FlatList
-            data={
-              selectedCertifications.length < 4
-                ? [...selectedCertifications, {isAddButton: true}]
-                : selectedCertifications
-            }
-            numColumns={4}
-            scrollEnabled={false}
-            renderItem={({item, index}) =>
-              item.isAddButton ? (
-                <TouchableOpacity
-                  style={styles.imageItem}
-                  onPress={() => {
-                    setIsVisibleImage(true);
-                    setType('certifications');
-                  }}>
-                  <AddCircle size={12} color={colors.primary} />
-                </TouchableOpacity>
-              ) : (
-                <TouchableOpacity
-                  style={styles.imageWrapper}
-                  onPress={() => {
-                    setSelectedImage(item.path);
-                  }}>
+        }
+        right={
+          <IconButtonComponent
+            name="file-clock"
+            size={30}
+            color={colors.grey}
+            onPress={onMyApplicationHandle}
+          />
+        }>
+        <SectionComponent>
+          <TextComponent text="Hình ảnh" type="title" required />
+          <RowComponent justify="flex-start" styles={{marginBottom: 16}}>
+            <TouchableOpacity
+              style={
+                avatar
+                  ? {
+                      width: 60,
+                      height: 60,
+                      borderRadius: 30,
+                      borderWidth: 0.5,
+                    }
+                  : styles.imageAvtContainer
+              }
+              onPress={() => {
+                setIsVisibleImage(true), setType('avatar');
+              }}>
+              {avatar ? (
+                <View>
                   <Image
-                    source={{uri: item.path}}
-                    style={styles.imageThumbnail}
+                    source={{uri: avatar}}
+                    style={styles.avatar}
+                    resizeMode="contain"
                   />
-                  <View style={{position: 'absolute', top: -10, right: -10}}>
-                    <IconButtonComponent
-                      name="close-circle"
-                      size={18}
-                      color={colors.red}
-                      onPress={() => removeImage(index)}
-                    />
-                  </View>
-                </TouchableOpacity>
-              )
-            }
-            keyExtractor={(item, index) =>
-              item.isAddButton ? `add-${index}` : item.path
-            }
-            columnWrapperStyle={{
-              justifyContent:
-                selectedCertifications.length % 4 === 0
-                  ? 'space-between'
-                  : 'flex-start',
-              paddingVertical: 6,
-            }}
+                </View>
+              ) : (
+                <AddCircle size={12} color={colors.primary} />
+              )}
+            </TouchableOpacity>
+            <TextComponent
+              text="Đây sẽ là ảnh đại diện của trung tâm bạn, hãy chọn ảnh sao cho phù hợp nhất!"
+              numOfLine={2}
+              type="description"
+              styles={{paddingLeft: 20, flexWrap: 'wrap', maxWidth: '80%'}}
+            />
+          </RowComponent>
+          {formik.errors.avatar && formik.touched.avatar && (
+            <Text style={styles.errorText}>{formik.errors.avatar}</Text>
+          )}
+          <TextComponent text="Tên trung tâm" type="title" required />
+          <InputComponent
+            onChange={formik.handleChange('name')}
+            onBlur={formik.handleBlur('name')}
+            value={formik.values.name}
+            placeholder="Tên trung tâm "
           />
-        </View>
-        <TextComponent text="Mô tả" type="title" required />
-        <InputComponent
-          onChange={formik.handleChange('description')}
-          onBlur={formik.handleBlur('description')}
-          placeholder="Mô tả"
-          value={formik.values.description}
-          multiline
-          allowClear
-        />
-        {formik.errors.description && formik.touched.description && (
-          <Text style={styles.errorText}>{formik.errors.description}</Text>
-        )}
-        <TextComponent text="Dịch vụ" type="title" required />
-        <DropdownPicker
-        placeholder='Dịch vụ'
-          onSelect={(selectedServices: string | string[]) => {
-            formik.handleChange('services');
-            formik.setFieldValue('services', selectedServices);
-          }}
-          values={servicesSelects}
-          selected={formik.values.services}
-          multible
-        />
-        {formik.errors.services && formik.touched.services && (
-          <Text style={styles.errorText}>{formik.errors.services}</Text>
-        )}
+          {formik.errors.name && formik.touched.name && (
+            <Text style={styles.errorText}>{formik.errors.name}</Text>
+          )}
+
+          <TextComponent text="Số điện thoại" type="title" required />
+          <InputComponent
+            onChange={formik.handleChange('phoneNumber')}
+            onBlur={formik.handleBlur('phoneNumber')}
+            value={formik.values.phoneNumber}
+            placeholder="Số điện thoại"
+            type="numeric"
+          />
+          {formik.errors.phoneNumber && formik.touched.phoneNumber && (
+            <Text style={styles.errorText}>{formik.errors.phoneNumber}</Text>
+          )}
+
+          <TextComponent text="Địa chỉ" type="title" required />
+          <InputComponent
+            onChange={formik.handleChange('address')}
+            onBlur={formik.handleBlur('address')}
+            value={formik.values.address}
+            placeholder="Địa chỉ"
+          />
+          {formik.errors.address && formik.touched.address && (
+            <Text style={styles.errorText}>{formik.errors.address}</Text>
+          )}
+
+          <TextComponent text="Hồ sơ/chứng nhận" type="title" />
+          <View style={styles.imageContainer}>
+            <FlatList
+              data={
+                selectedCertifications.length < 4
+                  ? [...selectedCertifications, {isAddButton: true}]
+                  : selectedCertifications
+              }
+              numColumns={4}
+              scrollEnabled={false}
+              renderItem={({item, index}) =>
+                item.isAddButton ? (
+                  <TouchableOpacity
+                    style={styles.imageItem}
+                    onPress={() => {
+                      setIsVisibleImage(true);
+                      setType('certifications');
+                    }}>
+                    <AddCircle size={12} color={colors.primary} />
+                  </TouchableOpacity>
+                ) : (
+                  <TouchableOpacity
+                    style={styles.imageWrapper}
+                    onPress={() => {
+                      setSelectedImage(item.path);
+                    }}>
+                    <Image
+                      source={{uri: item.path}}
+                      style={styles.imageThumbnail}
+                    />
+                    <View style={{position: 'absolute', top: -10, right: -10}}>
+                      <IconButtonComponent
+                        name="close-circle"
+                        size={18}
+                        color={colors.red}
+                        onPress={() => removeImage(index)}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                )
+              }
+              keyExtractor={(item, index) =>
+                item.isAddButton ? `add-${index}` : item.path
+              }
+              columnWrapperStyle={{
+                justifyContent:
+                  selectedCertifications.length % 4 === 0
+                    ? 'space-between'
+                    : 'flex-start',
+                paddingVertical: 6,
+              }}
+            />
+          </View>
+          <TextComponent text="Mô tả" type="title" required />
+          <InputComponent
+            onChange={formik.handleChange('description')}
+            onBlur={formik.handleBlur('description')}
+            placeholder="Mô tả"
+            value={formik.values.description}
+            multiline
+            allowClear
+          />
+          {formik.errors.description && formik.touched.description && (
+            <Text style={styles.errorText}>{formik.errors.description}</Text>
+          )}
+          <TextComponent text="Dịch vụ" type="title" required />
+          <DropdownPicker
+            placeholder="Dịch vụ"
+            onSelect={(selectedServices: string | string[]) => {
+              formik.handleChange('services');
+              formik.setFieldValue('services', selectedServices || null);
+              formik.setFieldTouched('services', true);
+              
+            }}
+            values={servicesSelects}
+            selected={formik.values.services}
+            multible
+            formik={formik}
+            validateField='services'
+          />
+          {formik.errors.services && formik.touched.services && (
+            <Text style={styles.errorText}>{formik.errors.services}</Text>
+          )}
+        </SectionComponent>
+        {/* )}
+      </Formik> */}
+
+        <Portal>
+          <Modalize
+            ref={imageModalRef}
+            onClose={() => setIsVisibleImage(false)}
+            handlePosition="inside"
+            adjustToContentHeight>
+            <View style={{paddingTop: 20, paddingHorizontal: 20}}>
+              <SectionComponent>
+                {/* <RowComponent justify="flex-start" styles={{paddingBottom: 20}} onPress={openCameraHandle}>
+                <Camera size={24} color={colors.primary} variant="Bold" />
+                <TextComponent
+                  text="Mở camera"
+                  type="title"
+                  styles={{paddingLeft: 20}}
+                />
+              </RowComponent> */}
+                <RowComponent justify="flex-start" onPress={openGallaryHandle}>
+                  <Gallery size={24} color={colors.primary} variant="Bold" />
+                  <TextComponent
+                    text="Ảnh từ thư viện"
+                    type="title"
+                    styles={{paddingLeft: 20}}
+                  />
+                </RowComponent>
+              </SectionComponent>
+            </View>
+          </Modalize>
+          <Modal
+            visible={!!selectedImage}
+            transparent={true}
+            onRequestClose={() => {
+              setSelectedImage(null);
+            }}>
+            <View style={styles.fullScreenContainer}>
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={() => setSelectedImage(null)}>
+                <MaterialCommunityIcons name="close" size={30} color="white" />
+              </TouchableOpacity>
+              <Image
+                source={{uri: selectedImage}}
+                style={styles.fullScreenImage}
+                resizeMode="contain"
+              />
+            </View>
+          </Modal>
+        </Portal>
+      </Container>
+      <SectionComponent>
         <ButtonComponent
           text="Gửi đơn"
           onPress={formik.handleSubmit}
@@ -428,57 +481,7 @@ const EmployeeRegistrationScreen = () => {
           styles={{width: '100%', marginTop: 10}}
         />
       </SectionComponent>
-      {/* )}
-      </Formik> */}
-
-      <Portal>
-        <Modalize
-          ref={imageModalRef}
-          onClose={() => setIsVisibleImage(false)}
-          handlePosition="inside"
-          adjustToContentHeight>
-          <View style={{paddingTop: 20, paddingHorizontal: 20}}>
-            <SectionComponent>
-              {/* <RowComponent justify="flex-start" styles={{paddingBottom: 20}} onPress={openCameraHandle}>
-                <Camera size={24} color={colors.primary} variant="Bold" />
-                <TextComponent
-                  text="Mở camera"
-                  type="title"
-                  styles={{paddingLeft: 20}}
-                />
-              </RowComponent> */}
-              <RowComponent justify="flex-start" onPress={openGallaryHandle}>
-                <Gallery size={24} color={colors.primary} variant="Bold" />
-                <TextComponent
-                  text="Ảnh từ thư viện"
-                  type="title"
-                  styles={{paddingLeft: 20}}
-                />
-              </RowComponent>
-            </SectionComponent>
-          </View>
-        </Modalize>
-        <Modal
-          visible={!!selectedImage}
-          transparent={true}
-          onRequestClose={() => {
-            setSelectedImage(null);
-          }}>
-          <View style={styles.fullScreenContainer}>
-            <TouchableOpacity
-              style={styles.closeButton}
-              onPress={() => setSelectedImage(null)}>
-              <MaterialCommunityIcons name="close" size={30} color="white" />
-            </TouchableOpacity>
-            <Image
-              source={{uri: selectedImage}}
-              style={styles.fullScreenImage}
-              resizeMode="contain"
-            />
-          </View>
-        </Modal>
-      </Portal>
-    </Container>
+    </>
   );
 };
 

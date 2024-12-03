@@ -22,15 +22,20 @@ import {
   PetGroomingIcon,
   PetTrainingIcon,
 } from '@/assets/svgs';
+
 interface Props {
   label?: string;
   values: SelectModel[];
-  selected?: string | string[];
+  selected?: string | string[] | any;
   onSelect: (value: string | string[]) => void;
   placeholder: string;
   multible?: boolean;
   canPress?: boolean;
+  resetValue?: boolean;
+  formik?: any;
+  validateField? :string // Thêm formik vào các props
 }
+
 const DropdownPicker = (props: Props) => {
   const {
     onSelect,
@@ -40,12 +45,22 @@ const DropdownPicker = (props: Props) => {
     multible,
     placeholder,
     canPress = true,
+    resetValue = false,
+    formik, // Nhận formik từ props
+    validateField,
   } = props;
+
   const [isVisible, setIsVisible] = useState(false);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const modalizeRef = useRef<Modalize>();
 
-  // console.log(values)
+  useEffect(() => {
+    if (resetValue) {
+      setSelectedItems([]);
+      onSelect(multible ? [] : '');
+    }
+  }, [resetValue]);
+
   const getIcon = (label: string) => {
     let width = 30;
     let height = 30;
@@ -58,7 +73,7 @@ const DropdownPicker = (props: Props) => {
       case 'Huấn luyện':
         return <PetTrainingIcon width={width} height={height} />;
       case 'Bác sĩ thú y':
-          return <DoctorIcon width={width} height={height} />;
+        return <DoctorIcon width={width} height={height} />;
       case 'Chó':
         return <DogIcon width={width} height={height} />;
       case 'Mèo':
@@ -72,15 +87,20 @@ const DropdownPicker = (props: Props) => {
     if (selectedItems.includes(id)) {
       const data = [...selectedItems];
       const index = selectedItems.findIndex(element => element === id);
-
       if (index !== -1) {
         data.splice(index, 1);
       }
       setSelectedItems(data);
+
+      // Cập nhật lại giá trị trong Formik và trigger validation
+      formik.setFieldValue(validateField, data.length > 0 ? data : null);
+      formik.setFieldTouched(validateField, true); // Đánh dấu trường đã được touch
+      formik.validateForm(); // Trigger lại validation
     } else {
       setSelectedItems([...selectedItems, id]);
     }
   };
+
   useEffect(() => {
     if (multible) {
       onSelect(selectedItems);
@@ -92,6 +112,7 @@ const DropdownPicker = (props: Props) => {
       setSelectedItems(selected as string[]);
     }
   }, [isVisible, selected]);
+
   useEffect(() => {
     if (isVisible) {
       modalizeRef.current?.open();
@@ -110,13 +131,22 @@ const DropdownPicker = (props: Props) => {
           name="close"
           size={18}
           color={colors.text}
-          onPress={() => selectItemHandel(id)}
+          onPress={() => {
+            // Xoá item khỏi selectedItems
+            const updatedItems = selectedItems.filter(itemId => itemId !== id);
+            setSelectedItems(updatedItems);
+
+            // Cập nhật lại giá trị trong Formik và trigger validation
+            formik.setFieldValue(validateField, updatedItems.length > 0 ? updatedItems : null);
+            formik.setFieldTouched(validateField, true); // Đánh dấu trường đã được touch
+            formik.validateForm(); // Trigger lại validation
+          }}
         />
       </RowComponent>
     ) : null;
   };
+
   const renderServiceItem = (item: SelectModel) => {
-    // console.log(item.value)
     return (
       <RowComponent
         key={item.value}
@@ -152,6 +182,7 @@ const DropdownPicker = (props: Props) => {
       </RowComponent>
     );
   };
+
   return (
     <View>
       {label && <TextComponent text={label} styles={{marginBottom: 8}} />}
@@ -206,7 +237,7 @@ export default DropdownPicker;
 
 const styles = StyleSheet.create({
   itemContainer: {
-    marginBottom: 12,
+    marginBottom: 8,
   },
   selectedItem: {
     borderWidth: 0.5,

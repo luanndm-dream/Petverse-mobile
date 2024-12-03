@@ -220,6 +220,9 @@ const CreateJobScreen = () => {
     },
   });
 
+  
+
+
   const handleSubmit = () => {
     formik.handleSubmit();
     const allPricesValid = validateAllPrices();
@@ -407,7 +410,7 @@ const CreateJobScreen = () => {
             required
           />
 
-          <TextComponent text="Mô tả trung tâm" type="title" />
+          <TextComponent text="Mô tả trung tâm" type="title" required/>
           <InputComponent
             onChange={formik.handleChange('description')}
             value={formik.values.description}
@@ -422,14 +425,19 @@ const CreateJobScreen = () => {
               {formik.errors.description}
             </Text>
           )}
+          <TextComponent text="Loại thú cưng" type="title" required/>
           <DropdownPicker
             values={species}
             multible
             onSelect={(selectedScpecies: string | string[]) => {
               setSelectedSpeciesId(selectedScpecies);
-              formik.setFieldValue('speciesId', selectedScpecies);
+              formik.setFieldValue('speciesId', selectedScpecies || null);
+              formik.setFieldTouched('speciesId', true);
+
             }}
             placeholder="Chọn thú"
+            formik={formik}
+            validateField='speciesId'
           />
           {formik.errors.speciesId && formik.touched.speciesId && (
             <Text style={globalStyles.errorText}>

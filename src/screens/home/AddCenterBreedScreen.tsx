@@ -25,6 +25,7 @@ import Toast from 'react-native-toast-message';
 const AddCenterBreedScreen = () => {
   const {navigate, goBack} = useCustomNavigation();
   const {showLoading, hideLoading} = useLoading();
+  const [resetDropdown, setResetDropdown] = useState(false);
   const [spicies, setSpicies] = useState<SelectModel[]>([]);
   const petCenterId = useAppSelector(state => state.auth.petCenterId) as never;
 
@@ -35,6 +36,12 @@ const AddCenterBreedScreen = () => {
       .replace(/\B(?=(\d{3})+(?!\d))/g, ','); // Thêm dấu phân cách hàng nghìn
   };
 
+  const handleResetDropdown = () => {
+    setResetDropdown(true);
+    // Đợi một chút để reset
+    setTimeout(() => setResetDropdown(false), 50);
+  };
+  
   useEffect(() => {
     showLoading();
     apiGetPetSpecies().then((res: any) => {
@@ -128,9 +135,12 @@ const AddCenterBreedScreen = () => {
           <DropdownPicker
             values={spicies}
             onSelect={(selectedSpecies: string | string[]) => {
-              formik.setFieldValue('speciesId', selectedSpecies);
+              formik.setFieldValue('speciesId', selectedSpecies || null);
+              formik.setFieldTouched('speciesId', true);
             }}
             placeholder="Chọn giống"
+            formik={formik}
+            validateField='speciesId'
           />
           {formik.errors.speciesId && (
             <Text style={globalStyles.errorText}>

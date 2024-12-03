@@ -130,7 +130,7 @@ const SignUpScreen = () => {
         }) => (
           <>
             <SectionComponent styles={{flex: 1}}>
-              <TextComponent text="Họ và tên" type="title" />
+              <TextComponent text="Họ và tên" type="title" required/>
               <InputComponent
                 value={values.fullname}
                 onChange={handleChange('fullname')}
@@ -139,7 +139,7 @@ const SignUpScreen = () => {
               {errors.fullname && touched.fullname && (
                 <Text style={styles.errorText}>{errors.fullname}</Text>
               )}
-              <TextComponent text="Email" type="title" />
+              <TextComponent text="Email" type="title" required/>
               <InputComponent
                 value={values.email}
                 onChange={handleChange('email')}
@@ -148,7 +148,7 @@ const SignUpScreen = () => {
               {errors.email && touched.email && (
                 <Text style={styles.errorText}>{errors.email}</Text>
               )}
-              <TextComponent text="Mật khẩu" type="title" />
+              <TextComponent text="Mật khẩu" type="title" required/>
               <InputComponent
                 value={values.password}
                 onChange={handleChange('password')}
@@ -159,7 +159,7 @@ const SignUpScreen = () => {
               {errors.password && touched.password && (
                 <Text style={styles.errorText}>{errors.password}</Text>
               )}
-              <TextComponent text="Xác nhận mật khẩu" type="title" />
+              <TextComponent text="Xác nhận mật khẩu" type="title"required />
               <InputComponent
                 value={values.confirmPassword}
                 onChange={handleChange('confirmPassword')}
@@ -169,7 +169,7 @@ const SignUpScreen = () => {
               {errors.confirmPassword && touched.confirmPassword && (
                 <Text style={styles.errorText}>{errors.confirmPassword}</Text>
               )}
-              <TextComponent text="Số điện thoại" type="title" />
+              <TextComponent text="Số điện thoại" type="title"required />
               <InputComponent
                 value={values.phoneNumber}
                 onChange={handleChange('phoneNumber')}

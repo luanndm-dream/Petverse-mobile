@@ -364,7 +364,7 @@ const AppointmentScreen = () => {
             />
           </RowComponent>
 
-          <TextComponent text="Chọn thú cưng" type="title" />
+          <TextComponent text="Chọn thú cưng" type="title" required/>
           {selectedPet ? (
             <TouchableOpacity
               style={styles.selectedPetContainer}
@@ -401,6 +401,7 @@ const AppointmentScreen = () => {
                   color: colors.primary,
                   marginTop: 4,
                 }}
+              
               />
             </TouchableOpacity>
           )}
@@ -411,7 +412,7 @@ const AppointmentScreen = () => {
             />
           )}
 
-          <TextComponent text="Từ ngày" type="title" />
+          <TextComponent text="Từ ngày" type="title" required/>
           <RowComponent justify="space-between">
             <View style={{flexDirection: 'column', width: '70%'}}>
               <RowComponent
@@ -460,7 +461,7 @@ const AppointmentScreen = () => {
                 variant="TwoTone"
                 style={{alignSelf: 'center'}}
               />
-              <TextComponent text="Đến ngày" type="title" />
+              <TextComponent text="Đến ngày" type="title" required />
               <RowComponent justify="space-between">
                 <View style={{flexDirection: 'column', width: '70%'}}>
                   <RowComponent

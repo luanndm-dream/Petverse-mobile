@@ -58,7 +58,7 @@ export const globalStyles = StyleSheet.create({
         marginBottom: 16,
         paddingVertical: 8,
       },
-      errorText: {
+        errorText: {
         color: 'red',
         fontSize: 14,
         // marginTop:,

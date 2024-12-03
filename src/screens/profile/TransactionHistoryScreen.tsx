@@ -34,8 +34,15 @@ const TransactionItem = ({ item }: any) => {
 
       <View style={styles.footerRow}>
         <Text style={styles.date}>{item.createdDate}</Text>
-        <Text style={[styles.amount, { color: item.isMinus ? colors.red : colors.green }]}>
-          {item.isMinus ? '-' : '+'}
+        <Text
+          style={[
+            styles.amount,
+            {
+              color: item.status === 1 ? colors.grey : item.isMinus ? colors.red : colors.green,
+            },
+          ]}
+        >
+          {item.status === 1 ? '' : item.isMinus ? '-' : '+'}
           {formatAmount(item.amount)}
         </Text>
       </View>
