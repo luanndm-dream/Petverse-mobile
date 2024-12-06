@@ -60,13 +60,20 @@ const ScheduleScreen: React.FC = () => {
       Alert.alert('Thông báo', 'Vui lòng nhập mô tả');
       return;
     }
-
+  
+    // Kiểm tra xem khung giờ đã tồn tại chưa
+    const isTimeExist = timeSlots.some(slot => slot.time === selectedTime);
+    if (isTimeExist) {
+      Alert.alert('Thông báo', 'Khung giờ này đã được thêm.');
+      return;
+    }
+  
     const newTimeSlot: TimeSlot = {
       id: Date.now().toString(),
       time: selectedTime,
       description,
     };
-
+  
     setTimeSlots(prevSlots => [...prevSlots, newTimeSlot]);
     setSelectedTime('');
     setDescription('');

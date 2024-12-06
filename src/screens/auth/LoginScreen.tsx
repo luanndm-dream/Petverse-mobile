@@ -45,29 +45,36 @@ const LoginScreen = () => {
   const handleLogin = async (email: string, password: string) => {
     try {
       showLoading();
-
       const res: any = await apiLogin(email, password);
-
-      if (res.statusCode === 200) {
-        dispatch(addAuth(res.data));
-        await AsyncStorage.setItem(
-          'auth',
-          isRemember ? JSON.stringify(res.data) : '',
-        );
-
-        hideLoading();
-        Toast.show({
-          type: 'success',
-          text1: 'Đăng nhập thành công',
-          text2: 'Petverse chúc bạn thật nhiều sức khoẻ!',
-        });
-      } else {
-        hideLoading();
+      if (res.data.roleName === 'Manager' || res.data.roleName === 'Admin') {
         Toast.show({
           type: 'error',
           text1: 'Đăng nhập thất bại',
-          text2: `Xảy ra lỗi: ${res.message}`,
+          text2: `Truy cập bị từ chối`,
         });
+        hideLoading()
+      } else {
+        if (res.statusCode === 200) {
+          dispatch(addAuth(res.data));
+          await AsyncStorage.setItem(
+            'auth',
+            isRemember ? JSON.stringify(res.data) : '',
+          );
+
+          hideLoading();
+          Toast.show({
+            type: 'success',
+            text1: 'Đăng nhập thành công',
+            text2: 'Petverse chúc bạn thật nhiều sức khoẻ!',
+          });
+        } else {
+          hideLoading();
+          Toast.show({
+            type: 'error',
+            text1: 'Đăng nhập thất bại',
+            text2: `Xảy ra lỗi: ${res.message}`,
+          });
+        }
       }
     } catch (error) {
       hideLoading();
@@ -76,7 +83,6 @@ const LoginScreen = () => {
         text1: 'Đăng nhập thất bại',
         text2: 'Có lỗi xảy ra trong quá trình đăng nhập.',
       });
-      console.error('Lỗi đăng nhập:', error);
     }
   };
 
@@ -85,11 +91,10 @@ const LoginScreen = () => {
   };
   const forgotPasswordHandle = () => {
     navigate(STACK_NAVIGATOR_SCREENS.FORGOTPASSWORDSCREEN);
-  } 
+  };
 
   return (
-    <Container
-    isScroll={true}>
+    <Container isScroll={true}>
       <SpaceComponent height={50} />
       <Image
         style={styles.logoImage}
@@ -151,30 +156,28 @@ const LoginScreen = () => {
               )}
             </SectionComponent>
             <SectionComponent>
-            <RowComponent
-              justify="space-between"
-              styles={{marginTop: -20}}>
-              <RowComponent onPress={() => setIsRemember(!isRemember)}>
-                <Switch
-                  trackColor={{true: colors.primary}}
-                  thumbColor={colors.white}
-                  value={isRemember}
-                  onChange={() => setIsRemember(!isRemember)}
+              <RowComponent justify="space-between" styles={{marginTop: -20}}>
+                <RowComponent onPress={() => setIsRemember(!isRemember)}>
+                  <Switch
+                    trackColor={{true: colors.primary}}
+                    thumbColor={colors.white}
+                    value={isRemember}
+                    onChange={() => setIsRemember(!isRemember)}
+                  />
+                  <SpaceComponent width={4} />
+                  <TextComponent text="Ghi nhớ tôi" />
+                </RowComponent>
+                <ButtonComponent
+                  text="Quên mật khẩu?"
+                  onPress={forgotPasswordHandle}
+                  type="text"
                 />
-                <SpaceComponent width={4} />
-                <TextComponent text="Ghi nhớ tôi" />
               </RowComponent>
-              <ButtonComponent
-                text="Quên mật khẩu?"
-                onPress={forgotPasswordHandle}
-                type="text"
-              />
-            </RowComponent>
             </SectionComponent>
             <ButtonComponent
               text="Đăng nhập"
               type="primary"
-              onPress={handleSubmit} 
+              onPress={handleSubmit}
             />
 
             <RowComponent>

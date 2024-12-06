@@ -295,12 +295,12 @@ const TrackingScreen = () => {
           </View>
         </ScrollView>
         {roleName === 'PetCenter' && appointmentData.status === 2 && (
-  <View style={styles.completedMessageContainer}>
-    <Text style={styles.completedMessageText}>
-      Lịch hẹn đã hoàn thành, không thể tạo thêm báo cáo.
-    </Text>
-  </View>
-)}
+          <View style={styles.completedMessageContainer}>
+            <Text style={styles.completedMessageText}>
+              Đã hoàn thành, không thể tạo thêm báo cáo.
+            </Text>
+          </View>
+        )}
       </Container>
       {selectedRecordIndex !== null &&
         selectedDateData &&

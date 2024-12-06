@@ -20,7 +20,7 @@ import useLoading from '@/hook/useLoading';
 import { apiGetJobByPetCenterId } from '@/api/apiJob';
 import { STACK_NAVIGATOR_SCREENS } from '@/constants/screens';
 import { useAppSelector } from '@/redux';
-import { EditServiceIcon, PetBreedingIcon } from '@/assets/svgs';
+import { EditServiceIcon, OverviewIcon, PetBreedingIcon } from '@/assets/svgs';
 import LinearGradient from 'react-native-linear-gradient';
 
 const { width } = Dimensions.get('window');
@@ -175,10 +175,10 @@ const WorkProfileScreen = () => {
               ['#00BCD4', '#2196F3'] 
             )}
              {renderMenuItem(
-              <PetBreedingIcon width={45} height={45} />,
-              "Chỉnh sửa công việc",
-              "Theo dõi và quản lý hoạt động sinh sản",
-              () => navigate(STACK_NAVIGATOR_SCREENS.MANAGEPETBREEDINGSCREEN),
+              <OverviewIcon width={45} height={45} />,
+              "Tổng quan trung tâm",
+              "Quản lí các tổng quan của trung tâm",
+              () => navigate(STACK_NAVIGATOR_SCREENS.EDITOVERVIEWSCREEN),
               ['#4CAF50', '#81C784'] 
             )}
           </>

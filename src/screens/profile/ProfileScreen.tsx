@@ -56,13 +56,13 @@ const ProfileScreen = () => {
   const [refreshFlag, setRefreshFlag] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
   const dispatch = useAppDispatch();
+  console.log(managerData)
   useEffect(() => {
-   
-    // apiGetUserByUserId(managerId).then((res: any) => {
-    //   if (res.statusCode === 200) {
-    //     setManagerData(res?.data);
-    //   }
-    // });
+    apiGetUserByUserId(managerId).then((res: any) => {
+      if (res.statusCode === 200) {
+        setManagerData(res?.data);
+      }
+    });
     if (petCenterId) {
       apiGetPetCenterByPetCenterId(petCenterId).then((res: any) => {
         if (res.statusCode === 200) {

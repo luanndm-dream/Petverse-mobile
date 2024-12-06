@@ -48,7 +48,7 @@ const PlaceForPetScreen = () => {
         hideLoading();
       });
   }, []);
-
+  console.log(placesData);
   const handleFilter = (speciesId: any) => {
     setSelectedSpecies(speciesId);
     if (speciesId === null) {
@@ -79,10 +79,14 @@ const PlaceForPetScreen = () => {
       inputRange: [-1, 0, index * 220, (index + 1) * 220],
       outputRange: [1, 1, 1, 0.9],
     });
+
     const openGoogleMaps = (lat: string, lng: string) => {
       const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
-      Linking.openURL(url).catch((err) => console.error('Error opening Google Maps:', err));
+      Linking.openURL(url).catch(err =>
+        console.error('Error opening Google Maps:', err),
+      );
     };
+
     return (
       <Animated.View style={[styles.card, {transform: [{scale}]}]}>
         <Image source={{uri: item.image}} style={styles.image} />
@@ -103,11 +107,22 @@ const PlaceForPetScreen = () => {
           <Text style={styles.placeDescription} numberOfLines={2}>
             {item.description}
           </Text>
-          <TouchableOpacity
-            style={styles.directionButton}
-            onPress={() => openGoogleMaps(item.lat, item.lng)}>
-            <Text style={styles.directionText}>Chỉ đường</Text>
-          </TouchableOpacity>
+          <View style={[styles.headerRow, {marginTop: 8}]}>
+            <View style={styles.freeTagContainer}>
+              <Text
+                style={[
+                  styles.freeTag,
+                  item.isFree ? styles.freeTagActive : styles.freeTagInactive,
+                ]}>
+                {item.isFree ? 'Miễn phí' : 'Không miễn phí'}
+              </Text>
+            </View>
+            <TouchableOpacity
+              style={styles.directionButton}
+              onPress={() => openGoogleMaps(item.lat, item.lng)}>
+              <Text style={styles.directionText}>Chỉ đường</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </Animated.View>
     );
@@ -228,12 +243,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 12,
   },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
   placeName: {
     fontSize: 16,
     fontWeight: 'bold',
@@ -264,12 +273,38 @@ const styles = StyleSheet.create({
     lineHeight: 18,
     marginBottom: 12,
   },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  freeTagContainer: {
+    marginRight: 8, // Tạo khoảng cách với các thành phần khác
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  freeTag: {
+    fontSize: 10, // Kích thước chữ nhỏ
+    fontWeight: '600',
+    textAlign: 'center',
+    paddingHorizontal: 6, // Giảm padding ngang
+    paddingVertical: 2, // Giảm padding dọc
+    borderRadius: 6, // Bo góc
+  },
+  freeTagActive: {
+    backgroundColor: '#E8F5E9', // Xanh nhạt
+    color: '#2E7D32', // Xanh đậm
+  },
+  freeTagInactive: {
+    backgroundColor: '#FFEBEE', // Đỏ nhạt
+    color: '#C62828', // Đỏ đậm
+  },
   directionButton: {
     backgroundColor: colors.primary,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
     borderRadius: 8,
-    alignSelf: 'flex-end',
   },
   directionText: {
     color: colors.white,

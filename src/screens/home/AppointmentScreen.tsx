@@ -52,12 +52,14 @@ import firestore from '@react-native-firebase/firestore';
 import {addAppointmentInBreedingToFirestore} from '@/services/firestoreFunction';
 import {apiGetUserByUserId} from '@/api/apiUser';
 import {apiGetPetCenterServiceByPetServiceId} from '@/api/apiPetCenterService';
+import { appointmentData } from '@/data/appointmentData';
 
 const AppointmentScreen = () => {
   const route = useRoute<any>();
   const navigation = useNavigation<any>();
   const {showLoading, hideLoading} = useLoading();
-  const {petCenterServiceId, petCenterServiceName, type, price} = route.params;
+  const {petCenterServiceId, petCenterServiceName, type, price, speciesId} =
+    route.params;
   const {goBack, navigate} = useCustomNavigation();
   const userId = useAppSelector(state => state.auth.userId);
   const [userData, setUserData] = useState<any>();
@@ -103,25 +105,42 @@ const AppointmentScreen = () => {
       },
     );
   }, []);
+
   useFocusEffect(
     useCallback(() => {
-      apiGetPetByUserId(userId).then((res: any) => {
-        if (res.statusCode === 200) {
-          hideLoading();
-          setMyPet(res.data.items);
-        } else {
-          hideLoading();
-          console.log('load my pet fail', res);
-        }
-      });
-    }, [userId]),
+      if (petCenterServiceName.includes('phối') && speciesId) {
+        console.log('speciesId:', speciesId);
+        apiGetPetByUserId(userId, speciesId).then((res: any) => {
+          console.log('Filtered API Response:', res);
+          if (res.statusCode === 200) {
+            hideLoading();
+            setMyPet(res.data.items); // Lọc theo speciesId
+          } else {
+            hideLoading();
+            console.error('Load pets failed:', res);
+          }
+        });
+      } else {
+        apiGetPetByUserId(userId).then((res: any) => {
+          console.log('Unfiltered API Response:', res);
+          if (res.statusCode === 200) {
+            hideLoading();
+            setMyPet(res.data.items); // Không lọc
+          } else {
+            hideLoading();
+            console.error('Load pets failed:', res);
+          }
+        });
+      }
+    }, [userId, speciesId, petCenterServiceName]),
   );
+  console.log('speciesId:', speciesId);
+  console.log('Calling API with speciesId:', speciesId ? true : false);
 
   const formattedSchedules = scheduleData.map((item: any) => ({
-    time: moment(item.time, 'HH:mm').format('HH:mm'), // Chỉ giữ giờ
+    time: moment(item.time, 'HH:mm').format('HH:mm'),
     description: item.description,
   }));
-  
 
   const handleToDateConfirm = (date: any) => {
     const fromDate = moment(formik.values.fromDate, 'DD/MM/YYYY');
@@ -156,7 +175,6 @@ const AppointmentScreen = () => {
     }
   };
 
-
   const validationSchema = Yup.object().shape({
     petId: Yup.string().required('Vui lòng chọn thú cưng'),
     fromDate: Yup.string().required('Vui lòng chọn ngày bắt đầu'),
@@ -189,7 +207,6 @@ const AppointmentScreen = () => {
       if (values.fromDate && values.fromTime) {
         switch (type) {
           case 0:
-          
             startTime = `${values.fromDate} ${values.fromTime}`;
             endTime = `${values.fromDate} ${values.fromTime}`;
             break;
@@ -199,7 +216,7 @@ const AppointmentScreen = () => {
             break;
         }
       }
-      
+
       showLoading();
       console.log(petCenterServiceName);
       if (petCenterServiceName.includes('phối')) {
@@ -236,7 +253,7 @@ const AppointmentScreen = () => {
           }
         });
       } else {
-        console.log(formattedSchedules)
+        console.log(formattedSchedules);
         apiCreateServiceAppointment(
           userId,
           selectedPet.id,
@@ -315,15 +332,15 @@ const AppointmentScreen = () => {
       apiGetUserByUserId(userId).then((res: any) => {
         setUserData(res.data);
       });
-      apiGetPetByUserId(userId).then((res: any) => {
-        if (res.statusCode === 200) {
-          hideLoading();
-          setMyPet(res.data.items);
-        } else {
-          hideLoading();
-          console.log('load my pet fail', res);
-        }
-      });
+      // apiGetPetByUserId(userId).then((res: any) => {
+      //   if (res.statusCode === 200) {
+      //     hideLoading();
+      //     setMyPet(res.data.items);
+      //   } else {
+      //     hideLoading();
+      //     console.log('load my pet fail', res);
+      //   }
+      // });
     }, [userId]),
   );
 
@@ -338,7 +355,9 @@ const AppointmentScreen = () => {
             color={colors.dark}
             onPress={goBack}
           />
-        }>
+        }
+
+        >
         {isAgree && (
           <View style={styles.warningContainer}>
             <RowComponent justify="space-between">
@@ -364,7 +383,7 @@ const AppointmentScreen = () => {
             />
           </RowComponent>
 
-          <TextComponent text="Chọn thú cưng" type="title" required/>
+          <TextComponent text="Chọn thú cưng" type="title" required />
           {selectedPet ? (
             <TouchableOpacity
               style={styles.selectedPetContainer}
@@ -401,7 +420,6 @@ const AppointmentScreen = () => {
                   color: colors.primary,
                   marginTop: 4,
                 }}
-              
               />
             </TouchableOpacity>
           )}
@@ -412,7 +430,7 @@ const AppointmentScreen = () => {
             />
           )}
 
-          <TextComponent text="Từ ngày" type="title" required/>
+          <TextComponent text="Từ ngày" type="title" required />
           <RowComponent justify="space-between">
             <View style={{flexDirection: 'column', width: '70%'}}>
               <RowComponent
@@ -502,20 +520,20 @@ const AppointmentScreen = () => {
                 </View>
               </RowComponent>
               {type === 1 && scheduleData.length > 0 && (
-  <>
-    <TextComponent text="Lịch theo dõi báo cáo" type="title" />
-    <View style={styles.scheduleGrid}>
-      {scheduleData.map((item: any, index) => (
-        <View key={index} style={styles.scheduleItem}>
-          <TextComponent
-            text={`${item.time} - ${item.description}`}
-            styles={{textAlign: 'center'}}
-          />
-        </View>
-      ))}
-    </View>
-  </>
-)}
+                <>
+                  <TextComponent text="Lịch theo dõi báo cáo" type="title" />
+                  <View style={styles.scheduleGrid}>
+                    {scheduleData.map((item: any, index) => (
+                      <View key={index} style={styles.scheduleItem}>
+                        <TextComponent
+                          text={`${item.time} - ${item.description}`}
+                          styles={{textAlign: 'center'}}
+                        />
+                      </View>
+                    ))}
+                  </View>
+                </>
+              )}
             </>
           )}
         </SectionComponent>
@@ -667,14 +685,14 @@ const AppointmentScreen = () => {
         onConfirm={handleToTimeConfirm}
       />
       <PopupComponent
-        description="Có thể dẫn đến cận huyết, do thú cưng và giống đã từng phối với nhau."
+        description="Điều này có thể ảnh hưởng đến sức khỏe thế hệ sau. Thú cưng của bạn đã từng phối với giống này."
         iconColor={colors.yellow}
         iconName="alert-circle"
         isVisible={isPopup}
         leftTitle="Huỷ"
         onClose={() => setIsPopup(false)}
         onLeftPress={() => setIsPopup(false)}
-        title="Cảnh báo cận huyết"
+        title="Cảnh báo cẩn thận"
         onRightPress={() => {
           setIsPopup(false);
           setIsAgree(true);

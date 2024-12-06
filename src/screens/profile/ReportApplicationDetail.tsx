@@ -35,7 +35,7 @@ const ReportApplicationDetail = () => {
   const route = useRoute<any>();
   const { reportId } = route.params;
   const [reportData, setReportData] = useState<ReportData | null>(null);
-
+  console.log(reportData)
   useEffect(() => {
     showLoading();
     apiGetReportByReportId(reportId).then((res: any) => {
@@ -247,21 +247,42 @@ const styles = StyleSheet.create({
   mediaGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    marginHorizontal: -8,
+    justifyContent: "space-between", // Giãn đều các phần tử
+    alignItems: "center", // Căn giữa các phần tử theo chiều dọc
+    marginHorizontal: -8, // Loại bỏ padding bên ngoài
   },
   imageContainer: {
-    width: (width - 48) / 2,
-    aspectRatio: 1,
-    padding: 8,
+    width: (width - 48) / 2, // Đảm bảo kích thước nhất quán
+    aspectRatio: 1, // Tỉ lệ 1:1 để giữ hình vuông
+    margin: 8, // Thay vì padding, dùng margin để cách đều
+    backgroundColor: colors.white,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: colors.grey4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
   },
   videoContainer: {
     width: (width - 48) / 2,
-    padding: 8,
+    margin: 8, // Thay vì padding, dùng margin để cách đều
+    backgroundColor: colors.white,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: colors.grey4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
   },
   image: {
     width: "100%",
     height: "100%",
     borderRadius: 10,
+    // resizeMode: 'cover'
   },
   infoText: {
     fontSize: 14,

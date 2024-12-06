@@ -42,4 +42,6 @@ export const STACK_NAVIGATOR_SCREENS = {
   REPORTAPPLICATIONDETAIL: 'ReportApplicationDetail',
   EDITPETALBUM: 'EditPetAlbum',
   MYAPPLICATIONSCREEN: 'MyApplicationScreen',
+  EDITOVERVIEWSCREEN: 'EditOverViewScreen',
+  REVIEWSCREEN: 'ReviewScreen',
 };

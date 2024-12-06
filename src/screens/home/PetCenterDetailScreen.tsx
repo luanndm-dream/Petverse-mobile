@@ -12,6 +12,7 @@ import {
   ButtonComponent,
   Container,
   IconButtonComponent,
+  PopupComponent,
   RowComponent,
   TextComponent,
 } from '@/components';
@@ -25,7 +26,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import {Star} from 'iconsax-react-native';
 import {apiGetPetCenterRateByPetCenterId} from '@/api/apiPetCenterRate';
 import {STACK_NAVIGATOR_SCREENS} from '@/constants/screens';
-import { useAppSelector } from '@/redux';
+import {useAppSelector} from '@/redux';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -110,76 +111,125 @@ const ServicesTab = ({petCenterData}: any) => {
   const [selectedServiceName, setSelectedServiceName] = useState<string>('');
   const [serviceType, setServiceType] = useState();
   const [servicePrice, setServicePrice] = useState();
-  const roleName = useAppSelector((state) => state.auth.roleName)
-  const isPetCenter = roleName === 'PetCenter';
-  return (
-    <View style={styles.tabContainer}>
-      <FlatList
-        showsVerticalScrollIndicator={false}
-        scrollEnabled={true}
-        data={petCenterData.petCenterServices}
-        renderItem={({item, index}) => (
-          <TouchableOpacity
-            onPress={() => {
-              setSelectedService(item.petCenterServiceId),
-                setSelectedServiceName(item.name);
-              setServiceType(item.type);
-              setServicePrice(item.price);
-            }}
-            style={[
-              styles.serviceCard,
-              {
-                borderColor:
-                  selectedService === item.petCenterServiceId
-                    ? colors.primary
-                    : 'transparent',
-                borderWidth: 2,
-              },
-            ]}>
-            <RowComponent justify="space-between">
-              <TextComponent
-                text={item.name}
-                styles={styles.serviceName}
-                type="title"
-              />
-              <RowComponent
-                styles={{justifyContent: 'center', alignItems: 'center'}}>
-                <Star size={16} color={colors.primary} variant="Bold" />
-                <TextComponent
-                  text={item.rate.toFixed(2)}
-                  styles={{marginLeft: 4}}
-                  type="title"
-                />
-              </RowComponent>
-            </RowComponent>
+  const [isPopupVisible, setPopupVisible] = useState(false); // Trạng thái Popup
+  const [selectedServiceUsageRate, setSelectedServiceUsageRate] = useState(0); // Tỷ lệ sử dụng
 
-            <TextComponent
-              text={`Giá: ${priceFormater(item.price)}`}
-              styles={styles.servicePrice}
-            />
-          </TouchableOpacity>
-        )}
-        keyExtractor={item => item.petCenterServiceId.toString()}
-        contentContainerStyle={styles.serviceList}
-      />
-      <ButtonComponent
-         text={isPetCenter ? 'Chỉ khách hàng đặt' : 'Đặt dịch vụ'}
-        type="primary"
-        disable={!selectedService || roleName === 'PetCenter'} 
-        onPress={() => {
+  const roleName = useAppSelector(state => state.auth.roleName);
+  const isPetCenter = roleName === 'PetCenter';
+
+  const handleServicePress = () => {
+    // Hiển thị cảnh báo nếu dịch vụ gần quá tải
+    if (selectedServiceUsageRate >= 0.5) {
+      setPopupVisible(true);
+    } else {
+      // Điều hướng đến màn hình đặt dịch vụ
+      navigation.navigate(STACK_NAVIGATOR_SCREENS.APPOINMENTSCREEN, {
+        petCenterServiceId: selectedService,
+        petCenterServiceName: selectedServiceName,
+        type: serviceType,
+        price: servicePrice,
+        speciesId: null
+
+      });
+    }
+  };
+
+  return (
+    <>
+      <View style={styles.tabContainer}>
+        <FlatList
+          showsVerticalScrollIndicator={false}
+          scrollEnabled={true}
+          data={petCenterData.petCenterServices}
+          renderItem={({item, index}) => {
+            const usageRate = item.capacity > 0 ? item.currentUsage / item.capacity : 0;
+
+            return (
+              <TouchableOpacity
+                onPress={() => {
+                  setSelectedService(item.petCenterServiceId);
+                  setSelectedServiceName(item.name);
+                  setServiceType(item.type);
+                  setServicePrice(item.price);
+                  setSelectedServiceUsageRate(usageRate); // Cập nhật tỷ lệ sử dụng của dịch vụ
+                }}
+                style={[
+                  styles.serviceCard,
+                  {
+                    backgroundColor: usageRate >= 0.5 ? '#FFFDE7' : '#FFFFFF', // Cảnh báo màu nền
+                    borderColor:
+                      selectedService === item.petCenterServiceId
+                        ? colors.primary
+                        : 'transparent',
+                    borderWidth: 2,
+                  },
+                ]}>
+                <RowComponent justify="space-between">
+                  <TextComponent
+                    text={item.name}
+                    styles={styles.serviceName}
+                    type="title"
+                  />
+                  <RowComponent
+                    styles={{justifyContent: 'center', alignItems: 'center'}}>
+                    <Star size={16} color={colors.primary} variant="Bold" />
+                    <TextComponent
+                      text={item.rate.toFixed(2)}
+                      styles={{marginLeft: 4}}
+                      type="title"
+                    />
+                  </RowComponent>
+                </RowComponent>
+
+                <TextComponent
+                  text={`Giá: ${priceFormater(item.price)}`}
+                  styles={styles.servicePrice}
+                />
+              </TouchableOpacity>
+            );
+          }}
+          keyExtractor={item => item.petCenterServiceId.toString()}
+          contentContainerStyle={styles.serviceList}
+        />
+        <ButtonComponent
+          text={isPetCenter ? 'Chỉ khách hàng đặt' : 'Đặt dịch vụ'}
+          type="primary"
+          styles={{width: '100%'}}
+          disable={!selectedService || roleName === 'PetCenter'}
+          onPress={handleServicePress}
+        />
+      </View>
+
+      {/* PopupComponent */}
+      <PopupComponent
+        description="Hiện tại dịch vụ này đang có khả năng bị quá tải, bạn hãy cân nhắc trước khi đặt."
+        isVisible={isPopupVisible}
+        iconColor={colors.yellow}
+        buttonLeftColor={colors.grey}
+        iconName="alert-circle"
+        leftTitle="Huỷ"
+        onClose={() => setPopupVisible(false)}
+        onLeftPress={() => setPopupVisible(false)}
+        onRightPress={() => {
+          // Điều hướng đến đặt dịch vụ nếu người dùng xác nhận
           navigation.navigate(STACK_NAVIGATOR_SCREENS.APPOINMENTSCREEN, {
             petCenterServiceId: selectedService,
             petCenterServiceName: selectedServiceName,
             type: serviceType,
             price: servicePrice,
+            speciesId: null
           });
+          setPopupVisible(false); // Ẩn Popup
         }}
+        rightTitle="Xác nhận"
+        title="Cảnh báo"
       />
-    </View>
+    </>
   );
 };
 
 const ReviewsTab = ({petCenterRate}: any) => {
+  console.log(petCenterRate)
   const serviceColors = [
     '#FFCDD2',
     '#FFF9C4',
@@ -262,19 +312,19 @@ const PetCenterDetailScreen = () => {
   const {goBack} = useCustomNavigation();
   const {showLoading, hideLoading} = useLoading();
   const route = useRoute<any>();
-  const navigation = useNavigation<any>()
-  const userId = useAppSelector((state) => state.auth.userId)
+  const navigation = useNavigation<any>();
+  const userId = useAppSelector(state => state.auth.userId);
   const {petCenterId, petCenterName, userIdOfPetCenter, isBook} = route.params;
   const [petCenterData, setPetCenterData] = useState<any>();
   const [petCenterRate, setPetCenterRate] = useState<any>([]);
-  console.log(userIdOfPetCenter)
+  const [isVisible, setisVisible] = useState(false)
   useEffect(() => {
     showLoading();
     Promise.all([
       apiGetPetCenterByPetCenterId(petCenterId),
       apiGetPetCenterRateByPetCenterId(petCenterId),
     ]).then(([centerRes, rateRes]: any) => {
-      console.log(centerRes, 'rateRes', rateRes)
+      console.log(centerRes, 'rateRes', rateRes);
       if (centerRes.statusCode === 200 && rateRes.statusCode === 200) {
         hideLoading();
         setPetCenterData(centerRes.data);
@@ -283,7 +333,6 @@ const PetCenterDetailScreen = () => {
     });
   }, []);
   if (!petCenterData) return null;
-
 
   const onMessaging = () => {
     navigation.navigate(STACK_NAVIGATOR_SCREENS.CHATDETAILSCREEN, {
@@ -295,6 +344,7 @@ const PetCenterDetailScreen = () => {
   };
 
   return (
+    <>
     <Container
       title={petCenterName}
       left={
@@ -307,13 +357,12 @@ const PetCenterDetailScreen = () => {
       }
       right={
         <IconButtonComponent
-        name="chat-plus"
-        size={30}
-        color={colors.primary}
-        onPress={onMessaging}
-      />
-      }
-      >
+          name="chat-plus"
+          size={30}
+          color={colors.primary}
+          onPress={onMessaging}
+        />
+      }>
       <View style={styles.container}>
         <Image source={{uri: petCenterData.avatar}} style={styles.avatar} />
         {/* <TextComponent text={petCenterData.name} type="title" styles={styles.centerName} /> */}
@@ -328,7 +377,11 @@ const PetCenterDetailScreen = () => {
           text={petCenterData.description}
           styles={styles.addressText}
         />
-        <TextComponent text="Địa chỉ" type="title" styles={{marginVertical: 6}}/>
+        <TextComponent
+          text="Địa chỉ"
+          type="title"
+          styles={{marginVertical: 6}}
+        />
         <TextComponent text={petCenterData.address} size={16} />
         {/* <View style={styles.ratingContainer}>
           <Star size={18} color={colors.primary} variant="Bold" />
@@ -349,8 +402,7 @@ const PetCenterDetailScreen = () => {
               shadowOpacity: 0,
             },
           }}
-          initialRouteName={isBook ? "Dịch vụ": "Tổng quan"}
-        >
+          initialRouteName={isBook ? 'Dịch vụ' : 'Tổng quan'}>
           <Tab.Screen name="Tổng quan">
             {() => <OverviewTab petCenterData={petCenterData} />}
           </Tab.Screen>
@@ -363,6 +415,19 @@ const PetCenterDetailScreen = () => {
         </Tab.Navigator>
       </View>
     </Container>
+    <PopupComponent 
+    description='Hiện tại dịch vụ này của trung tâm đang có khả năng sẽ bị quá tải, bạn hãy cân nhắc trước khi đặt'
+    isVisible={isVisible}
+    iconColor={colors.yellow}
+    iconName='alert-circle'
+    leftTitle='Huỷ'
+    onClose={()=>setisVisible(false)}
+    onLeftPress={()=>setisVisible(false)}
+    onRightPress={()=>{}}
+    rightTitle='Xác nhận'
+    title='Cảnh báo'
+    />
+    </>
   );
 };
 
@@ -375,7 +440,7 @@ const styles = StyleSheet.create({
   },
   avatar: {
     width: '100%',
-    height: 200,
+    height: 180,
     borderRadius: 10,
     marginBottom: 16,
   },
@@ -545,16 +610,16 @@ const styles = StyleSheet.create({
     color: colors.grey,
   },
   serviceNameContainer: {
-    backgroundColor: '#FFF9C4', 
-    paddingHorizontal: 8,     
-    paddingVertical: 4,        
-    borderRadius: 6,          
-    marginTop: 4,      
-    alignSelf: 'flex-start',   
+    backgroundColor: '#FFF9C4',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    marginTop: 4,
+    alignSelf: 'flex-start',
   },
   serviceNameText: {
     fontSize: 14,
     fontWeight: '600',
-    color: colors.dark, 
+    color: colors.dark,
   },
 });

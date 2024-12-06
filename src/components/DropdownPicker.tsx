@@ -93,9 +93,9 @@ const DropdownPicker = (props: Props) => {
       setSelectedItems(data);
 
       // Cập nhật lại giá trị trong Formik và trigger validation
-      formik.setFieldValue(validateField, data.length > 0 ? data : null);
-      formik.setFieldTouched(validateField, true); // Đánh dấu trường đã được touch
-      formik.validateForm(); // Trigger lại validation
+      formik?.setFieldValue(validateField, data.length > 0 ? data : null);
+      formik?.setFieldTouched(validateField, true); // Đánh dấu trường đã được touch
+      formik?.validateForm(); // Trigger lại validation
     } else {
       setSelectedItems([...selectedItems, id]);
     }
@@ -107,11 +107,19 @@ const DropdownPicker = (props: Props) => {
     }
   }, [multible, selectedItems]);
 
+
+  useEffect(() => {
+    if (selected && selected.length > 0) {
+      setSelectedItems(selected as string[]); // Đồng bộ giá trị khi khởi tạo
+    }
+  }, [selected]);
+
   useEffect(() => {
     if (isVisible && selected && selected?.length > 0) {
       setSelectedItems(selected as string[]);
     }
   }, [isVisible, selected]);
+
 
   useEffect(() => {
     if (isVisible) {
@@ -137,9 +145,9 @@ const DropdownPicker = (props: Props) => {
             setSelectedItems(updatedItems);
 
             // Cập nhật lại giá trị trong Formik và trigger validation
-            formik.setFieldValue(validateField, updatedItems.length > 0 ? updatedItems : null);
-            formik.setFieldTouched(validateField, true); // Đánh dấu trường đã được touch
-            formik.validateForm(); // Trigger lại validation
+            formik?.setFieldValue(validateField, updatedItems.length > 0 ? updatedItems : null);
+            formik?.setFieldTouched(validateField, true); // Đánh dấu trường đã được touch
+            formik?.validateForm(); // Trigger lại validation
           }}
         />
       </RowComponent>

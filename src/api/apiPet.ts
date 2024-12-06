@@ -1,9 +1,17 @@
 import {protectedAxios, publicAxios} from './apiConfiguration';
 
-export async function apiGetPetByUserId(userId: string) {
+export async function apiGetPetByUserId(userId: string, speciesId?: number) {
   const url = `Pet/${userId}`;
 
-  return protectedAxios.get(url);
+  // Cấu hình `params` nếu có `speciesId`
+  const params = speciesId
+    ? {
+        params: { SpeciesId: speciesId },
+      }
+    : {};
+
+
+  return protectedAxios.get(url, params);
 }
 
 export async function apiGetPetSpecies() {

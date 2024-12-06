@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {Image, StyleSheet, Text, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {
   Container,
@@ -22,7 +22,7 @@ import {STACK_NAVIGATOR_SCREENS} from '@/constants/screens';
 import useLoading from '@/hook/useLoading';
 import Toast from 'react-native-toast-message';
 import firestore from '@react-native-firebase/firestore';
-import { priceFormater } from '@/utils/priceFormater';
+import {priceFormater} from '@/utils/priceFormater';
 
 const MyAppointmentDetailScreen = () => {
   const userId = useAppSelector(state => state.auth.userId);
@@ -50,6 +50,7 @@ const MyAppointmentDetailScreen = () => {
     }
   };
 
+  console.log(appointmentData);
   useEffect(() => {
     const loadDocumentIds = async () => {
       const ids = await fetchDocumentIds();
@@ -75,11 +76,29 @@ const MyAppointmentDetailScreen = () => {
 
   const getPopupContent = (action: string) => {
     switch (action) {
+      case 'complete':
+        return {
+          title: 'Hoàn thành',
+          description: 'Chắn chắn muốn hoàn thành lịch hẹn?',
+          iconName: 'check-circle',
+          iconColor: colors.green,
+          hasInput: false,
+          leftTitle: 'Huỷ',
+          rightTitle: 'Xác nhận',
+          buttonLeftColor: colors.grey,
+          buttonRightColor: colors.green,
+          onLeftPress: () => setIsVisible(false),
+          onRightPress: () => {
+            setIsVisible(false);
+            onCompleteHandle();
+          },
+        };
+
       case 'warning':
         return {
-          title: 'Cảnh báo cận huyết',
+          title: 'Cảnh báo',
           description:
-            'Lịch hẹn này có thể dẫn đến cận huyết vì thú cưng đã từng phối giống với loại giống này trước đây. Bạn có chắc chắn muốn tiếp tục?',
+            'Điều này có thể ảnh hưởng đến sức khỏe thế hệ sau. Thú cưng của bạn đã từng phối với giống này.',
           iconName: 'alert-circle',
           iconColor: colors.yellow,
           hasInput: false,
@@ -297,6 +316,12 @@ const MyAppointmentDetailScreen = () => {
       appointmentType: appointmentType,
     });
   };
+  const reviewHandle = (appointmentId: string) => {
+    navigation.navigate(STACK_NAVIGATOR_SCREENS.REVIEWSCREEN, {
+      appointmentId
+    })
+  }
+
   const getStatusText = (status: number): string => {
     switch (status) {
       case 0:
@@ -375,7 +400,7 @@ const MyAppointmentDetailScreen = () => {
                 text="Hoàn thành"
                 type="primary"
                 color={colors.green}
-                onPress={onCompleteHandle}
+                onPress={() => openPopup('complete')}
               />
             </RowComponent>
           );
@@ -465,7 +490,7 @@ const MyAppointmentDetailScreen = () => {
               type="primary"
               color={colors.green}
               styles={styles.singleButton}
-              onPress={onCompleteHandle}
+              onPress={() => openPopup('complete')}
             />
           );
         } else if (roleName === 'Customer') {
@@ -520,6 +545,7 @@ const MyAppointmentDetailScreen = () => {
   return (
     <>
       <Container
+        isScroll
         title="Chi tiết lịch hẹn"
         left={
           <IconButtonComponent
@@ -528,7 +554,16 @@ const MyAppointmentDetailScreen = () => {
             color={colors.dark}
             onPress={goBack}
           />
-        }>
+        }
+        right={appointmentData?.status === 2 && (
+          <IconButtonComponent
+          name="message-draw"
+          size={30}
+          color={colors.dark}
+          onPress={()=>reviewHandle(appointmentId)}
+        />
+        )}
+        >
         {isInBreeding && (
           <View style={styles.warningContainer}>
             <RowComponent justify="space-between">
@@ -540,27 +575,54 @@ const MyAppointmentDetailScreen = () => {
           </View>
         )}
         <View style={styles.detailContainer}>
-          <Text style={styles.label}>Dịch vụ:</Text>
+          <TextComponent text="Dịch vụ" type="title" />
+
           <Text style={styles.value}>
             {appointmentType === 1 ? 'Phối giống' : 'Dịch vụ thú cưng'}
           </Text>
 
-          <Text style={styles.label}>Tên người dùng:</Text>
-          <Text style={styles.value}>{appointmentData.userName}</Text>
+          <TextComponent text="Tên người dùng" type="title" />
 
-          <Text style={styles.label}>Tên trung tâm:</Text>
+          <Text style={styles.value}>{appointmentData.userName}</Text>
+          <TextComponent text='Thông tin thú cưng' type='title'/>
+
+          <View style={styles.petContainer}>
+            <Image
+              source={{uri: appointmentData.pet.avatar}}
+              style={styles.petAvatar}
+            />
+            <View style={styles.petDetails}>
+              <Text style={styles.petName}>{appointmentData.pet.name}</Text>
+              <View style={styles.petInfoContainer}>
+                <Text style={styles.petInfoLabel}>Giới tính:</Text>
+                <Text style={styles.petInfo}>
+                  {appointmentData.pet.gender === 1 ? 'Đực' : 'Cái'}
+                </Text>
+              </View>
+              <View style={styles.petInfoContainer}>
+                <Text style={styles.petInfoLabel}>Cân nặng:</Text>
+                <Text style={styles.petInfo}>
+                  {appointmentData.pet.weight} kg
+                </Text>
+              </View>
+            </View>
+          </View>
+
+          <TextComponent text='Tên trung tâm' type='title'/>
           <Text style={styles.value}>{appointmentData.centerName}</Text>
 
-          <Text style={styles.label}>Ngày bắt đầu:</Text>
+          <TextComponent text='Ngày bắt đầu' type='title'/>
           <Text style={styles.value}>{appointmentData.startTime}</Text>
 
-          <Text style={styles.label}>Ngày kết thúc:</Text>
+          <TextComponent text='Ngày kết thúc' type='title'/>
           <Text style={styles.value}>{appointmentData.endTime}</Text>
 
-          <Text style={styles.label}>Số tiền:</Text>
-          <Text style={styles.value}>{priceFormater(appointmentData.amount)}</Text>
+          <TextComponent text='Số tiền' type='title'/>
+          <Text style={[styles.value, {fontWeight: 'bold', color: colors.primary}]}>
+            {priceFormater(appointmentData.amount)}
+          </Text>
 
-          <Text style={styles.label}>Trạng thái:</Text>
+          <TextComponent text='Trạng thái' type='title'/>
           <Text
             style={[
               styles.value,
@@ -568,18 +630,20 @@ const MyAppointmentDetailScreen = () => {
             ]}>
             {getStatusText(appointmentData.status)}
           </Text>
-
-          <Text style={styles.label}>Lý do huỷ:</Text>
+          <TextComponent text='Lí do huỷ' type='title'/>
           <Text style={styles.value}>
             {appointmentData.cancelReason || 'Không có'}
           </Text>
 
-          <Text style={styles.label}>Lịch trình:</Text>
+          <TextComponent text='Lịch trình' type='title'/>
           {appointmentData.schedules && appointmentData.schedules.length > 0 ? (
-            <TextComponent text='Có lịch trình kèm theo' type='title' color={colors.red}/>
-          
+            <TextComponent
+              text="Có lịch trình kèm theo"
+              type="title"
+              color={colors.red}
+            />
           ) : (
-            <TextComponent text='Không có lịch trình' type='title'/>
+            <TextComponent text="Không có lịch trình" type="title" />
           )}
         </View>
       </Container>
@@ -658,5 +722,55 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     flex: 1,
     marginRight: 8,
+  },
+  petContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12, // Giảm khoảng cách phía dưới
+    backgroundColor: colors.white,
+    padding: 12, // Giảm padding
+    borderRadius: 8, // Bo góc nhỏ hơn
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2, // Giảm độ nổi cho Android
+    borderLeftWidth: 3, // Độ dày border nhỏ hơn
+    borderLeftColor: colors.primary,
+  },
+  petAvatar: {
+    width: 60, // Giảm kích thước ảnh
+    height: 60, // Giảm kích thước ảnh
+    borderRadius: 30, // Bo góc nhỏ hơn
+    marginRight: 12, // Giảm khoảng cách giữa ảnh và chi tiết
+    borderWidth: 1.5, // Giảm độ dày border ảnh
+    borderColor: colors.primary,
+  },
+  petDetails: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  petName: {
+    fontSize: 18, // Giảm kích thước tên thú cưng
+    fontWeight: '600',
+    color: colors.dark,
+    marginBottom: 2, // Giảm khoảng cách bên dưới
+    letterSpacing: 0.5,
+  },
+  petInfoContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4, // Giảm khoảng cách giữa các dòng
+  },
+  petInfo: {
+    fontSize: 14, // Giảm kích thước chữ thông tin
+    color: colors.grey,
+    flex: 1,
+  },
+  petInfoLabel: {
+    fontSize: 14, // Giảm kích thước label
+    fontWeight: '600',
+    color: colors.dark,
+    marginRight: 4, // Giảm khoảng cách giữa label và giá trị
   },
 });

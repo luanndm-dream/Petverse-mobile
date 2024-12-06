@@ -14,6 +14,7 @@ import TextComponent from './TextComponent';
 type Props = {
   children: ReactNode;
   title?: string;
+  style?: any;
   left?: ReactNode;
   right?: ReactNode;
   isScroll?: boolean;
@@ -31,10 +32,11 @@ const Container = (props: Props) => {
     isScroll = false,
     onLeftPress,
     onRightPress,
+    style
   } = props;
 
   return (
-    <SafeAreaView style={[globalStyles.container]} 
+    <SafeAreaView style={[globalStyles.container, style]} 
     // onTouchStart={Keyboard.dismiss}
     >
       {/* <KeyboardAvoidingView onPress={Keyboard.dismiss}> */}

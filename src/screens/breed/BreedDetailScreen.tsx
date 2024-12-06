@@ -45,11 +45,7 @@ const BreedDetailScreen = () => {
   const [breedCenterData, setBreedCenterData] = useState<any>();
   const [currentIndex, setCurrentIndex] = useState(0);
 
-
-
-
-
-
+  console.log(breedCenterData)
 
   useEffect(() => {
     showLoading();
@@ -147,6 +143,7 @@ const BreedDetailScreen = () => {
     breedId: string,
     type: number,
     price: number,
+    speciesId: number
   ) => {
     // if()
     navigation.navigate(STACK_NAVIGATOR_SCREENS.APPOINMENTSCREEN, {
@@ -154,6 +151,7 @@ const BreedDetailScreen = () => {
       petCenterServiceName: ` phối ${breedName}`,
       type: 0,
       price: price,
+      speciesId,
     });
   };
 
@@ -264,6 +262,7 @@ const BreedDetailScreen = () => {
               breedCenterData.id,
               1,
               breedCenterData.price,
+              breedCenterData.speciesId
             )
           }
         />
