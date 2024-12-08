@@ -136,7 +136,6 @@ const AddCenterBreedScreen = () => {
             values={spicies}
             onSelect={(selectedSpecies: string | string[]) => {
               formik.setFieldValue('speciesId', selectedSpecies || null);
-              formik.setFieldTouched('speciesId', true);
             }}
             placeholder="Chọn giống"
             formik={formik}

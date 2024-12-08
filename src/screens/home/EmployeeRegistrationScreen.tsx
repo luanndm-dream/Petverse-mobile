@@ -408,8 +408,6 @@ const EmployeeRegistrationScreen = () => {
             onSelect={(selectedServices: string | string[]) => {
               formik.handleChange('services');
               formik.setFieldValue('services', selectedServices || null);
-              formik.setFieldTouched('services', true);
-              
             }}
             values={servicesSelects}
             selected={formik.values.services}

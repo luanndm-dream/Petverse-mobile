@@ -360,7 +360,7 @@ const AddPetScreen = () => {
             values={petSubType}
             onSelect={(selectedPetSubType: string | string[]) => {
               formik.setFieldValue('breed', selectedPetSubType || 0); 
-              formik.setFieldTouched('breed', true);
+              // formik.setFieldTouched('breed', true);
             }}
             formik={formik}
             validateField='breed'

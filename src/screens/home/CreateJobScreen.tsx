@@ -432,7 +432,6 @@ const CreateJobScreen = () => {
             onSelect={(selectedScpecies: string | string[]) => {
               setSelectedSpeciesId(selectedScpecies);
               formik.setFieldValue('speciesId', selectedScpecies || null);
-              formik.setFieldTouched('speciesId', true);
 
             }}
             placeholder="Chọn thú"

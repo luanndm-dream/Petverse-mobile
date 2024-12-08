@@ -213,8 +213,7 @@ const EditOverViewScreen = () => {
               multible
               onSelect={(selectedSpecies: string | string[]) => {
                 console.log('Selected Species:', selectedSpecies);
-                formik.setFieldValue('speciesId', selectedSpecies || null);
-                formik.setFieldTouched('speciesId', true);
+                formik.setFieldValue('speciesId', selectedSpecies || null); 
                 // setIsChanged(true);
               }}
               placeholder="Chọn giống"
