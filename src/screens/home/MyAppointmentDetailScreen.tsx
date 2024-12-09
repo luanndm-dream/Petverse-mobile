@@ -50,7 +50,7 @@ const MyAppointmentDetailScreen = () => {
     }
   };
 
-  console.log(appointmentData);
+
   useEffect(() => {
     const loadDocumentIds = async () => {
       const ids = await fetchDocumentIds();
@@ -230,6 +230,7 @@ const MyAppointmentDetailScreen = () => {
       }
     });
   };
+  console.log(appointmentData)
 
   const openPopup = (action: string) => {
     setPopupAction(action);
@@ -578,7 +579,7 @@ const MyAppointmentDetailScreen = () => {
           <TextComponent text="Dịch vụ" type="title" />
 
           <Text style={styles.value}>
-            {appointmentType === 1 ? 'Phối giống' : 'Dịch vụ thú cưng'}
+           {appointmentData.serviceName ? appointmentData.serviceName : 'Phối giống'}
           </Text>
 
           <TextComponent text="Tên người dùng" type="title" />
@@ -600,12 +601,13 @@ const MyAppointmentDetailScreen = () => {
                 </Text>
               </View>
               <View style={styles.petInfoContainer}>
-                <Text style={styles.petInfoLabel}>Cân nặng:</Text>
+                <Text style={styles.petInfoLabel}>Đã phối gần nhất:</Text>
                 <Text style={styles.petInfo}>
-                  {appointmentData.pet.weight} kg
+                  {appointmentData.pet.lastBreedDate}
                 </Text>
               </View>
             </View>
+            
           </View>
 
           <TextComponent text='Tên trung tâm' type='title'/>

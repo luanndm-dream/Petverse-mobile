@@ -44,6 +44,9 @@ import EditPetAlbum from '@/screens/home/EditPetAlbum';
 import MyApplicationScreen from '@/screens/home/MyApplicationScreen';
 import EditOverViewScreen from '@/screens/home/EditOverViewScreen';
 import ReviewScreen from '@/screens/home/ReviewScreen';
+import ChangePasswordScreen from '@/screens/profile/ChangePasswordScreen';
+import VaccineScreen from '@/screens/home/VaccineScreen';
+import AddVaccineScreen from '@/screens/home/AddVaccineScreen';
 
 const MainNavigator = () => {
   const Stack = createNativeStackNavigator();
@@ -95,6 +98,9 @@ const MainNavigator = () => {
           <Stack.Screen name='MyApplicationScreen' component={MyApplicationScreen}/>
           <Stack.Screen name='EditOverViewScreen' component={EditOverViewScreen}/>
           <Stack.Screen name='ReviewScreen' component={ReviewScreen}/>
+          <Stack.Screen name='ChangePasswordScreen' component={ChangePasswordScreen}/>
+          <Stack.Screen name='VaccineScreen' component={VaccineScreen}/>
+          <Stack.Screen name='AddVaccineScreen' component={AddVaccineScreen}/>
           <Stack.Screen name="TestScreen" component={TestScreen}/>
         </Stack.Navigator>
   );

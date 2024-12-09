@@ -52,6 +52,8 @@ const EmployeeRegistrationScreen = () => {
   const {navigate, goBack} = useCustomNavigation();
   const {showLoading, hideLoading} = useLoading();
   const userId = useAppSelector(state => state.auth.userId);
+  const [isAgree, setIsAgree] = useState(false);
+
   const getPetServiceHandle = () => {
     showLoading();
     apiGetPetServices().then((res: any) => {
@@ -79,10 +81,8 @@ const EmployeeRegistrationScreen = () => {
       const result = await check(permission);
 
       if (result === RESULTS.DENIED) {
-        // Yêu cầu quyền camera
         const requestResult = await request(permission);
         if (requestResult !== RESULTS.GRANTED) {
-          // Alert.alert('Quyền truy cập bị từ chối', 'Bạn cần cấp quyền camera để sử dụng tính năng này');
         }
       }
     } catch (error) {
@@ -224,7 +224,6 @@ const EmployeeRegistrationScreen = () => {
         console.log('res', mediaUpload(values.avatar));
         if (res.statusCode === 200) {
           hideLoading();
-
           Toast.show({
             type: 'success',
             text1: 'Đăng ký đơn thành công',
@@ -413,11 +412,32 @@ const EmployeeRegistrationScreen = () => {
             selected={formik.values.services}
             multible
             formik={formik}
-            validateField='services'
+            validateField="services"
           />
           {formik.errors.services && formik.touched.services && (
             <Text style={styles.errorText}>{formik.errors.services}</Text>
           )}
+          <View style={styles.checkboxContainer}>
+            <TouchableOpacity
+              style={[
+                styles.checkbox,
+                isAgree && styles.checkboxChecked, // Style khi được tick
+              ]}
+              onPress={() => setIsAgree(!isAgree)}>
+              {isAgree && (
+                <MaterialCommunityIcons name="check" size={16} color="white" />
+              )}
+            </TouchableOpacity>
+            <RowComponent>
+              <TextComponent text='Tôi đồng ý với '/>
+            <ButtonComponent
+              text="điều khoản và điều kiện"
+              type="link"
+              onPress={() => navigate(STACK_NAVIGATOR_SCREENS.POLICYSCREEN)}
+            />
+            </RowComponent>
+            
+          </View>
         </SectionComponent>
         {/* )}
       </Formik> */}
@@ -470,15 +490,15 @@ const EmployeeRegistrationScreen = () => {
           </Modal>
         </Portal>
       </Container>
-      <SectionComponent>
+      <View style={{paddingHorizontal: 16}}>
         <ButtonComponent
           text="Gửi đơn"
           onPress={formik.handleSubmit}
-          color={colors.primary}
+          disable={!isAgree}
           type="primary"
           styles={{width: '100%', marginTop: 10}}
         />
-      </SectionComponent>
+      </View>
     </>
   );
 };
@@ -559,5 +579,28 @@ const styles = StyleSheet.create({
     top: 40,
     right: 20,
     zIndex: 1,
+  },
+  checkboxContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 16,
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderRadius: 4,
+    borderWidth: 1.5,
+    borderColor: colors.grey,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+  },
+  checkboxChecked: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+  },
+  checkboxText: {
+    fontSize: 14,
+    color: colors.dark,
   },
 });

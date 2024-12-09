@@ -12,7 +12,7 @@ type Props = {
   numOfLine?: number;
   color?: string;
   styles?: StyleProp<TextStyle>;
-  type?: 'bigTitle' | 'title' | 'text' | 'description';
+  type?: 'bigTitle' | 'title' | 'text' | 'description' | 'subTitle';
   required?: boolean;
 };
 const TextComponent = (props: Props) => {
@@ -31,6 +31,10 @@ const TextComponent = (props: Props) => {
     case 'description':
       fontSize = sizes.description;
       fontFamily = fontFamilies.regular;
+      break;
+      case 'subTitle':
+      fontSize = sizes.subTitle || sizes.text; // Nếu không có `sizes.subTitle`, dùng `sizes.text`
+      fontFamily = fontFamilies.medium;
       break;
     default:
       fontSize = sizes.text;

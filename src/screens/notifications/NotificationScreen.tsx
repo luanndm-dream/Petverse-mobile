@@ -5,11 +5,10 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Platform,
-  Animated,
 } from 'react-native';
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useAppSelector} from '@/redux';
-import { Notification} from 'iconsax-react-native';
+import {Notification} from 'iconsax-react-native';
 import {
   Container,
   IconButtonComponent,
@@ -20,20 +19,11 @@ import {colors} from '@/constants/colors';
 import moment from 'moment';
 import 'moment/locale/vi';
 import firestore from '@react-native-firebase/firestore';
-import { useNavigation } from '@react-navigation/native';
-import { STACK_NAVIGATOR_SCREENS } from '@/constants/screens';
+import {useNavigation} from '@react-navigation/native';
+import {STACK_NAVIGATOR_SCREENS} from '@/constants/screens';
 
 const NotificationItem = ({item, userId, onPress}: any) => {
-  const fadeAnim = useRef(new Animated.Value(0.5)).current;
   const isUnread = item.participants[userId]?.isRead === false;
-
-  useEffect(() => {
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: 500,
-      useNativeDriver: true,
-    }).start();
-  }, []);
 
   const getLeftBarColor = () => {
     switch (item.status) {
@@ -58,36 +48,38 @@ const NotificationItem = ({item, userId, onPress}: any) => {
   };
 
   return (
-    <Animated.View style={{opacity: fadeAnim}}>
-      <TouchableOpacity
-        onPress={() => onPress(item)}
+    <TouchableOpacity
+      onPress={() => onPress(item)}
+      style={[
+        styles.notificationItem,
+        isUnread && styles.unreadItem,
+      ]}
+      activeOpacity={0.7}>
+      <View style={[styles.leftBar, {backgroundColor: getLeftBarColor()}]} />
+      <View
         style={[
-          styles.notificationItem,
-          isUnread && styles.unreadItem,
-        ]}
-        activeOpacity={0.7}>
-        <View style={[styles.leftBar, {backgroundColor: getLeftBarColor()}]} />
-        <View style={[styles.mainContent, {backgroundColor: isUnread ? getStatusBackground() : colors.white}]}>
-          <View style={styles.itemHeader}>
-            {isUnread && <View style={styles.unreadDot} />}
-            <Text style={styles.timestamp}>
-              {moment(item.timestamp.seconds * 1000).fromNow()}
-            </Text>
-          </View>
-
-          <View style={styles.textContainer}>
-            <Text
-              style={[styles.title, isUnread && styles.unreadTitle]}
-              numberOfLines={1}>
-              {item.title}
-            </Text>
-            <Text style={styles.message} numberOfLines={2}>
-              {item.message}
-            </Text>
-          </View>
+          styles.mainContent,
+          {backgroundColor: isUnread ? getStatusBackground() : colors.white},
+        ]}>
+        <View style={styles.itemHeader}>
+          {isUnread && <View style={styles.unreadDot} />}
+          <Text style={styles.timestamp}>
+            {moment(item.timestamp.seconds * 1000).fromNow()}
+          </Text>
         </View>
-      </TouchableOpacity>
-    </Animated.View>
+
+        <View style={styles.textContainer}>
+          <Text
+            style={[styles.title, isUnread && styles.unreadTitle]}
+            numberOfLines={1}>
+            {item.title}
+          </Text>
+          <Text style={styles.message} numberOfLines={2}>
+            {item.message}
+          </Text>
+        </View>
+      </View>
+    </TouchableOpacity>
   );
 };
 
@@ -96,7 +88,7 @@ const NotificationScreen = () => {
   const id = useAppSelector(state =>
     roleName === 'Customer' ? state.auth.userId : state.auth.petCenterId,
   );
-  const navigation = useNavigation<any>()
+  const navigation = useNavigation<any>();
   const [notifications, setNotifications] = useState<any>([]);
   const [loading, setLoading] = useState(true);
 
@@ -156,13 +148,15 @@ const NotificationScreen = () => {
 
   const handleNotificationPress = (notification: any) => {
     markNotificationAsRead(notification, id as never);
-    navigation.navigate(STACK_NAVIGATOR_SCREENS.REPORTAPPLICATIONDETAIL,{
-      reportId: notification.reportId
-    })
+    navigation.navigate(STACK_NAVIGATOR_SCREENS.REPORTAPPLICATIONDETAIL, {
+      reportId: notification.reportId,
+    });
   };
 
   const getUnreadCount = () => {
-    return notifications.filter((n: any) => !n.participants[id as never]?.isRead).length;
+    return notifications.filter(
+      (n: any) => !n.participants[id as never]?.isRead,
+    ).length;
   };
 
   if (loading) {
@@ -181,7 +175,6 @@ const NotificationScreen = () => {
         {notifications.length > 0 ? (
           <>
             <View style={styles.headerContainer}>
-              {/* <TextComponent text="Thông báo" styles={styles.headerTitle} /> */}
               {getUnreadCount() > 0 && (
                 <View style={styles.countContainer}>
                   <Text style={styles.notificationCount}>

@@ -26,6 +26,7 @@ interface Props {
   onEnd?: () => void;
   multiline?: boolean;
   maxLength?: number;
+  isEdit?: boolean
 }
 
 const InputComponent = (props: Props) => {
@@ -41,7 +42,8 @@ const InputComponent = (props: Props) => {
     type,
     onBlur,
     multiline,
-    maxLength
+    maxLength,
+    isEdit
   } = props;
   const [isShowPassword, setIsShowPassword] = useState(isPassword ?? false);
   
@@ -62,6 +64,7 @@ const InputComponent = (props: Props) => {
           autoCapitalize={'none'}
           onEndEditing={onEnd}
           onBlur={onBlur}
+          editable={isEdit}
         />
         {iconRight && iconRight}
         <TouchableOpacity

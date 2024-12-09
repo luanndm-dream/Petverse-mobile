@@ -37,20 +37,20 @@ export const profileFeatureData = [
     iconName: "security",
     screen: STACK_NAVIGATOR_SCREENS.POLICYSCREEN,
   },
-  {
-    id: 6,
-    title: 'Chỉnh sách & bảo mật',
-    backgroundColor: colors.green,
-    iconName: "book-open",
-    screen: STACK_NAVIGATOR_SCREENS.POLICYSCREEN,
-  },
+  // {
+  //   id: 6,
+  //   title: 'Chỉnh sách & bảo mật',
+  //   backgroundColor: colors.green,
+  //   iconName: "book-open",
+  //   screen: STACK_NAVIGATOR_SCREENS.POLICYSCREEN,
+  // },
  
   {
     id: 7,
     title: 'Đổi mật khẩu',
     backgroundColor: colors.orange,
     iconName: "lock-reset",
-    screen: STACK_NAVIGATOR_SCREENS.ABOUTUSSCREEN,
+    screen: STACK_NAVIGATOR_SCREENS.CHANGEPASSWORDSCREEN,
   },
   {
     id: 8,

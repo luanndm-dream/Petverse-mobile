@@ -18,10 +18,11 @@ interface Props {
   onSelected: (imagePath: string | string[]) => void;
   initialImages?: string[];
   camera?: boolean;
+  maxItem?: number
 }
 
 const AddImageComponent = (props: Props) => {
-  const {onSelected, initialImages, camera} = props;
+  const {onSelected, initialImages, camera, maxItem = 4} = props;
   const [selectedImages, setSelectedImages] = useState<any[]>([]);
 
   const requestGalleryPermission = async () => {
@@ -55,7 +56,7 @@ const AddImageComponent = (props: Props) => {
           ImagePicker.openCamera({
             cropping: true,
           }).then(image => {
-            if (selectedImages.length < 4) {
+            if (selectedImages.length < maxItem) {
               const newImage = {path: image.path};
               setSelectedImages(prev => [...prev, newImage]);
               onSelected([
@@ -65,7 +66,7 @@ const AddImageComponent = (props: Props) => {
             } else {
               Alert.alert(
                 'Giới hạn ảnh',
-                'Bạn chỉ có thể chọn tối đa 4 hình ảnh.',
+                `Bạn chỉ có thể chọn tối đa ${maxItem} hình ảnh.`,
                 [{text: 'OK'}],
               );
             }
@@ -88,7 +89,7 @@ const AddImageComponent = (props: Props) => {
             }
             return true; // Giữ lại ảnh và video hợp lệ
           });
-            if (selectedImages.length + validMedia.length <= 4) {
+            if (selectedImages.length + validMedia.length <= maxItem) {
               const newImages = validMedia.map(image => ({
                 path: image.path,
               }));
@@ -100,7 +101,7 @@ const AddImageComponent = (props: Props) => {
             } else {
               Alert.alert(
                 'Giới hạn ảnh',
-                'Bạn chỉ có thể chọn tối đa 4 hình ảnh.',
+                `Bạn chỉ có thể chọn tối đa ${maxItem} hình ảnh.`,
                 [{text: 'OK'}],
               );
             }
@@ -126,7 +127,7 @@ const AddImageComponent = (props: Props) => {
     <View style={styles.imageContainer}>
       <FlatList
         data={
-          selectedImages.length < 4
+          selectedImages.length < maxItem
             ? [...selectedImages, {isAddButton: true}]
             : selectedImages
         }

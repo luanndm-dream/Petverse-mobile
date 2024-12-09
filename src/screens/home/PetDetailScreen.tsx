@@ -255,7 +255,19 @@ const PetDetailScreen = () => {
             onPress={() => navigation.goBack()}
           />
         }
-       
+        right={
+          <IconButtonComponent
+            name="needle"
+            size={30}
+            color={colors.dark}
+            onPress={() => {
+              navigation.navigate(STACK_NAVIGATOR_SCREENS.VACCINESCREEN, {
+                petId,
+                petName
+              })
+            }}
+          />
+        }
         >
         <ImageBackground
           source={require('../../assets/images/BannerAvatarPet.png')}

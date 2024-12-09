@@ -51,3 +51,15 @@ export async function apiUpdateUser(
     },
   });
 }
+
+export async function apiChangePassword(userId: string, currentPassword: string, newPassword: string) {
+    let url = `User/${userId}/ChangePassword`
+
+    const dataSend = {
+      id: userId,
+      currentPassword: currentPassword,
+      newPassword: newPassword
+    }
+
+    return protectedAxios.put(url,dataSend)
+}

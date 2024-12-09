@@ -424,6 +424,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginTop: Platform.OS === 'android' ? 32 : 0,
+    borderBottomWidth: 1,
+    borderColor: colors.grey4
   },
   backButton: {
     padding: 8,

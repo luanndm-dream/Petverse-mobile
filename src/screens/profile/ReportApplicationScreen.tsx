@@ -30,14 +30,14 @@ interface ReportItem {
 
 const STATUS_LABELS: Record<number, string> = {
   0: 'Đang xử lý',
-  1: 'Đã phê duyệt',
-  2: 'Đã từ chối',
+  1: 'Đã xử lý',
+  2: 'Bị từ chối',
 };
 
 const STATUS_COLORS: Record<number, string> = {
-  0: '#FFB74D', 
-  1: '#66BB6A', 
-  2: '#EF5350', 
+  0: colors.yellow, 
+  1: colors.green, 
+  2: colors.red, 
 };
 
 const ReportApplicationScreen = () => {

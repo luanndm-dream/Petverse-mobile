@@ -14,6 +14,7 @@ interface Props {
   isVisible?: boolean;
   maxDateNow?: boolean;
   minDateNow?: boolean;
+  minDateValue?: any
 }
 
 const DatePicker = (props: Props) => {
@@ -25,6 +26,7 @@ const DatePicker = (props: Props) => {
     onCancel,
     maxDateNow,
     minDateNow,
+    minDateValue
   } = props;
   const modalizeRef = useRef<Modalize>();
   const today = moment();
@@ -75,9 +77,13 @@ const DatePicker = (props: Props) => {
   const years = () => {
     let data = [];
     const currentYear = moment().year();
-    const startYear = minDateNow ? currentYear : 1900; // Nếu minDateNow, bắt đầu từ năm hiện tại
+    const startYear = minDateValue
+      ? moment(minDateValue, 'DD-MM-YYYY').year() // Sử dụng format DD-MM-YYYY
+      : minDateNow
+      ? currentYear
+      : 1900;
     const endYear = maxDateNow ? currentYear : 2100;
-
+  
     for (let i = startYear; i <= endYear; i++) {
       data.push({
         label: i.toString(),
@@ -86,7 +92,6 @@ const DatePicker = (props: Props) => {
     }
     return data;
   };
-
   const monthRef: any = useRef();
   const dayRef: any = useRef();
   const yearRef: any = useRef();
@@ -127,25 +132,35 @@ const DatePicker = (props: Props) => {
 
   const checkDate = () => {
     const selectedDate = moment(
-      `${year.current}-${month.current}-${day.current}`,
-      'YYYY-MM-DD',
+      `${day.current}-${month.current}-${year.current}`,
+      'DD-MM-YYYY',
     );
-
+  
     // Nếu có maxDateNow
     if (maxDateNow && selectedDate.isAfter(today)) {
       year.current = today.format('YYYY');
       month.current = today.format('MM');
       day.current = today.format('DD');
     }
-
+  
     // Nếu có minDateNow
     if (minDateNow && selectedDate.isBefore(today)) {
       year.current = today.format('YYYY');
       month.current = today.format('MM');
       day.current = today.format('DD');
     }
-
-    // Update vị trí cho từng picker
+  
+    // Nếu có minDateValue
+    if (minDateValue) {
+      const minDate = moment(minDateValue, 'DD-MM-YYYY');
+      if (selectedDate.isBefore(minDate)) {
+        year.current = minDate.format('YYYY');
+        month.current = minDate.format('MM');
+        day.current = minDate.format('DD');
+      }
+    }
+  
+    // Cập nhật picker
     yearRef.current?.scrollToIndex({
       animated: true,
       index: years().findIndex(e => e.value === year.current),
@@ -154,35 +169,17 @@ const DatePicker = (props: Props) => {
       animated: true,
       index: months().findIndex(e => e.value === month.current),
     });
-
+  
     const newDays = generateDays(year.current, month.current);
     setDaysList(newDays);
-
+  
     setTimeout(() => {
       dayRef.current?.scrollToIndex({
         animated: true,
         index: newDays.findIndex(e => e.value === day.current),
       });
     }, 0);
-
-    // Kiểm tra và điều chỉnh số ngày hợp lệ
-    const maxDays = getDaysInMonth(year.current, month.current);
-    const currentDayNum = parseInt(day.current);
-
-    if (currentDayNum > maxDays) {
-      day.current = maxDays.toString().padStart(2, '0');
-      const updatedDays = generateDays(year.current, month.current);
-      setDaysList(updatedDays);
-
-      setTimeout(() => {
-        dayRef.current?.scrollToIndex({
-          animated: true,
-          index: updatedDays.findIndex(e => e.value === day.current),
-        });
-      }, 0);
-    }
   };
-
   const updateDaysList = () => {
     const newDays = generateDays(year.current, month.current);
     setDaysList(newDays);

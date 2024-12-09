@@ -43,7 +43,7 @@ const MyPetScreen = () => {
   };
 
   useEffect(() => {
-    showLoading();
+   
     Promise.all([apiGetPetBreed(1), apiGetPetBreed(2)])
       .then(([dogResponse, catResponse]: any) => {
         if (dogResponse.statusCode === 200) {
@@ -54,7 +54,7 @@ const MyPetScreen = () => {
         }
       })
       .finally(() => {
-        hideLoading();
+      
       });
   }, [userId]);
 
@@ -126,7 +126,7 @@ const MyPetScreen = () => {
         <IconButtonComponent
           name="plus"
           size={30}
-          color={colors.grey}
+          color={colors.dark}
           onPress={() =>
             navigation.navigate(STACK_NAVIGATOR_SCREENS.ADDPETSCREEN)
           }
