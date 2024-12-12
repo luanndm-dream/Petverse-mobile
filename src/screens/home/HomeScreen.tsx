@@ -264,7 +264,7 @@ const HomeScreen = () => {
               text={monthText}
               type="title"
               color={colors.white}
-              styles={{textAlign: 'center', marginTop: 6}}
+              styles={{textAlign: 'center', marginTop: 3}}
             />
           </LinearGradient>
         </SectionComponent>

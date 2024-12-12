@@ -106,6 +106,7 @@ const UpdateTrackingScreen = () => {
           <TextComponent text="Hình ảnh" type="title" />
           <AddImageComponent
           camera
+          onlyImage
             onSelected={(val: string | string[]) => selectetPetPhotoHandle(val)}
           />
           {formik.errors.media ? (

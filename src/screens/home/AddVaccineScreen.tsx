@@ -124,6 +124,7 @@ const AddVaccineScreen = () => {
           <AddImageComponent
             onSelected={(val: any) => handleAddCertificate(val)}
             maxItem={1}
+            onlyImage
           />
           {formik.errors.certificates && formik.touched.certificates && (
             <Text style={globalStyles.errorText}>

@@ -49,10 +49,13 @@ const TextComponent = (props: Props) => {
           fontFamily: font ? font : fontFamily,
           flex: flex,
           color: color ?? colors.text,
+          letterSpacing: type === 'description' ? 0.8 : 0,
         },
         styles,
       ]}
-      numberOfLines={numOfLine}>
+      numberOfLines={numOfLine}
+      
+      >
       {text}
       {required && <Text style={{color: colors.red}}> *</Text>}
     </Text>

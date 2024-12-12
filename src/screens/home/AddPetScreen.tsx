@@ -1,4 +1,5 @@
 import {
+  Alert,
   Image,
   Platform,
   StyleSheet,
@@ -21,11 +22,7 @@ import {
 } from '@/components';
 import {colors} from '@/constants/colors';
 import {useCustomNavigation} from '@/utils/navigation';
-import {
-  apiCreatePet,
-  apiGetPetBreed,
-  apiGetPetSpecies,
-} from '@/api/apiPet';
+import {apiCreatePet, apiGetPetBreed, apiGetPetSpecies} from '@/api/apiPet';
 import {useAppSelector} from '@/redux';
 import {useFormik} from 'formik';
 import * as Yup from 'yup';
@@ -82,7 +79,7 @@ const AddPetScreen = () => {
   const selectetPetPhotoHandle = (imagePath: any) => {
     const petPhoto: any[] = [];
     const petVideo: any[] = [];
-  
+
     imagePath.forEach((path: any) => {
       if (path.endsWith('.mp4')) {
         petVideo.push(mediaUpload(path));
@@ -90,12 +87,11 @@ const AddPetScreen = () => {
         petPhoto.push(mediaUpload(path));
       }
     });
-  
+
     setPetPhotos(petPhoto);
     setPetVideos(petVideo);
     formik.setFieldValue('petPhotos', petPhoto);
     formik.setFieldValue('petVideos', petVideo);
-
   };
   // console.log(petP)
   const onPressGender = (type: number) => {
@@ -111,7 +107,7 @@ const AddPetScreen = () => {
 
   const ageHandle = (age: string) => {
     setAge(age);
-    formik.setFieldValue('age', age)
+    formik.setFieldValue('age', age);
     setIsVisibleModalAge(false);
   };
 
@@ -135,19 +131,32 @@ const AddPetScreen = () => {
     }
   };
 
-  const openGallaryHandle = () => {
+  const openGallaryHandle =  async () => {
     if (RESULTS.GRANTED) {
-      ImagePicker.openPicker({}).then(image => {
-        setAvatar(image.path);
-        formik.setFieldValue('avatar', image.path);
+      const image = await ImagePicker.openPicker({
+        mediaType: 'photo', // Chỉ cho phép chọn ảnh
       });
+
+      // Kiểm tra xem tệp có phải là ảnh không
+      if (!image.mime.startsWith('image')) {
+        Alert.alert(
+          'Lỗi',
+          'Bạn chỉ được phép chọn ảnh làm avatar. Vui lòng chọn file ảnh hợp lệ.',
+          [{text: 'OK'}]
+        );
+        return;
+      }
+
+      // Nếu là ảnh hợp lệ, cập nhật avatar
+      setAvatar(image.path);
+      formik.setFieldValue('avatar', image.path);
     } else {
       if (!RESULTS.GRANTED) {
         requestGalleryPermission();
       } else {
         ImagePicker.openPicker({
           multiple: true,
-          mediaType: 'photo'
+          mediaType: 'photo',
         }).then((images: any) => {
           setAvatar(images.path);
         });
@@ -161,7 +170,6 @@ const AddPetScreen = () => {
   useEffect(() => {
     showLoading();
     apiGetPetBreed(selectedPetTypeId).then((res: any) => {
-      
       if (res.statusCode === 200) {
         const items: SelectModel[] = [];
         res?.data?.items.forEach((item: any) => {
@@ -171,7 +179,7 @@ const AddPetScreen = () => {
             description: item?.description,
           });
         });
-    
+
         setSubPetType(items);
         hideLoading();
       }
@@ -267,10 +275,9 @@ const AddPetScreen = () => {
             onPress={goBack}
           />
         }
-        isScroll={true}
-      >
+        isScroll={true}>
         <SectionComponent>
-          <TextComponent text="Ảnh đại diện" type="title" required/>
+          <TextComponent text="Ảnh đại diện" type="title" required />
 
           <RowComponent justify="flex-start" styles={{marginBottom: 16}}>
             <TouchableOpacity
@@ -307,7 +314,7 @@ const AddPetScreen = () => {
           {formik.errors.avatar && formik.touched.avatar && (
             <Text style={styles.errorText}>{formik.errors.avatar}</Text>
           )}
-          <TextComponent text="Tên thú cưng" type="title" required/>
+          <TextComponent text="Tên thú cưng" type="title" required />
           <InputComponent
             onChange={formik.handleChange('petName')}
             value={formik.values.petName}
@@ -352,23 +359,23 @@ const AddPetScreen = () => {
             )}
           </View>
 
-          <TextComponent text="Giống" type="title" required/>
+          <TextComponent text="Giống" type="title" required />
           <DropdownPicker
             canPress={formik.values.species > 0 ? true : false}
             multible={false}
             placeholder="Chọn giống"
             values={petSubType}
             onSelect={(selectedPetSubType: string | string[]) => {
-              formik.setFieldValue('breed', selectedPetSubType || 0); 
+              formik.setFieldValue('breed', selectedPetSubType || 0);
               // formik.setFieldTouched('breed', true);
             }}
             formik={formik}
-            validateField='breed'
+            validateField="breed"
           />
           {formik.errors.breed && formik.touched.breed && (
             <Text style={styles.errorText}>{formik.errors.breed}</Text>
           )}
-          <TextComponent text="Ngày sinh" type="title" required/>
+          <TextComponent text="Ngày sinh" type="title" required />
           <RowComponent
             styles={[
               globalStyles.inputContainer,
@@ -429,7 +436,7 @@ const AddPetScreen = () => {
             maximumTrackTintColor={colors.secondary}
             thumbTintColor={colors.primary}
           />
-           {formik.errors.weight && formik.touched.weight && (
+          {formik.errors.weight && formik.touched.weight && (
             <Text style={styles.errorText}>{formik.errors.weight}</Text>
           )}
           <TextComponent text="Thú cưng đã được triệt sản?" type="title" />

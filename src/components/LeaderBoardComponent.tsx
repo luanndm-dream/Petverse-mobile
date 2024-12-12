@@ -1,48 +1,23 @@
 import {Image, StyleSheet, Text, View} from 'react-native';
-import React, { useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import Animated, {
   FadeInRight,
   interpolate,
-  interpolateColor,
   runOnJS,
   SharedValue,
   useAnimatedStyle,
-  useDerivedValue,
   useSharedValue,
-  withDelay,
-  withSpring,
-  withTiming,
 } from 'react-native-reanimated';
 import {fontFamilies} from '@/constants/fontFamilies';
 import {colors} from '@/constants/colors';
-import {Crown} from 'iconsax-react-native';
-import { useIsFocused } from '@react-navigation/native';
-
-const centers = [
-  {
-    name: 'Center 1',
-    rate: 5,
-  },
-  {
-    name: 'Center 2',
-    rate: 3.5,
-  },
-  {
-    name: 'Center 3',
-    rate: 4,
-  },
-  {
-    name: 'Center 4',
-    rate: 4.5,
-  },
-  {
-    name: 'Center 5',
-    rate: 2.8,
-  },
-];
+import {apiGetTop5PetCenter} from '@/api/apiPetCenter';
 
 type PlaceProps = {
-  center: (typeof centers)[0];
+  center: {
+    name: string;
+    averageRate: number;
+    avatar: string;
+  };
   index: number;
   onFinish?: (() => void) | null;
   anim: SharedValue<number>;
@@ -52,36 +27,15 @@ type PlaceProps = {
 const avatarSize = 26;
 const spacing = 4;
 const stagger = 300;
-const order = [3, 1, 0, 2, 4];
-const sortedByRate = [...centers].sort((a, b) => b.rate - a.rate);
-
-const finalSortedCenters = order.map(index => sortedByRate[index]);
-
-
 
 function Place({center, index, onFinish, anim, highestRate}: PlaceProps) {
-  const _anim = useDerivedValue(() => {
-    return withDelay(
-      stagger * index,
-      withSpring(anim.value, {
-        damping: 80,
-        stiffness: 200,
-      }),
-    );
-  });
-
   const stylez = useAnimatedStyle(() => {
-    let backgroundColor;
-
-    if (center.rate === highestRate) {
-      backgroundColor = '#FFC300'; 
-    } else if (center.rate === sortedByRate[1]?.rate) {
-      backgroundColor = '#4A90E2';
-    } else if (center.rate === sortedByRate[2]?.rate) {
-      backgroundColor = '#907aa5';
-    } else {
-      backgroundColor = colors.grey4; 
-    }
+    const backgroundColor =
+      center.averageRate === highestRate
+        ? '#FFC300'
+        : center.averageRate >= highestRate - 1
+        ? '#4A90E2'
+        : colors.grey4;
 
     return {
       height: interpolate(
@@ -89,7 +43,7 @@ function Place({center, index, onFinish, anim, highestRate}: PlaceProps) {
         [0, 1],
         [
           avatarSize + spacing,
-          Math.max(avatarSize, center.rate * 16 + spacing),
+          Math.max(avatarSize, center.averageRate * 16 + spacing),
         ],
       ),
       backgroundColor,
@@ -102,16 +56,6 @@ function Place({center, index, onFinish, anim, highestRate}: PlaceProps) {
     };
   });
 
-  const crownStylez = useAnimatedStyle(() => {
-    return {
-      opacity: center.rate === highestRate ? anim.value : 0,
-      transform: [
-        {
-          translateY: interpolate(anim.value, [0, 1], [-20, 0]),
-        },
-      ],
-    };
-  });
   return (
     <Animated.View
       style={{alignItems: 'center', paddingHorizontal: 12}}
@@ -130,7 +74,7 @@ function Place({center, index, onFinish, anim, highestRate}: PlaceProps) {
           {fontSize: 14, fontFamily: fontFamilies.bold, color: colors.white},
           textStylez,
         ]}>
-        {center.rate}
+        {center.averageRate.toFixed(1)}
       </Animated.Text>
       <Animated.View
         style={[
@@ -147,7 +91,7 @@ function Place({center, index, onFinish, anim, highestRate}: PlaceProps) {
             aspectRatio: 1,
           }}>
           <Image
-            source={{uri: `https://i.pravatar.cc/150?u=user_${center.name}`}}
+            source={{uri: center.avatar}}
             style={{
               flex: 1,
               borderRadius: avatarSize,
@@ -156,11 +100,57 @@ function Place({center, index, onFinish, anim, highestRate}: PlaceProps) {
           />
         </View>
       </Animated.View>
+      
+      <Text
+        style={{
+          fontSize: 6,
+          fontFamily: fontFamilies.regular,
+          color: colors.white,
+          marginTop: 2,
+          fontWeight: 'bold'
+        }}
+        numberOfLines={2}
+        ellipsizeMode="tail">
+        {center.name}
+      </Text>
     </Animated.View>
   );
 }
+
 const LeaderBoardComponent = () => {
   const anim = useSharedValue(0);
+  const [centers, setCenters] = useState([]);
+
+  const now = new Date();
+  let year = now.getFullYear();
+  let prevMonth = now.getMonth();
+  if (prevMonth === 0) {
+    prevMonth = 12; // Tháng 12
+    year -= 1; // Năm trước đó
+  }
+
+  useEffect(() => {
+    apiGetTop5PetCenter(prevMonth, year).then((res: any) => {
+      if (res.data?.topPetCenterDatas) {
+        // Cập nhật danh sách centers
+        setCenters(res.data.topPetCenterDatas);
+      }
+    });
+  }, []);
+
+  // Xử lý khi chưa có dữ liệu
+  if (centers.length === 0) {
+    return (
+      <View style={{alignSelf: 'center', marginTop: 20}}>
+        <Text style={{color: colors.grey}}>Loading...</Text>
+      </View>
+    );
+  }
+
+  const highestRate = Math.max(
+    ...centers.map((center: any) => center.averageRate),
+  );
+
   return (
     <View style={{alignSelf: 'center'}}>
       <View
@@ -169,17 +159,21 @@ const LeaderBoardComponent = () => {
           gap: spacing,
           justifyContent: 'flex-end',
           alignItems: 'flex-end',
-          height: 100,
+          height: 110,
         }}>
-        {finalSortedCenters.map((center, index) => (
+        {centers.map((center: any, index) => (
           <Place
             key={index}
-            center={center}
+            center={{
+              name: center.name,
+              averageRate: center.averageRate,
+              avatar: center.avatar,
+            }}
             index={index}
             anim={anim}
-            highestRate={sortedByRate[0]?.rate}
+            highestRate={highestRate}
             onFinish={
-              index === finalSortedCenters.length - 1
+              index === centers.length - 1
                 ? () => {
                     anim.value = 1;
                     console.log('Finished', index);

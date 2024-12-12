@@ -9,13 +9,19 @@ import {
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useNavigation, useRoute} from '@react-navigation/native';
-import {apiGetPetByPetId, apiGetPetBreed, apiUpdatePet} from '@/api/apiPet';
+import {
+  apiGetPetByPetId,
+  apiGetPetBreed,
+  apiUpdatePet,
+  apiDeletePet,
+} from '@/api/apiPet';
 import useLoading from '@/hook/useLoading';
 import {
   ButtonComponent,
   Container,
   IconButtonComponent,
   InputComponent,
+  PopupComponent,
   RowComponent,
   SectionComponent,
   SpaceComponent,
@@ -29,6 +35,7 @@ import {ageFormatter} from '@/utils/AgeFormatter';
 import {useFormik} from 'formik';
 import * as Yup from 'yup';
 import Toast from 'react-native-toast-message';
+import {useCustomNavigation} from '@/utils/navigation';
 
 const PetDetailScreen = () => {
   const route = useRoute<any>();
@@ -40,7 +47,8 @@ const PetDetailScreen = () => {
   const [catSubType, setCatSubType] = useState<any[]>([]);
   const [petSubTypeName, setPetSubTypeName] = useState<string>('');
   const [isEdit, setIsEdit] = useState(false);
-
+  const {navigate, goBack} = useCustomNavigation();
+  const [isVisible, setIsVisible] = useState(false);
   const formik = useFormik({
     initialValues: {
       name: petData?.name || '',
@@ -179,6 +187,27 @@ const PetDetailScreen = () => {
       });
   }, [petId, isEdit]);
 
+  const deletePetHandle = () => {
+    apiDeletePet(petId).then((res: any) => {
+      if (res.statusCode === 200) {
+        hideLoading();
+        Toast.show({
+          type: 'success',
+          text1: 'Xoá pet thành công',
+          text2: 'Petverse chúc bạn thật nhiều sức khoẻ!',
+        });
+        goBack();
+      } else {
+        hideLoading();
+        Toast.show({
+          type: 'error',
+          text1: 'Xoá pet thất bại',
+          text2: `Xảy ra lỗi ${res.message}`,
+        });
+      }
+    });
+  };
+
   const renderInfoItem = (
     label: string,
     value: any,
@@ -263,12 +292,11 @@ const PetDetailScreen = () => {
             onPress={() => {
               navigation.navigate(STACK_NAVIGATOR_SCREENS.VACCINESCREEN, {
                 petId,
-                petName
-              })
+                petName,
+              });
             }}
           />
-        }
-        >
+        }>
         <ImageBackground
           source={require('../../assets/images/BannerAvatarPet.png')}
           style={styles.backgroundImage}>
@@ -357,6 +385,14 @@ const PetDetailScreen = () => {
               )
             }
           />
+          <View style={{alignSelf: 'center', marginTop: 12}}>
+            <ButtonComponent
+              text="Xoá thú cưng"
+              type="link"
+              textColor={colors.red}
+              onPress={() => setIsVisible(true)}
+            />
+          </View>
         </SectionComponent>
       </Container>
       {isEdit && (
@@ -367,6 +403,20 @@ const PetDetailScreen = () => {
           // disabled={!formik.isValid || !formik.dirty}
         />
       )}
+      <PopupComponent
+        title="Xoá thú cưng"
+        description="Bạn chắc chắn muốn xoá thú cưng này"
+        iconName="alert-circle"
+        iconColor={colors.yellow}
+        isVisible={isVisible}
+        leftTitle="Huỷ"
+        onClose={() => setIsVisible(false)}
+        onLeftPress={() => setIsVisible(false)}
+        onRightPress={deletePetHandle}
+        rightTitle="Xác nhận"
+        buttonLeftColor={colors.grey}
+        buttonRightColor={colors.red}
+      />
     </>
   );
 };

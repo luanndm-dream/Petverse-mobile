@@ -603,7 +603,7 @@ const MyAppointmentDetailScreen = () => {
               <View style={styles.petInfoContainer}>
                 <Text style={styles.petInfoLabel}>Đã phối gần nhất:</Text>
                 <Text style={styles.petInfo}>
-                  {appointmentData.pet.lastBreedDate}
+                  {appointmentData.pet.lastBreedDate ? appointmentData.pet.lastBreedDate : 'Không có'}
                 </Text>
               </View>
             </View>
@@ -728,16 +728,16 @@ const styles = StyleSheet.create({
   petContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12, // Giảm khoảng cách phía dưới
+    marginVertical: 12,
     backgroundColor: colors.white,
-    padding: 12, // Giảm padding
-    borderRadius: 8, // Bo góc nhỏ hơn
+    padding: 12,
+    borderRadius: 8,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 2, // Giảm độ nổi cho Android
-    borderLeftWidth: 3, // Độ dày border nhỏ hơn
+    elevation: 2, 
+    borderLeftWidth: 3, 
     borderLeftColor: colors.primary,
   },
   petAvatar: {

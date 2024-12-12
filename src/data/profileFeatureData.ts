@@ -37,13 +37,13 @@ export const profileFeatureData = [
     iconName: "security",
     screen: STACK_NAVIGATOR_SCREENS.POLICYSCREEN,
   },
-  // {
-  //   id: 6,
-  //   title: 'Chỉnh sách & bảo mật',
-  //   backgroundColor: colors.green,
-  //   iconName: "book-open",
-  //   screen: STACK_NAVIGATOR_SCREENS.POLICYSCREEN,
-  // },
+  {
+    id: 6,
+    title: 'Miễn trừ trách nhiệm',
+    backgroundColor: colors.green,
+    iconName: "book-open",
+    screen: STACK_NAVIGATOR_SCREENS.DISCLAIMERSCREEN,
+  },
  
   {
     id: 7,

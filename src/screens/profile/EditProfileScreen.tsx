@@ -55,6 +55,7 @@ const EditProfileScreen = () => {
   const validationSchema = Yup.object().shape({
     fullName: Yup.string()
       .min(2, 'Họ tên phải có ít nhất 2 ký tự')
+      .max(50, 'Họ tên chỉ tối đa 50 ký tự')
       .required('Họ tên là bắt buộc'),
 
     gender: Yup.number()
@@ -63,6 +64,7 @@ const EditProfileScreen = () => {
 
     address: Yup.string()
       .min(10, 'Địa chỉ phải có ít nhất 10 ký tự')
+      .max(200, 'Địa chỉ tối đa 200 ký tự')
       .required('Địa chỉ là bắt buộc'),
 
     phoneNumber: Yup.string()

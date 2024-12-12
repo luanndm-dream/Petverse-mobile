@@ -134,3 +134,9 @@ export async function apiUpdatePetAlbum(
     },
   });
 }
+
+export async function apiDeletePet(petId: number) {
+    let url = `Pet/${petId}`
+
+    return protectedAxios.delete(url)
+}

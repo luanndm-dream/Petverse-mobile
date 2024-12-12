@@ -12,11 +12,21 @@ export async function apiGetPetCenterByPetCenterId(petCenterId: string) {
   const url = `PetCenter/${petCenterId}`;
   return protectedAxios.get(url);
 }
+
 export async function apiGetPetCenterByPetServiceId(petServiceId: string) {
   const url = `PetCenter`;
   const params = {
     PetServiceId: petServiceId,
     pageSize: 1000
+  }
+  return protectedAxios.get(url, {params});
+}
+
+export async function apiGetTop5PetCenter(month: number, year: number) {
+  const url = `PetCenter/Top5PetCenter`;
+  const params = {
+    Month: month,
+    Year: year
   }
   return protectedAxios.get(url, {params});
 }

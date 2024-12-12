@@ -19,10 +19,11 @@ interface Props {
   initialImages?: string[];
   camera?: boolean;
   maxItem?: number
+  onlyImage?: boolean
 }
 
 const AddImageComponent = (props: Props) => {
-  const {onSelected, initialImages, camera, maxItem = 4} = props;
+  const {onSelected, initialImages, camera, maxItem = 4, onlyImage} = props;
   const [selectedImages, setSelectedImages] = useState<any[]>([]);
 
   const requestGalleryPermission = async () => {
@@ -56,6 +57,14 @@ const AddImageComponent = (props: Props) => {
           ImagePicker.openCamera({
             cropping: true,
           }).then(image => {
+            if (onlyImage && !image.mime.startsWith('image')) {
+              Alert.alert(
+                'Chỉ chấp nhận ảnh',
+                'Vui lòng chọn tệp là ảnh.',
+                [{text: 'OK'}],
+              );
+              return;
+            }
             if (selectedImages.length < maxItem) {
               const newImage = {path: image.path};
               setSelectedImages(prev => [...prev, newImage]);
@@ -75,20 +84,26 @@ const AddImageComponent = (props: Props) => {
           ImagePicker.openPicker({
             multiple: true,
           }).then(mediaFiles => {
-            console.log(mediaFiles)
-          const validMedia = mediaFiles.filter((media: any) => {
-            if (media.mime.startsWith('video')) {
-              if (media.duration > 20000) {
+            const validMedia = mediaFiles.filter((media: any) => {
+              // Kiểm tra loại file
+              if (onlyImage && !media.mime.startsWith('image')) {
+                Alert.alert(
+                  'Chỉ chấp nhận ảnh',
+                  `File "${media.filename || media.path}" không phải là ảnh.`,
+                  [{text: 'OK'}],
+                );
+                return false;
+              }
+              if (media.mime.startsWith('video') && media.duration > 20000) {
                 Alert.alert(
                   'Video quá dài',
                   `Video "${media.filename || media.path}" vượt quá 20 giây.`,
-                  [{ text: 'OK' }],
+                  [{text: 'OK'}],
                 );
-                return false; // Loại bỏ video quá dài
+                return false;
               }
-            }
-            return true; // Giữ lại ảnh và video hợp lệ
-          });
+              return true; // Chỉ giữ lại các file hợp lệ
+            });
             if (selectedImages.length + validMedia.length <= maxItem) {
               const newImages = validMedia.map(image => ({
                 path: image.path,

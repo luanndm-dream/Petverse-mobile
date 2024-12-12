@@ -59,14 +59,11 @@ const TransactionHistoryScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const PAGE_SIZE = 15;
+  const PAGE_SIZE = 3000;
 
   const fetchTransactions = async (currentPage = 1, isRefreshing = false) => {
-    if (isRefreshing) setRefreshing(true);
-    else setLoadingMore(true);
-  
     try {
-      const res: any = await apiGetTransactionByUserId(userId, PAGE_SIZE, currentPage);
+      const res: any = await apiGetTransactionByUserId(userId, PAGE_SIZE);
       if (res.statusCode === 200) {
         const sortedData = res.data.items.sort((a: any, b: any) => {
           // Chuyển đổi string ngày tháng sang Date object
@@ -80,49 +77,22 @@ const TransactionHistoryScreen = () => {
   
           return new Date(fullDateB).getTime() - new Date(fullDateA).getTime();
         });
-  
-        if (isRefreshing) {
           setTransactionData(sortedData);
-        } else {
-          setTransactionData((prevData) => [...prevData, ...sortedData]);
-        }
-  
-        setHasMore(res.data.items.length >= PAGE_SIZE);
+          setHasMore(res.data.items.length >= PAGE_SIZE);
       } else {
         console.log('Lấy giao dịch thất bại');
       }
     } catch (error) {
       console.error('Lỗi khi lấy giao dịch:', error);
     } finally {
-      if (isRefreshing) setRefreshing(false);
-      else setLoadingMore(false);
+      console.log('Finnally scope');
     }
   };
 
-  useEffect(() => {
-    showLoading();
-    fetchTransactions(page).finally(hideLoading);
-  }, [page]);
-
-  const handleRefresh = () => {
-    setPage(1);
-    fetchTransactions(1, true);
-  };
-
-  const handleLoadMore = () => {
-    if (!loadingMore && hasMore) {
-      setPage((prevPage) => prevPage + 1);
-    }
-  };
-
-  const renderFooter = () => {
-    if (!loadingMore) return null;
-    return (
-      <View style={styles.loadingContainer}>
-        <Text>Đang tải thêm...</Text>
-      </View>
-    );
-  };
+  useEffect(()=>{
+    fetchTransactions()
+  },[userId])
+ 
 
   const renderItem = ({ item }: any) => <TransactionItem item={item} />;
 
@@ -147,15 +117,10 @@ const TransactionHistoryScreen = () => {
         <FlatList
           data={transactionData}
           renderItem={renderItem}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item, index) => `${item.id}-${index}`}
           ListEmptyComponent={renderEmptyComponent}
-          ListFooterComponent={renderFooter}
-          contentContainerStyle={styles.listContainer}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} colors={[colors.primary]} />
-          }
+          contentContainerStyle={styles.listContainer}  
           showsVerticalScrollIndicator={false}
-          onEndReached={handleLoadMore}
           onEndReachedThreshold={0.5}
         />
       </Container>

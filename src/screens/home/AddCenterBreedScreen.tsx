@@ -198,6 +198,7 @@ const AddCenterBreedScreen = () => {
             onSelected={(url: string | string[]) => {
               formik.setFieldValue('images', Array.isArray(url) ? url : [url]);
             }}
+            onlyImage
           />
           {formik.errors.images && formik.touched.images && (
             <Text style={globalStyles.errorText}>{formik.errors.images}</Text>

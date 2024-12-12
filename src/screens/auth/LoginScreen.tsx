@@ -105,7 +105,7 @@ const LoginScreen = () => {
         <RowComponent>
           <TextComponent text="đến với" size={30} />
           <TextComponent
-            text=" PETVERSE"
+            text=" PetVerse"
             size={40}
             color={colors.primary}
             type={'bigTitle'}

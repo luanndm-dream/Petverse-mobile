@@ -38,7 +38,8 @@ const WorkProfileScreen = () => {
         try {
           const res:any = await apiGetJobByPetCenterId(petCenterId as never);
           if (res.statusCode === 200) {
-            setPetCenterData(res.data);
+            const data = res.data.havePhoto || [];
+            setPetCenterData(data);
           } else {
             console.log('Loading working profile failed');
           }
@@ -181,6 +182,14 @@ const WorkProfileScreen = () => {
               () => navigate(STACK_NAVIGATOR_SCREENS.EDITOVERVIEWSCREEN),
               ['#4CAF50', '#81C784'] 
             )}
+              {/* {renderMenuItem(
+              <PetBreedingIcon width={45} height={45} />,
+              "Thông tin Center",
+              "Chỉnh sửa thông tin Center",
+              () => navigate(STACK_NAVIGATOR_SCREENS.EDITPETCENTERSCREEN),
+              ['#FF5722', '#2196F3']
+              
+            )} */}
           </>
         )}
      </SectionComponent>

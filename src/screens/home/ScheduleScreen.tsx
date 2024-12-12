@@ -109,7 +109,6 @@ const ScheduleScreen: React.FC = () => {
   };
 
   const renderTimeSlot = ({item}: {item: TimeSlot}): React.ReactElement => {
-    console.log('Rendering slot:', item); // Thêm log để kiểm tra
     return (
       <View style={styles.timeSlotItem}>
         <RowComponent justify="space-between">

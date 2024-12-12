@@ -84,7 +84,7 @@ const ReportApplicationDetail = () => {
           <VideoPlayer
             video={{ uri: media.url }}
             videoWidth={width / 2 - 24}
-            videoHeight={(width / 2 - 24) * 0.5625} 
+            videoHeight={(width / 2 - 24)} 
             thumbnail={{ uri: "https://via.placeholder.com/150" }}
           />
         </View>

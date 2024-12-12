@@ -13,13 +13,12 @@ export async function apiCreatePayment(userId:string, title: string, description
     return protectedAxios.post(url, dataSend)
 }
 
-export async function apiGetTransactionByUserId(userId: string, pageSize: number, pageIndex: number){
+export async function apiGetTransactionByUserId(userId: string, pageSize: number){
     let url = 'Transaction'
 
         const params = {
             userId,
             pageSize,
-            pageIndex
         }
         return protectedAxios.get(url, {params})
 }

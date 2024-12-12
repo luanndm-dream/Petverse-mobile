@@ -47,4 +47,6 @@ export const STACK_NAVIGATOR_SCREENS = {
   CHANGEPASSWORDSCREEN: 'ChangePasswordScreen',
   VACCINESCREEN: 'VaccineScreen',
   ADDVACCINESCREEN: 'AddVaccineScreen',
+  DISCLAIMERSCREEN: 'DisclaimerScreen',
+  EDITPETCENTERSCREEN: 'EditPetCenterScreen',
 };

@@ -47,6 +47,8 @@ import ReviewScreen from '@/screens/home/ReviewScreen';
 import ChangePasswordScreen from '@/screens/profile/ChangePasswordScreen';
 import VaccineScreen from '@/screens/home/VaccineScreen';
 import AddVaccineScreen from '@/screens/home/AddVaccineScreen';
+import DisclaimerScreen from '@/screens/profile/DisclaimerScreen';
+import EditPetCenterScreen from '@/screens/home/EditPetCenterScreen';
 
 const MainNavigator = () => {
   const Stack = createNativeStackNavigator();
@@ -101,6 +103,8 @@ const MainNavigator = () => {
           <Stack.Screen name='ChangePasswordScreen' component={ChangePasswordScreen}/>
           <Stack.Screen name='VaccineScreen' component={VaccineScreen}/>
           <Stack.Screen name='AddVaccineScreen' component={AddVaccineScreen}/>
+          <Stack.Screen name='DisclaimerScreen' component={DisclaimerScreen}/>
+          <Stack.Screen name='EditPetCenterScreen' component={EditPetCenterScreen}/>
           <Stack.Screen name="TestScreen" component={TestScreen}/>
         </Stack.Navigator>
   );

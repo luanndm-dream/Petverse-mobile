@@ -131,26 +131,52 @@ const ProfileScreen = () => {
   const openGalarryHandle = () => {
     // showLoading();
     if (RESULTS.GRANTED) {
-      ImagePicker.openPicker({}).then(image => {
-        apiChangeAvatar(userId, image.path).then((res: any) => {
-          if (res.statusCode === 200) {
-            hideLoading();
-            setRefreshFlag(!refreshFlag);
-            Toast.show({
-              type: 'success',
-              text1: 'Thay đổi ảnh đại diện thành công',
-              text2: 'Petverse chúc bạn thật nhiều sức khoẻ!',
-            });
-          } else {
-            hideLoading();
+      ImagePicker.openPicker({mediaType: 'photo'}) // Chỉ cho phép chọn ảnh
+      .then(image => {
+        // Kiểm tra nếu file không phải là ảnh
+        if (!image.mime.startsWith('image')) {
+          Toast.show({
+            type: 'error',
+            text1: 'Lỗi',
+            text2: 'Bạn chỉ được phép chọn tệp ảnh làm avatar. Vui lòng chọn file ảnh hợp lệ!',
+          });
+          return; // Ngăn không cho tiếp tục nếu không phải ảnh
+        }
+
+        apiChangeAvatar(userId, image.path)
+          .then((res: any) => {
+            if (res.statusCode === 200) {
+              setRefreshFlag(!refreshFlag);
+              Toast.show({
+                type: 'success',
+                text1: 'Thay đổi ảnh đại diện thành công',
+                text2: 'Petverse chúc bạn thật nhiều sức khoẻ!',
+              });
+            } else {
+              Toast.show({
+                type: 'error',
+                text1: 'Thay đổi ảnh đại diện thất bại',
+                text2: `Xảy ra lỗi khi thay đổi ảnh đại diện: ${res.message}`,
+              });
+            }
+          })
+          .catch(err => {
             Toast.show({
               type: 'error',
-              text1: 'Thay đổi ảnh đại diện thất bại',
-              text2: `Xảy ra lỗi khi thay đổi ảnh đại diện ${res.message}`,
+              text1: 'Lỗi',
+              text2: 'Xảy ra lỗi khi kết nối tới server.',
             });
-          }
+          });
+      })
+      .catch(error => {
+        Toast.show({
+          type: 'error',
+          text1: 'Huỷ chọn',
+          text2: 'Bạn đã huỷ chọn ảnh.',
         });
+        console.error('Lỗi khi chọn ảnh:', error);
       });
+  
     }
   };
   const onPressItem = (screen: string) => {
