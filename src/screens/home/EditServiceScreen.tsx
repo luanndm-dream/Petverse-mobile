@@ -30,6 +30,8 @@ const EditServiceScreen = () => {
   const [serviceData, setServiceData] = useState<any>(null);
   const [isTimePickerVisible, setIsTimePickerVisible] =
     useState<boolean>(false);
+    const [isChangeTime, setIsChangeTime] =
+    useState<boolean>(false);
   const [selectedScheduleIndex, setSelectedScheduleIndex] = useState<
     number | null
   >(null);
@@ -136,7 +138,12 @@ const EditServiceScreen = () => {
   const handleTimeConfirm = (time: string): void => {
     if (selectedScheduleIndex !== null) {
       const updatedSchedule = [...formik.values.schedule];
-      updatedSchedule[selectedScheduleIndex].time = time;
+      // Cập nhật thời gian của lịch trình được chọn
+      updatedSchedule[selectedScheduleIndex] = {
+        ...updatedSchedule[selectedScheduleIndex],
+        time: time,
+      };
+      // Cập nhật giá trị trong Formik
       formik.setFieldValue('schedule', updatedSchedule);
     }
     setIsTimePickerVisible(false);
@@ -145,9 +152,7 @@ const EditServiceScreen = () => {
   const handleDescriptionChange = (text: string, index: number) => {
     // Clone mảng schedule để giữ tính bất biến
     const updatedSchedule = [...formik.values.schedule];
-    updatedSchedule[index] = { ...updatedSchedule[index], description: text };
-  
-    // Cập nhật giá trị trong Formik
+    updatedSchedule[index] = {...updatedSchedule[index], description: text};
     formik.setFieldValue('schedule', updatedSchedule);
   };
 
@@ -260,7 +265,12 @@ const EditServiceScreen = () => {
             </Text>
           )}
 
-          <TextComponent text="Khung giờ làm việc" required type="title" />
+          {formik.values.schedule.length > 0 && (
+            <>
+              <TextComponent text="Khung giờ làm việc" required type="title" />
+             
+            </>
+          )}
           <FlatList
             scrollEnabled={false}
             data={formik.values.schedule}

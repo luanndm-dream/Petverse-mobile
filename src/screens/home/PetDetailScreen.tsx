@@ -1,10 +1,12 @@
 import {
+  Alert,
   Image,
   ImageBackground,
   StyleSheet,
   Switch,
   Text,
   TextInput,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
@@ -14,9 +16,12 @@ import {
   apiGetPetBreed,
   apiUpdatePet,
   apiDeletePet,
+  apiUpdatePetAvatar,
 } from '@/api/apiPet';
+import ImagePicker from 'react-native-image-crop-picker';
 import useLoading from '@/hook/useLoading';
 import {
+  AlertPopupComponent,
   ButtonComponent,
   Container,
   IconButtonComponent,
@@ -36,6 +41,8 @@ import {useFormik} from 'formik';
 import * as Yup from 'yup';
 import Toast from 'react-native-toast-message';
 import {useCustomNavigation} from '@/utils/navigation';
+import { apiChangeAvatar } from '@/api/apiUser';
+import { mediaUpload } from '@/utils/mediaUpload';
 
 const PetDetailScreen = () => {
   const route = useRoute<any>();
@@ -43,10 +50,12 @@ const PetDetailScreen = () => {
   const {showLoading, hideLoading} = useLoading();
   const {petId, petName} = route?.params;
   const [petData, setPetData] = useState<any>();
+  const [petAvatar, setPetAvatar] = useState<any>();
   const [dogSubType, setDogSubType] = useState<any[]>([]);
   const [catSubType, setCatSubType] = useState<any[]>([]);
   const [petSubTypeName, setPetSubTypeName] = useState<string>('');
   const [isEdit, setIsEdit] = useState(false);
+  const [isAlert, setIsAlert] = useState(false);
   const {navigate, goBack} = useCustomNavigation();
   const [isVisible, setIsVisible] = useState(false);
   const formik = useFormik({
@@ -185,7 +194,7 @@ const PetDetailScreen = () => {
       .finally(() => {
         hideLoading();
       });
-  }, [petId, isEdit]);
+  }, [petId, isEdit, petAvatar]);
 
   const deletePetHandle = () => {
     apiDeletePet(petId).then((res: any) => {
@@ -207,6 +216,40 @@ const PetDetailScreen = () => {
       }
     });
   };
+
+  const handleChangeAvatar = () => {
+    ImagePicker.openPicker({
+      width: 300,
+      height: 300,
+      cropping: true,
+    }).then(image => {
+      if (image.path) {
+        if (!image.mime.startsWith('image')) {
+          setIsAlert(true)
+          return;
+        }
+        showLoading();
+       apiUpdatePetAvatar(petId,mediaUpload(image.path))
+          .then((res:any) => {
+            if (res.statusCode === 200) {
+              setPetAvatar(image.path)
+              Toast.show({
+                type: 'success',
+                text1: 'Thay đổi ảnh đại diện thành công',
+                text2: 'Petverse chúc bạn thật nhiều sức khoẻ!',
+              });
+            } else {
+              Toast.show({
+                type: 'error',
+                text1: 'Thay đổi ảnh đại diện thất bại',
+                text2: `Xảy ra lỗi: ${res.message}`,
+              });
+            }
+          })
+          .finally(() => hideLoading());
+      }
+    });
+  }
 
   const renderInfoItem = (
     label: string,
@@ -300,9 +343,16 @@ const PetDetailScreen = () => {
         <ImageBackground
           source={require('../../assets/images/BannerAvatarPet.png')}
           style={styles.backgroundImage}>
-          {petData?.avatar && (
-            <Image source={{uri: petData?.avatar}} style={styles.avatar} />
-          )}
+          <TouchableOpacity
+            style={styles.avatarContainer}
+            onPress={handleChangeAvatar}>
+            {petData?.avatar ? (
+              <Image source={{uri: petData?.avatar}} style={styles.avatar} />
+            ) : (
+              <TextComponent text="Chọn avatar" />
+            )}
+          </TouchableOpacity>
+
           <View style={styles.editContainer}>
             <View>
               <TextComponent text={petName} type="title" />
@@ -332,7 +382,7 @@ const PetDetailScreen = () => {
         </ImageBackground>
         <SectionComponent>
           <RowComponent justify="flex-start">
-            <TextComponent text="Giới thiệu" size={16} />
+            <TextComponent text="Giới thiệu" size={16} type="title" />
             {isEdit && (
               <>
                 <SpaceComponent width={16} />
@@ -350,11 +400,17 @@ const PetDetailScreen = () => {
               maxLength={500}
               onBlur={formik.handleBlur('description')}
               placeholder="Mô tả thú cưng"
+              // ={{padding: 8, backgroundColor: colors.white, borderRadius: 6}}
             />
           ) : (
             <TextComponent
               text={petData?.description?.trim()}
               type="description"
+              styles={{
+                padding: 8,
+                backgroundColor: colors.white,
+                borderRadius: 6,
+              }}
             />
           )}
           {formik.errors.description && formik.touched.description && (
@@ -417,6 +473,17 @@ const PetDetailScreen = () => {
         buttonLeftColor={colors.grey}
         buttonRightColor={colors.red}
       />
+        <AlertPopupComponent 
+          buttonTitle='Đóng'
+          description='Xin lỗi ảnh đại điện chỉ được chấp nhận file ảnh.'
+          iconColor={colors.yellow}
+          iconName='alert-circle'
+          isVisible={isAlert}
+          onButtonPress={()=>setIsAlert(false)}
+          onClose={()=>setIsAlert(false)}
+          title='Cảnh báo'
+          buttonColor={colors.grey}
+          />
     </>
   );
 };
@@ -443,10 +510,6 @@ const styles = StyleSheet.create({
     borderRadius: 60,
     borderWidth: 5,
     borderColor: colors.grey4,
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: [{translateX: -180}, {translateY: -40}],
   },
   infoItem: {
     paddingVertical: 16,
@@ -472,11 +535,11 @@ const styles = StyleSheet.create({
   },
   editRow: {
     flexDirection: 'row',
-    alignItems: 'center', // Căn giữa theo trục dọc
-    marginLeft: 8, // Khoảng cách giữa nhãn và icon
+    alignItems: 'center', 
+    marginLeft: 8,
   },
   errorTextInline: {
-    marginLeft: 4, // Khoảng cách giữa icon và chữ "Bắt buộc"
+    marginLeft: 4, 
   },
   textInput: {
     minWidth: 120,
@@ -491,5 +554,11 @@ const styles = StyleSheet.create({
   },
   inputError: {
     borderBottomColor: colors.red,
+  },
+  avatarContainer: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: [{translateX: -180}, {translateY: -40}],
   },
 });

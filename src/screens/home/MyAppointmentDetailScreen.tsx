@@ -50,7 +50,6 @@ const MyAppointmentDetailScreen = () => {
     }
   };
 
-
   useEffect(() => {
     const loadDocumentIds = async () => {
       const ids = await fetchDocumentIds();
@@ -230,7 +229,7 @@ const MyAppointmentDetailScreen = () => {
       }
     });
   };
-  console.log(appointmentData)
+  console.log(appointmentData);
 
   const openPopup = (action: string) => {
     setPopupAction(action);
@@ -319,9 +318,9 @@ const MyAppointmentDetailScreen = () => {
   };
   const reviewHandle = (appointmentId: string) => {
     navigation.navigate(STACK_NAVIGATOR_SCREENS.REVIEWSCREEN, {
-      appointmentId
-    })
-  }
+      appointmentId,
+    });
+  };
 
   const getStatusText = (status: number): string => {
     switch (status) {
@@ -392,11 +391,20 @@ const MyAppointmentDetailScreen = () => {
         if (roleName === 'PetCenter') {
           return (
             <RowComponent styles={{paddingHorizontal: 40}}>
-              <ButtonComponent
-                text="Tạo theo dõi"
-                type="primary"
-                onPress={trackingHandle}
-              />
+              {appointmentData.schedules.length > 0 ? (
+                <ButtonComponent
+                  text="Tạo theo dõi"
+                  type="primary"
+                  onPress={trackingHandle}
+                />
+              ) : (
+                <ButtonComponent
+                  text="Không có lịch theo dõi"
+                  type="primary"
+                  disable={true}
+                  onPress={trackingHandle}
+                />
+              )}
               <ButtonComponent
                 text="Hoàn thành"
                 type="primary"
@@ -408,11 +416,20 @@ const MyAppointmentDetailScreen = () => {
         } else if (roleName === 'Customer') {
           return (
             <RowComponent styles={{paddingHorizontal: 40}}>
-              <ButtonComponent
-                text="Xem báo cáo"
-                type="primary"
-                onPress={trackingHandle}
-              />
+              {appointmentData.schedules.length > 0 ? (
+                <ButtonComponent
+                  text="Xem báo cáo"
+                  type="primary"
+                  onPress={trackingHandle}
+                />
+              ) : (
+                <ButtonComponent
+                  text="Không có báo cáo"
+                  type="primary"
+                  disable={true}
+                  onPress={trackingHandle}
+                />
+              )}
               <ButtonComponent
                 text="Report"
                 type="primary"
@@ -556,15 +573,16 @@ const MyAppointmentDetailScreen = () => {
             onPress={goBack}
           />
         }
-        right={appointmentData?.status === 2 && (
-          <IconButtonComponent
-          name="message-draw"
-          size={30}
-          color={colors.dark}
-          onPress={()=>reviewHandle(appointmentId)}
-        />
-        )}
-        >
+        right={
+          appointmentData?.status === 2 && (
+            <IconButtonComponent
+              name="message-draw"
+              size={30}
+              color={colors.dark}
+              onPress={() => reviewHandle(appointmentId)}
+            />
+          )
+        }>
         {isInBreeding && (
           <View style={styles.warningContainer}>
             <RowComponent justify="space-between">
@@ -579,13 +597,15 @@ const MyAppointmentDetailScreen = () => {
           <TextComponent text="Dịch vụ" type="title" />
 
           <Text style={styles.value}>
-           {appointmentData.serviceName ? appointmentData.serviceName : 'Phối giống'}
+            {appointmentData.serviceName
+              ? appointmentData.serviceName
+              : 'Phối giống'}
           </Text>
 
           <TextComponent text="Tên người dùng" type="title" />
 
           <Text style={styles.value}>{appointmentData.userName}</Text>
-          <TextComponent text='Thông tin thú cưng' type='title'/>
+          <TextComponent text="Thông tin thú cưng" type="title" />
 
           <View style={styles.petContainer}>
             <Image
@@ -603,28 +623,30 @@ const MyAppointmentDetailScreen = () => {
               <View style={styles.petInfoContainer}>
                 <Text style={styles.petInfoLabel}>Đã phối gần nhất:</Text>
                 <Text style={styles.petInfo}>
-                  {appointmentData.pet.lastBreedDate ? appointmentData.pet.lastBreedDate : 'Không có'}
+                  {appointmentData.pet.lastBreedDate
+                    ? appointmentData.pet.lastBreedDate
+                    : 'Không có'}
                 </Text>
               </View>
             </View>
-            
           </View>
 
-          <TextComponent text='Tên trung tâm' type='title'/>
+          <TextComponent text="Tên trung tâm" type="title" />
           <Text style={styles.value}>{appointmentData.centerName}</Text>
 
-          <TextComponent text='Ngày bắt đầu' type='title'/>
+          <TextComponent text="Ngày bắt đầu" type="title" />
           <Text style={styles.value}>{appointmentData.startTime}</Text>
 
-          <TextComponent text='Ngày kết thúc' type='title'/>
+          <TextComponent text="Ngày kết thúc" type="title" />
           <Text style={styles.value}>{appointmentData.endTime}</Text>
 
-          <TextComponent text='Số tiền' type='title'/>
-          <Text style={[styles.value, {fontWeight: 'bold', color: colors.primary}]}>
+          <TextComponent text="Số tiền" type="title" />
+          <Text
+            style={[styles.value, {fontWeight: 'bold', color: colors.primary}]}>
             {priceFormater(appointmentData.amount)}
           </Text>
 
-          <TextComponent text='Trạng thái' type='title'/>
+          <TextComponent text="Trạng thái" type="title" />
           <Text
             style={[
               styles.value,
@@ -632,12 +654,12 @@ const MyAppointmentDetailScreen = () => {
             ]}>
             {getStatusText(appointmentData.status)}
           </Text>
-          <TextComponent text='Lí do huỷ' type='title'/>
+          <TextComponent text="Lí do huỷ" type="title" />
           <Text style={styles.value}>
             {appointmentData.cancelReason || 'Không có'}
           </Text>
 
-          <TextComponent text='Lịch trình' type='title'/>
+          <TextComponent text="Lịch trình" type="title" />
           {appointmentData.schedules && appointmentData.schedules.length > 0 ? (
             <TextComponent
               text="Có lịch trình kèm theo"
@@ -736,8 +758,8 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 2, 
-    borderLeftWidth: 3, 
+    elevation: 2,
+    borderLeftWidth: 3,
     borderLeftColor: colors.primary,
   },
   petAvatar: {

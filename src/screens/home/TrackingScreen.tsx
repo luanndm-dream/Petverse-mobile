@@ -46,7 +46,7 @@ const TrackingScreen = () => {
   const [selectedTrackings, setSelectedTrackings] = useState<any[]>([]);
   const [activeSlide, setActiveSlide] = useState(0);
   const [selectedScheduleId, setSelectedScheduleId] = useState();
-  console.log(appointmentId);
+  console.log(appointmentData);
   useFocusEffect(
     useCallback(() => {
       showLoading();
@@ -189,59 +189,63 @@ const TrackingScreen = () => {
     </View>
   );
 
-  const renderRecords = (records: any[]) => (
-    <View style={styles.timelineContainer}>
-      <Text style={styles.timelineTitle}>Tiến trình theo dõi</Text>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.recordsContainer}>
-        {records.map((record, index) => {
-          const hasTracking = record.trackings && record.trackings.length > 0;
-          const isSelected = selectedRecordIndex === index;
-          return (
-            <TouchableOpacity
-              key={index}
-              style={[
-                styles.recordTimeContainer,
-                {
-                  backgroundColor: isSelected
-                    ? colors.primary
-                    : hasTracking
-                    ? colors.green
-                    : colors.grey,
-                },
-              ]}
-              onPress={() => {
-                // console.log(record)
-                setSelectedScheduleId(record.scheduleId);
-                setSelectedRecordIndex(index);
-                setSelectedTrackings(record.trackings || []); // Update trackings when record is selected
-                setActiveSlide(0); // Reset active slide on record change
-              }}>
-              <View style={styles.timeIcon}>
-                <IconButtonComponent
-                  name="clock"
-                  size={16}
-                  color={colors.white}
-                />
-              </View>
-              <Text style={styles.recordTimeText}>{record.time}</Text>
-              <Text style={styles.recordDescription}>{record.description}</Text>
-              {hasTracking && (
-                <MaterialCommunityIcons
-                  name="check"
-                  size={16}
-                  color={colors.white}
-                  style={styles.checkIcon}
-                />
-              )}
-            </TouchableOpacity>
-          );
-        })}
-      </ScrollView>
-    </View>
-  );
+  const renderRecords = (records: any[]) => {
+    return (
+      <View style={styles.timelineContainer}>
+        <Text style={styles.timelineTitle}>Tiến trình theo dõi</Text>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.recordsContainer}>
+          {records.map((record, index) => {
+            const hasTracking = record.trackings && record.trackings.length > 0;
+            const isSelected = selectedRecordIndex === index;
+            return (
+              <TouchableOpacity
+                key={index}
+                style={[
+                  styles.recordTimeContainer,
+                  {
+                    backgroundColor: isSelected
+                      ? colors.primary
+                      : hasTracking
+                      ? colors.green
+                      : colors.grey,
+                  },
+                ]}
+                onPress={() => {
+                  // console.log(record)
+                  setSelectedScheduleId(record.scheduleId);
+                  setSelectedRecordIndex(index);
+                  setSelectedTrackings(record.trackings || []); // Update trackings when record is selected
+                  setActiveSlide(0); // Reset active slide on record change
+                }}>
+                <View style={styles.timeIcon}>
+                  <IconButtonComponent
+                    name="clock"
+                    size={16}
+                    color={colors.white}
+                  />
+                </View>
+                <Text style={styles.recordTimeText}>{record.time}</Text>
+                <Text style={styles.recordDescription}>
+                  {record.description}
+                </Text>
+                {hasTracking && (
+                  <MaterialCommunityIcons
+                    name="check"
+                    size={16}
+                    color={colors.white}
+                    style={styles.checkIcon}
+                  />
+                )}
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
+      </View>
+    );
+  };
 
   const handleReportAction = (scheduleId: number) => {
     console.log(scheduleId);
@@ -291,13 +295,17 @@ const TrackingScreen = () => {
               contentContainerStyle={styles.dateList}
             />
 
-            {selectedDateData && renderRecords(selectedDateData.records)}
+            {selectedDateData ? (
+              renderRecords(selectedDateData.records)
+            ) : (
+              <TextComponent text="Không có lịch báo cáo" styles={{alignSelf: 'center'}}/>
+            )}
           </View>
         </ScrollView>
         {roleName === 'PetCenter' && appointmentData.status === 2 && (
           <View style={styles.completedMessageContainer}>
             <Text style={styles.completedMessageText}>
-              Đã hoàn thành, không thể tạo thêm báo cáo.
+              Lịch hẹn đã hoàn thành, không thể tạo thêm báo cáo.
             </Text>
           </View>
         )}
@@ -325,7 +333,7 @@ export default TrackingScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.grey4,
+    backgroundColor: colors.white,
   },
   contentContainer: {
     flex: 1,
@@ -421,6 +429,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     marginTop: 16,
     marginBottom: 20,
+    flex: 1,
   },
   timelineTitle: {
     fontSize: 18,

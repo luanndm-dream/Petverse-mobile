@@ -10,6 +10,7 @@ import {
 import React, {useEffect, useState} from 'react';
 import {
   AddImageComponent,
+  AlertPopupComponent,
   ButtonComponent,
   Container,
   DatePicker,
@@ -37,6 +38,7 @@ import {mediaUpload} from '@/utils/mediaUpload';
 import Toast from 'react-native-toast-message';
 import {globalStyles} from '@/styles/globalStyles';
 import {Portal} from 'react-native-portalize';
+import { alertMessages } from '@/data/alertMessages';
 
 const AddPetScreen = () => {
   const userId = useAppSelector(state => state.auth.userId);
@@ -53,6 +55,8 @@ const AddPetScreen = () => {
   const [petVideos, setPetVideos] = useState<any[]>([]);
   const [isVisibleModalAge, setIsVisibleModalAge] = useState(false);
   const [age, setAge] = useState('');
+  const [isAlert, setIsAlert] = useState(false);
+  const [alertContent, setAlertContent] = useState<any>(null);
   const getPetIcon = (id: number) => {
     switch (id) {
       case 1:
@@ -139,11 +143,8 @@ const AddPetScreen = () => {
 
       // Kiểm tra xem tệp có phải là ảnh không
       if (!image.mime.startsWith('image')) {
-        Alert.alert(
-          'Lỗi',
-          'Bạn chỉ được phép chọn ảnh làm avatar. Vui lòng chọn file ảnh hợp lệ.',
-          [{text: 'OK'}]
-        );
+        setAlertContent(alertMessages.onlyImageAllowed);
+        setIsAlert(true);
         return;
       }
 
@@ -489,6 +490,18 @@ const AddPetScreen = () => {
         isVisible={isVisibleModalAge}
         onCancel={() => setIsVisibleModalAge(false)}
         maxDateNow={true}
+      />
+        <AlertPopupComponent
+        {...alertContent}
+        isVisible={isAlert}
+        onButtonPress={() => {
+          setIsAlert(false);
+          setAlertContent(null); // Reset nội dung sau khi đóng
+        }}
+        onClose={() => {
+          setIsAlert(false);
+          setAlertContent(null); // Reset nội dung sau khi đóng
+        }}
       />
     </>
   );

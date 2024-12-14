@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {
+  AlertPopupComponent,
   ButtonComponent,
   Container,
   DropdownPicker,
@@ -38,6 +39,7 @@ import {apiPostApplication} from '@/api/apiApplication';
 import Toast from 'react-native-toast-message';
 import {mediaUpload} from '@/utils/mediaUpload';
 import {STACK_NAVIGATOR_SCREENS} from '@/constants/screens';
+import { alertMessages } from '@/data/alertMessages';
 
 const EmployeeRegistrationScreen = () => {
   const [isVisibleImage, setIsVisibleImage] = useState(false);
@@ -53,7 +55,8 @@ const EmployeeRegistrationScreen = () => {
   const {showLoading, hideLoading} = useLoading();
   const userId = useAppSelector(state => state.auth.userId);
   const [isAgree, setIsAgree] = useState(false);
-
+  const [isAlert, setIsAlert] = useState(false);
+  const [alertContent, setAlertContent] = useState<any>(null);
   const getPetServiceHandle = () => {
     showLoading();
     apiGetPetServices().then((res: any) => {
@@ -132,16 +135,14 @@ const EmployeeRegistrationScreen = () => {
         requestGalleryPermission();
       } else {
         ImagePicker.openPicker({
-          multiple: true,
+          mediaType: 'photo',
+          multiple: true
         }).then(images => {
           if (selectedCertifications.length + images.length <= 4) {
             setSelectedCertifications(prev => [...prev, ...images]);
           } else {
-            Alert.alert(
-              'Giới hạn ảnh',
-              'Bạn chỉ có thể chọn tối đa 4 hình ảnh.',
-              [{text: 'OK'}],
-            );
+            setAlertContent(alertMessages.maxItemsExceeded(4));
+              setIsAlert(true);
           }
         });
       }
@@ -499,6 +500,18 @@ const EmployeeRegistrationScreen = () => {
           styles={{width: '100%', marginTop: 10}}
         />
       </View>
+      <AlertPopupComponent
+        {...alertContent}
+        isVisible={isAlert}
+        onButtonPress={() => {
+          setIsAlert(false);
+          setAlertContent(null); // Reset nội dung sau khi đóng
+        }}
+        onClose={() => {
+          setIsAlert(false);
+          setAlertContent(null); // Reset nội dung sau khi đóng
+        }}
+      />
     </>
   );
 };

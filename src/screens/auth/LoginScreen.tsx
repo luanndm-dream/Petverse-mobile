@@ -21,6 +21,7 @@ import Toast from 'react-native-toast-message';
 import {useAppDispatch} from '@/redux';
 import {addAuth} from '@/redux/reducers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {async} from '@firebase/util';
 
 const LoginScreen = () => {
   const {navigate} = useCustomNavigation();
@@ -42,19 +43,25 @@ const LoginScreen = () => {
       .required('Mật khẩu là bắt buộc'),
   });
 
-  const handleLogin = async (email: string, password: string) => {
-    try {
-      showLoading();
-      const res: any = await apiLogin(email, password);
-      if (res.data.roleName === 'Manager' || res.data.roleName === 'Admin') {
-        Toast.show({
-          type: 'error',
-          text1: 'Đăng nhập thất bại',
-          text2: `Truy cập bị từ chối`,
-        });
-        hideLoading()
-      } else {
+  const handleLogin = (email: string, password: string) => {
+    apiLogin(email, password)
+      .then(async (res: any) => {
         if (res.statusCode === 200) {
+          // Kiểm tra roleName nếu đăng nhập thành công
+          if (
+            res.data.roleName === 'Manager' ||
+            res.data.roleName === 'Admin'
+          ) {
+            Toast.show({
+              type: 'error',
+              text1: 'Đăng nhập thất bại',
+              text2: `Truy cập bị từ chối`,
+            });
+            hideLoading();
+            return;
+          }
+
+          // Xử lý đăng nhập thành công
           dispatch(addAuth(res.data));
           await AsyncStorage.setItem(
             'auth',
@@ -68,6 +75,7 @@ const LoginScreen = () => {
             text2: 'Petverse chúc bạn thật nhiều sức khoẻ!',
           });
         } else {
+          // Xử lý nếu có lỗi từ server trả về
           hideLoading();
           Toast.show({
             type: 'error',
@@ -75,16 +83,72 @@ const LoginScreen = () => {
             text2: `Xảy ra lỗi: ${res.message}`,
           });
         }
-      }
-    } catch (error) {
-      hideLoading();
-      Toast.show({
-        type: 'error',
-        text1: 'Đăng nhập thất bại',
-        text2: 'Có lỗi xảy ra trong quá trình đăng nhập.',
+      })
+      .catch((error: any) => {
+        // Xử lý lỗi từ API hoặc lỗi mạng
+        console.error('Lỗi đăng nhập:', error);
+        hideLoading();
+        Toast.show({
+          type: 'error',
+          text1: 'Đăng nhập thất bại',
+          text2:
+            error?.response?.data?.message ||
+            error?.message ||
+            'Xảy ra lỗi không xác định.',
+        });
       });
-    }
   };
+  // const handleLogin = async (email: string, password: string) => {
+  //   showLoading();
+  //   apiLogin(email, password)
+  //     .then(async (res: any) => {
+  //       console.log(res);
+  //       if (res.data.roleName === 'Manager' || res.data.roleName === 'Admin') {
+  //         // Ngăn chặn và hiển thị lỗi nếu roleName là Manager hoặc Admin
+  //         Toast.show({
+  //           type: 'error',
+  //           text1: 'Đăng nhập thất bại',
+  //           text2: `Truy cập bị từ chối`,
+  //         });
+  //         hideLoading();
+  //         return;
+  //       }
+
+  //       if (res.statusCode === 200) {
+  //         // Xử lý đăng nhập thành công
+  //         dispatch(addAuth(res.data));
+  //         await AsyncStorage.setItem(
+  //           'auth',
+  //           isRemember ? JSON.stringify(res.data) : '',
+  //         );
+
+  //         hideLoading();
+  //         Toast.show({
+  //           type: 'success',
+  //           text1: 'Đăng nhập thành công',
+  //           text2: 'Petverse chúc bạn thật nhiều sức khoẻ!',
+  //         });
+  //       } else {
+  //         // Xử lý nếu có lỗi từ server trả về
+  //         hideLoading();
+  //         Toast.show({
+  //           type: 'error',
+  //           text1: 'Đăng nhập thất bại',
+  //           text2: `Xảy ra lỗi: ${res.message}`,
+  //         });
+  //       }
+  //     })
+  //     .catch((error: any) => {
+  //       // Xử lý lỗi từ API hoặc mạng
+  //       console.error('Lỗi đăng nhập:', error);
+  //       hideLoading();
+  //       Toast.show({
+  //         type: 'error',
+  //         text1: 'Đăng nhập thất bại',
+  //         text2: error?.message || 'Xảy ra lỗi không xác định',
+  //       });
+  //     });
+  // };
 
   const signUpHandle = () => {
     navigate(STACK_NAVIGATOR_SCREENS.SIGNUPSCREEN);

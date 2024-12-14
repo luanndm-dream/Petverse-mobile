@@ -75,7 +75,7 @@ const ServiceScreen = () => {
         <Text style={styles.serviceDescription}>Mô tả: {item.description}</Text>
         <Text style={styles.servicePrice}>
         Giá: {priceFormater(item.price)} VND
-        {item.type === 1 ? ' /giờ' : '/lần'}
+        {item.type === 1 ? '/giờ' : '/lần'}
       </Text>
       
       </View>

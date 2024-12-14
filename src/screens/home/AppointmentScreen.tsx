@@ -253,7 +253,13 @@ const AppointmentScreen = () => {
           }
         });
       } else {
-        console.log(formattedSchedules);
+        console.log( userId,
+          selectedPet.id,
+          petCenterServiceId,
+          calculatedPrice,
+          startTime,
+          endTime,
+          formattedSchedules);
         apiCreateServiceAppointment(
           userId,
           selectedPet.id,

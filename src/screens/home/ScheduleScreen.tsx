@@ -14,6 +14,8 @@ import {
   ButtonComponent,
   TimePicker,
   TextComponent,
+  AlertPopupComponent,
+  PopupComponent,
 } from '@/components';
 import {colors} from '@/constants/colors';
 import {useCustomNavigation} from '@/utils/navigation';
@@ -35,8 +37,11 @@ const ScheduleScreen: React.FC = () => {
   const [selectedTime, setSelectedTime] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
+  const [isAlertVisible, setIsAlertVisible] = useState(false);
+  const [alertContent, setAlertContent] = useState<any>(null);
 
-
+  const [isPopupVisible, setIsPopupVisible] = useState(false);
+  const [currentDeleteId, setCurrentDeleteId] = useState<string | null>(null);
   useEffect(() => {
     const existingData = route.params?.scheduleData;
     if (existingData && existingData.length > 0 && timeSlots.length === 0) {
@@ -49,56 +54,76 @@ const ScheduleScreen: React.FC = () => {
     setIsTimePickerVisible(false);
   };
 
-
+  const showAlert = (content: any) => {
+    setAlertContent(content);
+    setIsAlertVisible(true);
+  };
 
   const handleAddTimeSlot = (): void => {
     if (!selectedTime) {
-      Alert.alert('Thông báo', 'Vui lòng chọn giờ');
+      showAlert({
+        title: 'Thông báo',
+        description: 'Vui lòng chọn giờ',
+        iconName: 'alert-circle',
+        iconColor: colors.yellow,
+        buttonTitle: 'Đóng',
+        buttonColor: colors.grey,
+      });
+      setIsAlertVisible(true);
       return;
     }
     if (!description) {
-      Alert.alert('Thông báo', 'Vui lòng nhập mô tả');
+      showAlert({
+        title: 'Thông báo',
+        description: 'Vui lòng nhập mô tả',
+        iconName: 'alert-circle',
+        iconColor: colors.yellow,
+        buttonTitle: 'Đóng',
+        buttonColor: colors.grey,
+      });
+      setIsAlertVisible(true);
       return;
     }
-  
+
     // Kiểm tra xem khung giờ đã tồn tại chưa
     const isTimeExist = timeSlots.some(slot => slot.time === selectedTime);
     if (isTimeExist) {
-      Alert.alert('Thông báo', 'Khung giờ này đã được thêm.');
+      showAlert({
+        title: 'Thông báo',
+        description: 'Khung giờ này đã được thêm.',
+        iconName: 'alert-circle',
+        iconColor: colors.yellow,
+        buttonTitle: 'Đóng',
+        buttonColor: colors.grey,
+      });
+      setIsAlertVisible(true);
       return;
     }
-  
+
     const newTimeSlot: TimeSlot = {
       id: Date.now().toString(),
       time: selectedTime,
       description,
     };
-  
+
     setTimeSlots(prevSlots => [...prevSlots, newTimeSlot]);
     setSelectedTime('');
     setDescription('');
   };
-
-  const handleDeleteTimeSlot = (id: string): void => {
-    console.log('Before delete:', timeSlots); // Kiểm tra trước
-    Alert.alert('Xác nhận xóa', 'Bạn có chắc chắn muốn xóa khung giờ này?', [
-      {
-        text: 'Hủy',
-        style: 'cancel',
-      },
-      {
-        text: 'Xóa',
-        style: 'destructive',
-        onPress: () => {
-          setTimeSlots(prevSlots => {
-            const newSlots = prevSlots.filter(slot => slot.id !== id);
-            console.log('After delete:', newSlots); // Kiểm tra sau
-            return newSlots;
-          });
-        },
-      },
-    ]);
+  
+  const confirmDeleteTimeSlot = (id: string): void => {
+    setCurrentDeleteId(id);
+    setIsPopupVisible(true);
   };
+
+  const handleDeleteConfirmed = (): void => {
+    if (currentDeleteId) {
+      setTimeSlots(prevSlots => prevSlots.filter(slot => slot.id !== currentDeleteId));
+      setCurrentDeleteId(null);
+      setIsPopupVisible(false);
+    }
+  };
+
 
   const handleGoBackWithData = (): void => {
     const onGoBack = route.params?.onGoBack;
@@ -113,19 +138,23 @@ const ScheduleScreen: React.FC = () => {
       <View style={styles.timeSlotItem}>
         <RowComponent justify="space-between">
           <View style={styles.timeContainer}>
-            <IconButtonComponent name="clock" size={20} color={colors.primary} />
+            <IconButtonComponent
+              name="clock"
+              size={20}
+              color={colors.primary}
+            />
             <TextComponent
               text={item.time}
               type="title"
               styles={styles.timeText}
             />
           </View>
-  
+
           <IconButtonComponent
             name="trash-can"
             size={20}
             color={colors.red}
-            onPress={() => handleDeleteTimeSlot(item.id)}
+            onPress={() => confirmDeleteTimeSlot(item.id)}
           />
         </RowComponent>
         <View style={styles.descriptionContainer}>
@@ -141,7 +170,6 @@ const ScheduleScreen: React.FC = () => {
   return (
     <>
       <Container
-        
         title="Tạo lịch theo dõi"
         left={
           <IconButtonComponent
@@ -151,7 +179,9 @@ const ScheduleScreen: React.FC = () => {
             onPress={handleGoBackWithData}
           />
         }>
-        <View style={styles.formContainer} onTouchStart={()=>Keyboard.dismiss()}>
+        <View
+          style={styles.formContainer}
+          onTouchStart={() => Keyboard.dismiss()}>
           <View style={styles.inputSection}>
             <TextComponent
               text="Giờ theo dõi"
@@ -206,9 +236,9 @@ const ScheduleScreen: React.FC = () => {
           <View style={styles.listContainer}>
             <FlatList
               data={timeSlots}
-              keyExtractor={item => item.id} 
+              keyExtractor={item => item.id}
               renderItem={renderTimeSlot}
-              extraData={timeSlots} 
+              extraData={timeSlots}
               ListEmptyComponent={
                 <View style={styles.emptyContainer}>
                   <IconButtonComponent
@@ -230,6 +260,24 @@ const ScheduleScreen: React.FC = () => {
         isVisible={isTimePickerVisible}
         onCancel={() => setIsTimePickerVisible(false)}
         onConfirm={handleTimeConfirm}
+      />
+      <PopupComponent
+        title="Xác nhận xoá"
+        description="Bạn có chắc chắn muốn xoá khung giờ này?"
+        iconColor={colors.yellow}
+        iconName="alert-circle"
+        isVisible={isPopupVisible}
+        leftTitle="Huỷ"
+        onClose={() => setIsPopupVisible(false)}
+        onLeftPress={() => setIsPopupVisible(false)}
+        onRightPress={handleDeleteConfirmed}
+        rightTitle="Xoá"
+      />
+      <AlertPopupComponent
+        isVisible={isAlertVisible}
+        {...alertContent}
+        onClose={() => setIsAlertVisible(false)}
+        onButtonPress={() => setIsAlertVisible(false)}
       />
     </>
   );

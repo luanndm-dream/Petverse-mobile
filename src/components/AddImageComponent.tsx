@@ -13,19 +13,22 @@ import {check, PERMISSIONS, request, RESULTS} from 'react-native-permissions';
 import ImagePicker from 'react-native-image-crop-picker';
 import {AddCircle} from 'iconsax-react-native';
 import IconButtonComponent from './IconButtonComponent';
+import AlertPopupComponent from './AlertPopupComponent';
+import {alertMessages} from '@/data/alertMessages';
 
 interface Props {
   onSelected: (imagePath: string | string[]) => void;
   initialImages?: string[];
   camera?: boolean;
-  maxItem?: number
-  onlyImage?: boolean
+  maxItem?: number;
+  onlyImage?: boolean;
 }
 
 const AddImageComponent = (props: Props) => {
   const {onSelected, initialImages, camera, maxItem = 4, onlyImage} = props;
   const [selectedImages, setSelectedImages] = useState<any[]>([]);
-
+  const [isAlert, setIsAlert] = useState(false);
+  const [alertContent, setAlertContent] = useState<any>(null);
   const requestGalleryPermission = async () => {
     try {
       const permission =
@@ -38,7 +41,6 @@ const AddImageComponent = (props: Props) => {
       if (result === RESULTS.DENIED) {
         const requestResult = await request(permission);
         if (requestResult !== RESULTS.GRANTED) {
-          // Alert.alert('Quyền truy cập bị từ chối', 'Bạn cần cấp quyền truy cập thư viện ảnh để sử dụng tính năng này');
         }
       }
     } catch (error) {
@@ -56,13 +58,13 @@ const AddImageComponent = (props: Props) => {
         if (camera) {
           ImagePicker.openCamera({
             cropping: true,
+            width: 800,
+            height: 800,
+            // compressImageQuality: 0.9,
           }).then(image => {
             if (onlyImage && !image.mime.startsWith('image')) {
-              Alert.alert(
-                'Chỉ chấp nhận ảnh',
-                'Vui lòng chọn tệp là ảnh.',
-                [{text: 'OK'}],
-              );
+              setAlertContent(alertMessages.onlyImageAllowed);
+              setIsAlert(true);
               return;
             }
             if (selectedImages.length < maxItem) {
@@ -73,33 +75,27 @@ const AddImageComponent = (props: Props) => {
                 newImage.path,
               ]);
             } else {
-              Alert.alert(
-                'Giới hạn ảnh',
-                `Bạn chỉ có thể chọn tối đa ${maxItem} hình ảnh.`,
-                [{text: 'OK'}],
-              );
+              setAlertContent(alertMessages.maxItemsExceeded(maxItem));
+              setIsAlert(true);
             }
           });
         } else {
           ImagePicker.openPicker({
             multiple: true,
           }).then(mediaFiles => {
+            console.log(mediaFiles)
             const validMedia = mediaFiles.filter((media: any) => {
               // Kiểm tra loại file
               if (onlyImage && !media.mime.startsWith('image')) {
-                Alert.alert(
-                  'Chỉ chấp nhận ảnh',
-                  `File "${media.filename || media.path}" không phải là ảnh.`,
-                  [{text: 'OK'}],
-                );
+                setAlertContent(alertMessages.onlyImageAllowed);
+                setIsAlert(true);
+
                 return false;
               }
               if (media.mime.startsWith('video') && media.duration > 20000) {
-                Alert.alert(
-                  'Video quá dài',
-                  `Video "${media.filename || media.path}" vượt quá 20 giây.`,
-                  [{text: 'OK'}],
-                );
+                console.log('isAlert:', isAlert, 'alertContent:', alertContent);
+                setAlertContent(alertMessages.videoTooLong);
+                setIsAlert(true);
                 return false;
               }
               return true; // Chỉ giữ lại các file hợp lệ
@@ -114,11 +110,8 @@ const AddImageComponent = (props: Props) => {
                 ...newImages.map(image => image.path),
               ]);
             } else {
-              Alert.alert(
-                'Giới hạn ảnh',
-                `Bạn chỉ có thể chọn tối đa ${maxItem} hình ảnh.`,
-                [{text: 'OK'}],
-              );
+              setAlertContent(alertMessages.onlyImageAllowed);
+              setIsAlert(true);
             }
           });
         }
@@ -132,53 +125,71 @@ const AddImageComponent = (props: Props) => {
   const removeImage = (index: number) => {
     setSelectedImages(prevImages => {
       const updatedImages = [...prevImages];
-      updatedImages.splice(index, 1); // Xóa hình ảnh tại vị trí chỉ định
-      onSelected(updatedImages.map(image => image.path)); // Gọi hàm onSelected với ảnh đã cập nhật
+      updatedImages.splice(index, 1);
+      onSelected(updatedImages.map(image => image.path));
       return updatedImages;
     });
   };
 
   return (
-    <View style={styles.imageContainer}>
-      <FlatList
-        data={
-          selectedImages.length < maxItem
-            ? [...selectedImages, {isAddButton: true}]
-            : selectedImages
-        }
-        numColumns={4}
-        scrollEnabled={false}
-        renderItem={({item, index}) =>
-          item.isAddButton ? (
-            <TouchableOpacity
-              style={styles.imageItem}
-              onPress={openGalleryHandle}>
-              <AddCircle size={40} color={colors.primary} />
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity style={styles.imageWrapper}>
-              <Image source={{uri: item.path}} style={styles.imageThumbnail} />
-              <View style={styles.closeIcon}>
-                <IconButtonComponent
-                  name="close-circle"
-                  size={18}
-                  color={colors.red}
-                  onPress={() => removeImage(index)}
+    <>
+      <View style={styles.imageContainer}>
+        <FlatList
+          data={
+            selectedImages.length < maxItem
+              ? [...selectedImages, {isAddButton: true}]
+              : selectedImages
+          }
+          numColumns={4}
+          scrollEnabled={false}
+          renderItem={({item, index}) =>
+            item.isAddButton ? (
+              <TouchableOpacity
+                style={styles.imageItem}
+                onPress={openGalleryHandle}>
+                <AddCircle size={40} color={colors.primary} />
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity style={styles.imageWrapper}>
+                <Image
+                  source={{uri: item.path}}
+                  style={styles.imageThumbnail}
                 />
-              </View>
-            </TouchableOpacity>
-          )
-        }
-        keyExtractor={(item, index) =>
-          item.isAddButton ? `add-${index}` : item.path
-        }
-        columnWrapperStyle={{
-          justifyContent:
-            selectedImages.length % 4 === 0 ? 'space-between' : 'flex-start',
-          paddingVertical: 6,
+                <View style={styles.closeIcon}>
+                  <IconButtonComponent
+                    name="close-circle"
+                    size={18}
+                    color={colors.red}
+                    onPress={() => removeImage(index)}
+                  />
+                </View>
+              </TouchableOpacity>
+            )
+          }
+          keyExtractor={(item, index) =>
+            item.isAddButton ? `add-${index}` : item.path
+          }
+          columnWrapperStyle={{
+            justifyContent:
+              selectedImages.length % 4 === 0 ? 'space-between' : 'flex-start',
+            paddingVertical: 6,
+          }}
+        />
+      </View>
+
+      <AlertPopupComponent
+        {...alertContent}
+        isVisible={isAlert}
+        onButtonPress={() => {
+          setIsAlert(false);
+          setAlertContent(null); // Reset nội dung sau khi đóng
+        }}
+        onClose={() => {
+          setIsAlert(false);
+          setAlertContent(null); // Reset nội dung sau khi đóng
         }}
       />
-    </View>
+    </>
   );
 };
 

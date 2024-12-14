@@ -135,6 +135,21 @@ export async function apiUpdatePetAlbum(
   });
 }
 
+export async function apiUpdatePetAvatar(petId: number, avatar:any) {
+  let url = `Pet/${petId}`
+  const formData = new FormData();
+
+  if(avatar){
+    formData.append('Avatar', avatar)
+  }
+
+  return protectedAxios.put(url, formData,{
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  } )
+}
+
 export async function apiDeletePet(petId: number) {
     let url = `Pet/${petId}`
 
