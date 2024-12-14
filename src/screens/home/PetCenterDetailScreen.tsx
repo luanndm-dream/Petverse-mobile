@@ -314,6 +314,7 @@ const PetCenterDetailScreen = () => {
   const route = useRoute<any>();
   const navigation = useNavigation<any>();
   const userId = useAppSelector(state => state.auth.userId);
+  const myPetCenterId = useAppSelector(state => state.auth.petCenterId);
   const {petCenterId, petCenterName, userIdOfPetCenter, isBook} = route.params;
   const [petCenterData, setPetCenterData] = useState<any>();
   const [petCenterRate, setPetCenterRate] = useState<any>([]);
@@ -356,12 +357,14 @@ const PetCenterDetailScreen = () => {
           />
         }
         right={
-          <IconButtonComponent
-            name="chat-plus"
-            size={30}
-            color={colors.grey}
-            onPress={onMessaging}
-          />
+          myPetCenterId != petCenterId && (
+            <IconButtonComponent
+              name="chat-plus"
+              size={30}
+              color={colors.grey}
+              onPress={onMessaging}
+            />
+          )
         }>
         <View style={styles.container}>
           <Image source={{uri: petCenterData.avatar}} style={styles.avatar} />

@@ -38,6 +38,7 @@ const MyAppointmentDetailScreen = () => {
   const [popupAction, setPopupAction] = useState<string | null>(null);
   const [inBreedingIds, setInbreedingIds] = useState<string[]>([]);
   const [isInBreeding, setIsInBreeding] = useState(false);
+  const myPetCenterId = useAppSelector((state) => state.auth.petCenterId)
   const fetchDocumentIds = async () => {
     try {
       const snapshot = await firestore().collection('inbreeding').get();
@@ -574,7 +575,7 @@ const MyAppointmentDetailScreen = () => {
           />
         }
         right={
-          appointmentData?.status === 2 && (
+          appointmentData?.status === 2 && myPetCenterId !== petCenterId && (
             <IconButtonComponent
               name="message-draw"
               size={30}
@@ -582,7 +583,8 @@ const MyAppointmentDetailScreen = () => {
               onPress={() => reviewHandle(appointmentId)}
             />
           )
-        }>
+        }
+        >
         {isInBreeding && (
           <View style={styles.warningContainer}>
             <RowComponent justify="space-between">

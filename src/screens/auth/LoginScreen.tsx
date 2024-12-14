@@ -44,6 +44,7 @@ const LoginScreen = () => {
   });
 
   const handleLogin = (email: string, password: string) => {
+    showLoading()
     apiLogin(email, password)
       .then(async (res: any) => {
         if (res.statusCode === 200) {
