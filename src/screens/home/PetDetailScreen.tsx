@@ -349,7 +349,7 @@ const PetDetailScreen = () => {
             {petData?.avatar ? (
               <Image source={{uri: petData?.avatar}} style={styles.avatar} />
             ) : (
-              <TextComponent text="Chọn avatar" />
+              <Image source={require('../../assets/images/DefaultAvatar.jpg')} style={styles.avatar} />
             )}
           </TouchableOpacity>
 
@@ -560,5 +560,6 @@ const styles = StyleSheet.create({
     top: '50%',
     left: '50%',
     transform: [{translateX: -180}, {translateY: -40}],
+    
   },
 });

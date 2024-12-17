@@ -158,14 +158,14 @@ const HomeScreen = () => {
 
             const workFeature = {
               id: 5,
-              name: 'Bàn làm việc Center',
+              name: 'Bàn làm việc',
               svg: WorkTableIcon,
               screen: STACK_NAVIGATOR_SCREENS.WORKPROFILESCREEN,
             };
 
             setHomeFeatureData(prevData => {
               const hasWorkFeature = prevData.some(
-                feature => feature.name === 'Bàn làm việc Center',
+                feature => feature.name === 'Bàn làm việc',
               );
 
               if (isPetCenter && !hasWorkFeature) {
@@ -173,7 +173,7 @@ const HomeScreen = () => {
               }
 
               if (!isPetCenter && hasWorkFeature) {
-                return prevData.filter(feature => feature.name !== 'Bàn làm việc Center');
+                return prevData.filter(feature => feature.name !== 'Bàn làm việc');
               }
 
               return prevData;

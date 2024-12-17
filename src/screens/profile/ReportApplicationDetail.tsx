@@ -1,20 +1,14 @@
-import {
-  StyleSheet,
-  View,
-  ScrollView,
-  Image,
-  Dimensions,
-} from "react-native";
-import React, { useEffect, useState } from "react";
-import { Container, IconButtonComponent, TextComponent } from "@/components";
-import VideoPlayer from "react-native-video-player"; // Thư viện phát video
-import { colors } from "@/constants/colors";
-import { useCustomNavigation } from "@/utils/navigation";
-import { useRoute } from "@react-navigation/native";
-import { apiGetReportByReportId } from "@/api/apiReport";
-import useLoading from "@/hook/useLoading";
+import {StyleSheet, View, ScrollView, Image, Dimensions} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {Container, IconButtonComponent, TextComponent} from '@/components';
+import VideoPlayer from 'react-native-video-player'; // Thư viện phát video
+import {colors} from '@/constants/colors';
+import {useCustomNavigation} from '@/utils/navigation';
+import {useRoute} from '@react-navigation/native';
+import {apiGetReportByReportId} from '@/api/apiReport';
+import useLoading from '@/hook/useLoading';
 
-const { width } = Dimensions.get("window");
+const {width} = Dimensions.get('window');
 
 interface ReportData {
   appointmentId: string;
@@ -22,20 +16,21 @@ interface ReportData {
   id: number;
   petCenterId: string;
   reason: string;
-  reportImages: Array<{ url: string }>;
+  reportImages: Array<{url: string}>;
   status: number;
   title: string;
   updatedDate: string;
   userId: string;
+  centerName: string;
 }
 
 const ReportApplicationDetail = () => {
-  const { goBack } = useCustomNavigation();
-  const { showLoading, hideLoading } = useLoading();
+  const {goBack} = useCustomNavigation();
+  const {showLoading, hideLoading} = useLoading();
   const route = useRoute<any>();
-  const { reportId } = route.params;
+  const {reportId} = route.params;
   const [reportData, setReportData] = useState<ReportData | null>(null);
-  console.log(reportData)
+  console.log(reportData);
   useEffect(() => {
     showLoading();
     apiGetReportByReportId(reportId).then((res: any) => {
@@ -43,7 +38,7 @@ const ReportApplicationDetail = () => {
         setReportData(res.data);
         hideLoading();
       } else {
-        console.log("Lấy dữ liệu report detail lỗi");
+        console.log('Lấy dữ liệu report detail lỗi');
         hideLoading();
       }
     });
@@ -52,13 +47,13 @@ const ReportApplicationDetail = () => {
   const getStatusText = (status: number) => {
     switch (status) {
       case 0:
-        return "Đang chờ xử lý";
+        return 'Đang chờ xử lý';
       case 1:
-        return "Đã xử lý";
+        return 'Đã xử lý';
       case 2:
-        return "Đã hủy";
+        return 'Đã hủy';
       default:
-        return "Không xác định";
+        return 'Không xác định';
     }
   };
 
@@ -75,17 +70,17 @@ const ReportApplicationDetail = () => {
     }
   };
 
-  const renderMedia = (media: { url: string }, index: number) => {
-    const isVideo = media.url.includes(".mp4"); 
+  const renderMedia = (media: {url: string}, index: number) => {
+    const isVideo = media.url.includes('.mp4');
 
     if (isVideo) {
       return (
         <View key={index} style={styles.videoContainer}>
           <VideoPlayer
-            video={{ uri: media.url }}
+            video={{uri: media.url}}
             videoWidth={width / 2 - 24}
-            videoHeight={(width / 2 - 24)} 
-            thumbnail={{ uri: "https://via.placeholder.com/150" }}
+            videoHeight={width / 2 - 24}
+            thumbnail={{uri: 'https://via.placeholder.com/150'}}
           />
         </View>
       );
@@ -93,7 +88,7 @@ const ReportApplicationDetail = () => {
       return (
         <View key={index} style={styles.imageContainer}>
           <Image
-            source={{ uri: media.url }}
+            source={{uri: media.url}}
             style={styles.image}
             resizeMode="cover"
           />
@@ -101,7 +96,7 @@ const ReportApplicationDetail = () => {
       );
     }
   };
-
+  console.log(reportData);
   return (
     <Container
       title="Chi tiết báo cáo"
@@ -112,12 +107,8 @@ const ReportApplicationDetail = () => {
           color={colors.dark}
           onPress={goBack}
         />
-      }
-    >
-      <ScrollView
-        style={styles.container}
-        showsVerticalScrollIndicator={false}
-      >
+      }>
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         {reportData && (
           <>
             {/* Header */}
@@ -131,9 +122,8 @@ const ReportApplicationDetail = () => {
                 <View
                   style={[
                     styles.statusBadge,
-                    { backgroundColor: getStatusColor(reportData.status) },
-                  ]}
-                >
+                    {backgroundColor: getStatusColor(reportData.status)},
+                  ]}>
                   <TextComponent
                     text={getStatusText(reportData.status)}
                     styles={styles.statusText}
@@ -155,9 +145,8 @@ const ReportApplicationDetail = () => {
             {/* Lý do báo cáo */}
             <View style={styles.section}>
               <TextComponent text="Lý do báo cáo" type="title" />
-              <View style={styles.contentBox}>
-                <TextComponent text={reportData.reason} styles={styles.reason} />
-              </View>
+
+              <TextComponent text={reportData.reason} />
             </View>
 
             {/* Hình ảnh và video đính kèm */}
@@ -166,7 +155,7 @@ const ReportApplicationDetail = () => {
                 <TextComponent text="Hình ảnh và video đính kèm" type="title" />
                 <View style={styles.mediaGrid}>
                   {reportData.reportImages.map((media, index) =>
-                    renderMedia(media, index)
+                    renderMedia(media, index),
                   )}
                 </View>
               </View>
@@ -174,17 +163,12 @@ const ReportApplicationDetail = () => {
 
             {/* Thông tin bổ sung */}
             <View style={styles.section}>
-              <TextComponent text="Thông tin bổ sung" type="title" />
-              <View style={styles.contentBox}>
-                <TextComponent
-                  text={`ID Cuộc hẹn: ${reportData.appointmentId}`}
-                  styles={styles.infoText}
-                />
-                <TextComponent
-                  text={`ID Trung tâm: ${reportData.petCenterId}`}
-                  styles={styles.infoText}
-                />
-              </View>
+              <TextComponent text="Tên trung tâm" type="title" />
+              <TextComponent
+                text={reportData.centerName}
+                // styles={styles.infoText}
+                type='bigTitle'
+              />
             </View>
           </>
         )}
@@ -204,14 +188,14 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   titleContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 8,
   },
   title: {
     fontSize: 22,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     color: colors.dark,
     flex: 1,
   },
@@ -224,7 +208,7 @@ const styles = StyleSheet.create({
   statusText: {
     color: colors.white,
     fontSize: 13,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   dates: {
     fontSize: 13,
@@ -235,8 +219,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   contentBox: {
-    backgroundColor: colors.grey4,
-    padding: 16,
+    paddingVertical: 16,
     borderRadius: 10,
   },
   reason: {
@@ -245,10 +228,10 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   mediaGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between", // Giãn đều các phần tử
-    alignItems: "center", // Căn giữa các phần tử theo chiều dọc
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between', // Giãn đều các phần tử
+    alignItems: 'center', // Căn giữa các phần tử theo chiều dọc
     marginHorizontal: -8, // Loại bỏ padding bên ngoài
   },
   imageContainer: {
@@ -259,8 +242,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     borderColor: colors.grey4,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 4,
@@ -272,15 +255,15 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     borderColor: colors.grey4,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 4,
   },
   image: {
-    width: "100%",
-    height: "100%",
+    width: '100%',
+    height: '100%',
     borderRadius: 10,
     // resizeMode: 'cover'
   },
