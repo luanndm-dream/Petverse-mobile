@@ -119,6 +119,8 @@ const EmployeeRegistrationScreen = () => {
       width: 300,
       height: 400,
       cropping: true,
+      compressImageMaxWidth: 800, // Kích thước tối đa 800px
+      compressImageMaxHeight: 800,
     }).then(image => {
       // console.log(image);
     });
@@ -130,6 +132,8 @@ const EmployeeRegistrationScreen = () => {
         cropping: true,
         width: 800,
         height: 800,
+        compressImageMaxWidth: 800, // Kích thước tối đa 800px
+        compressImageMaxHeight: 800,
       }).then(image => {
         setAvatar(image.path);
         formik.setFieldValue('avatar', image.path);
@@ -144,6 +148,8 @@ const EmployeeRegistrationScreen = () => {
           cropping: true,
           width: 800,
           height: 800,
+          compressImageMaxWidth: 800, // Kích thước tối đa 800px
+          compressImageMaxHeight: 800,
         }).then(images => {
           if (selectedCertifications.length + images.length <= 4) {
             setSelectedCertifications(prev => [...prev, ...images]);

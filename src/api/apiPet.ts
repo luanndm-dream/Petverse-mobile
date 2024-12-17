@@ -135,6 +135,8 @@ export async function apiUpdatePetAlbum(
     headers: {
       'Content-Type': 'multipart/form-data',
     },
+    maxContentLength: 10 * 1024 * 1024, // 10MB (nội dung)
+    maxBodyLength: 10 * 1024 * 1024,
   });
 }
 

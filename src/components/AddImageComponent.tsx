@@ -60,6 +60,8 @@ const AddImageComponent = (props: Props) => {
             cropping: true,
             width: 800,
             height: 800,
+            compressImageMaxWidth: 800, // Kích thước tối đa 800px
+            compressImageMaxHeight: 800,
             // compressImageQuality: 0.9,
           }).then(image => {
             if (onlyImage && !image.mime.startsWith('image')) {
@@ -85,6 +87,8 @@ const AddImageComponent = (props: Props) => {
             cropping: true,
             width: 800,
             height: 800,
+            compressImageMaxWidth: 800,
+            compressImageMaxHeight: 800,
           }).then(mediaFiles => {
             console.log(mediaFiles)
             const validMedia = mediaFiles.filter((media: any) => {

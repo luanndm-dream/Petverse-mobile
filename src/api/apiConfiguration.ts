@@ -17,6 +17,8 @@ export const protectedAxios = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+  // maxContentLength: 3097152, 
+  // maxBodyLength: 3097152,
   timeout: TIME_OUT,
 });
 

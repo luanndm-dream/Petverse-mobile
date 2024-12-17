@@ -138,7 +138,9 @@ const AddPetScreen = () => {
   const openGallaryHandle =  async () => {
     if (RESULTS.GRANTED) {
       const image = await ImagePicker.openPicker({
-        mediaType: 'photo', // Chỉ cho phép chọn ảnh
+        mediaType: 'photo',
+        compressImageMaxWidth: 800, // Kích thước tối đa 800px
+        compressImageMaxHeight: 800,
       });
 
       // Kiểm tra xem tệp có phải là ảnh không
@@ -161,6 +163,8 @@ const AddPetScreen = () => {
           cropping: true,
           width: 800,
           height: 800,
+          compressImageMaxWidth: 800, 
+          compressImageMaxHeight: 800,
         }).then((images: any) => {
           setAvatar(images.path);
         });

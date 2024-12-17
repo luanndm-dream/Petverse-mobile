@@ -136,6 +136,8 @@ const ProfileScreen = () => {
         cropping: true,
         width: 800,
         height: 800,
+        compressImageMaxWidth: 800, // Kích thước tối đa 800px
+        compressImageMaxHeight: 800,
       }) // Chỉ cho phép chọn ảnh
         .then(image => {
           // Kiểm tra nếu file không phải là ảnh

@@ -222,6 +222,8 @@ const PetDetailScreen = () => {
       width: 300,
       height: 300,
       cropping: true,
+      compressImageMaxWidth: 800, // Kích thước tối đa 800px
+      compressImageMaxHeight: 800,
     }).then(image => {
       if (image.path) {
         if (!image.mime.startsWith('image')) {
