@@ -1,15 +1,21 @@
 import {protectedAxios, publicAxios} from './apiConfiguration';
 
-export async function apiGetPetByUserId(userId: string, speciesId?: number) {
+export async function apiGetPetByUserId(
+  userId: string,
+  speciesId?: number,
+  IncludeSterilized?: boolean,
+) {
   const url = `Pet/${userId}`;
 
   // Cấu hình `params` nếu có `speciesId`
   const params = speciesId
     ? {
-        params: { SpeciesId: speciesId },
+        params: {
+          SpeciesId: speciesId,
+          IncludeSterilized: IncludeSterilized,
+        },
       }
     : {};
-
 
   return protectedAxios.get(url, params);
 }
@@ -103,12 +109,11 @@ export async function apiUpdatePetAlbum(
   petId: string,
   PetPhotos?: any[],
   PetVideos?: any[],
-  PetPhotoToDeleteId? : any[]
+  PetPhotoToDeleteId?: any[],
 ) {
   let url = `Pet/${petId}`;
   const formData = new FormData();
   formData.append('Id', petId);
-
 
   if (PetPhotos) {
     PetPhotos.forEach(photo => {
@@ -126,7 +131,20 @@ export async function apiUpdatePetAlbum(
     });
   }
 
+  return protectedAxios.put(url, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+}
 
+export async function apiUpdatePetAvatar(petId: number, avatar: any) {
+  let url = `Pet/${petId}`;
+  const formData = new FormData();
+
+  if (avatar) {
+    formData.append('Avatar', avatar);
+  }
 
   return protectedAxios.put(url, formData, {
     headers: {
@@ -135,23 +153,8 @@ export async function apiUpdatePetAlbum(
   });
 }
 
-export async function apiUpdatePetAvatar(petId: number, avatar:any) {
-  let url = `Pet/${petId}`
-  const formData = new FormData();
-
-  if(avatar){
-    formData.append('Avatar', avatar)
-  }
-
-  return protectedAxios.put(url, formData,{
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  } )
-}
-
 export async function apiDeletePet(petId: number) {
-    let url = `Pet/${petId}`
+  let url = `Pet/${petId}`;
 
-    return protectedAxios.delete(url)
+  return protectedAxios.delete(url);
 }

@@ -34,9 +34,9 @@ const ReportScreen = () => {
   const [videos, setVideos] = useState<string[]>([]);
   const validationSchema = Yup.object().shape({
     reason: Yup.string()
-      .min(10, 'Lý do phải ít nhất 10 chữ')
-      .max(500, 'Lý do phải tối đa 500 chữ')
-      .required('Lý do bắt buộc phải có'),
+      .min(10, 'Report phải ít nhất 10 chữ')
+      .max(500, 'Report phải tối đa 500 chữ')
+      .required('Report bắt buộc phải có'),
   });
   const formik = useFormik({
     initialValues: {

@@ -62,7 +62,7 @@ const OverviewTab = ({petCenterData}: any) => (
                 text={petCenterData?.job?.haveTransport ? 'Có' : 'Không'}
                 type="title"
               />
-              <TextComponent text="Ship" />
+              <TextComponent text="Vận chuyển" />
             </View>
           </RowComponent>
         </RowComponent>

@@ -167,10 +167,6 @@ const AddPetScreen = () => {
       }
     }
   };
-
-  // useEffect(() => {
-  //   apiGetPetByUserId(userId).then((res: any) => {});
-  // }, []);
   useEffect(() => {
     showLoading();
     apiGetPetBreed(selectedPetTypeId).then((res: any) => {

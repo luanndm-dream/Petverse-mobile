@@ -110,7 +110,7 @@ const AppointmentScreen = () => {
     useCallback(() => {
       if (petCenterServiceName.includes('phối') && speciesId) {
         console.log('speciesId:', speciesId);
-        apiGetPetByUserId(userId, speciesId).then((res: any) => {
+        apiGetPetByUserId(userId, speciesId, false).then((res: any) => {
           console.log('Filtered API Response:', res);
           if (res.statusCode === 200) {
             hideLoading();
@@ -338,15 +338,6 @@ const AppointmentScreen = () => {
       apiGetUserByUserId(userId).then((res: any) => {
         setUserData(res.data);
       });
-      // apiGetPetByUserId(userId).then((res: any) => {
-      //   if (res.statusCode === 200) {
-      //     hideLoading();
-      //     setMyPet(res.data.items);
-      //   } else {
-      //     hideLoading();
-      //     console.log('load my pet fail', res);
-      //   }
-      // });
     }, [userId]),
   );
 

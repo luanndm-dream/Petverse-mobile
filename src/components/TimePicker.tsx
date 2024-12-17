@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
       justifyContent: 'space-between',
       alignItems: 'center',
     //   marginHorizontal: ,
-    paddingHorizontal: 84,
+    paddingHorizontal: 88,
       paddingTop: 10,
     },
     title: {
