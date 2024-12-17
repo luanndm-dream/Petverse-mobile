@@ -111,6 +111,9 @@ const ChatDetailScreen = () => {
   const pickMedia = () => {
     ImagePicker.openPicker({
       mediaType: 'any',
+      cropping: true,
+      width: 800,
+      height: 800,
     })
       .then(async media => {
         const downloadUrl = await uploadMediaToStorage(media);

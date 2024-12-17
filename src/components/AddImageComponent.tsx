@@ -82,6 +82,9 @@ const AddImageComponent = (props: Props) => {
         } else {
           ImagePicker.openPicker({
             multiple: true,
+            cropping: true,
+            width: 800,
+            height: 800,
           }).then(mediaFiles => {
             console.log(mediaFiles)
             const validMedia = mediaFiles.filter((media: any) => {
@@ -182,11 +185,11 @@ const AddImageComponent = (props: Props) => {
         isVisible={isAlert}
         onButtonPress={() => {
           setIsAlert(false);
-          setAlertContent(null); // Reset nội dung sau khi đóng
+          setAlertContent(null); 
         }}
         onClose={() => {
           setIsAlert(false);
-          setAlertContent(null); // Reset nội dung sau khi đóng
+          setAlertContent(null); 
         }}
       />
     </>

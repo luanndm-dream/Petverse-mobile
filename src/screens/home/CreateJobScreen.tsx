@@ -93,10 +93,10 @@ const CreateJobScreen = () => {
   const handleCapacityChange = (value: string, index: number) => {
     const newValues = [...capacityValues];
     const newErrors = [...capacityErrors];
-  
+
     // Loại bỏ dấu chấm
     const rawValue = value.replace(/\./g, '');
-  
+
     // Kiểm tra chỉ cho phép số và tối đa 3 chữ số
     if (/^\d{0,3}$/.test(rawValue)) {
       newValues[index] = rawValue; // Không cần format vì là số nhỏ
@@ -109,7 +109,7 @@ const CreateJobScreen = () => {
     } else {
       newErrors[index] = 'Tối đa 3 chữ số';
     }
-  
+
     setCapacityValues(newValues);
     setCapacityErrors(newErrors);
   };
@@ -120,7 +120,7 @@ const CreateJobScreen = () => {
         ? 'Sức chứa là bắt buộc'
         : value.length > 3
         ? 'Tối đa 3 chữ số'
-        : ''
+        : '',
     );
     setCapacityErrors(errors);
     return errors.every(error => error === '');
@@ -129,10 +129,10 @@ const CreateJobScreen = () => {
   const handlePriceChange = (value: string, index: number) => {
     const newValues = [...priceValues];
     const newErrors = [...priceErrors];
-  
+
     // Loại bỏ dấu chấm
     const rawValue = value.replace(/\./g, '');
-  
+
     // Kiểm tra chỉ cho phép số và tối đa 8 chữ số
     if (/^\d{0,8}$/.test(rawValue)) {
       const formattedValue = formatPrice(rawValue); // Format lại giá trị
@@ -146,7 +146,7 @@ const CreateJobScreen = () => {
     } else {
       newErrors[index] = 'Tối đa 8 chữ số';
     }
-  
+
     setPriceValues(newValues);
     setPriceErrors(newErrors);
   };
@@ -161,7 +161,7 @@ const CreateJobScreen = () => {
         ? 'Giá là bắt buộc'
         : value.replace(/\./g, '').length > 8
         ? 'Tối đa 8 chữ số'
-        : ''
+        : '',
     );
     setPriceErrors(errors);
     return errors.every(error => error === '');
@@ -172,10 +172,11 @@ const CreateJobScreen = () => {
       id: service.petCenterServiceId,
       price: parseInt(priceValues[index].replace(/\./g, ''), 10) || 0,
       capacity: parseInt(capacityValues[index].replace(/\./g, ''), 10) || 0,
-      schedule: serviceSchedules[service.petCenterServiceId]?.map((schedule: any) => ({
-        time: schedule.time,
-        description: schedule.description,
-      })) || [], // Nếu không có lịch, trả về mảng rỗng
+      schedule:
+        serviceSchedules[service.petCenterServiceId]?.map((schedule: any) => ({
+          time: schedule.time,
+          description: schedule.description,
+        })) || [], // Nếu không có lịch, trả về mảng rỗng
       type:
         service.name === 'Huấn luyện' || service.name === 'Trông thú' ? 1 : 0,
     }));
@@ -220,9 +221,6 @@ const CreateJobScreen = () => {
     },
   });
 
-  
-
-
   const handleSubmit = () => {
     formik.handleSubmit();
     const allPricesValid = validateAllPrices();
@@ -234,7 +232,7 @@ const CreateJobScreen = () => {
       allCapacitiesValid &&
       Object.keys(formik.errors).length === 0
     ) {
-      showLoading()
+      showLoading();
       // console.log(JSON.stringify(petCenterService, null, 2));
       apiCreateJob(
         petCenterId as never,
@@ -285,15 +283,14 @@ const CreateJobScreen = () => {
 
   const renderPriceItem = ({item, index}: any) => (
     <View style={styles.serviceCard}>
-     
       <RowComponent justify="flex-start">
-      <TextComponent text={item.name} type="title" color={colors.primary} />
-      {item.name === 'Bác sĩ thú y' || item.name === 'Dịch vụ spa' ? (
-        <TextComponent text="(lần)" color={colors.red} type='title'/>
-      ) : (
-        <TextComponent text="(giờ)" color={colors.red} type='title' />
-      )}
-    </RowComponent>
+        <TextComponent text={item.name} type="title" color={colors.primary} />
+        {item.name === 'Bác sĩ thú y' || item.name === 'Dịch vụ spa' ? (
+          <TextComponent text="(lần)" color={colors.red} type="title" />
+        ) : (
+          <TextComponent text="(giờ)" color={colors.red} type="title" />
+        )}
+      </RowComponent>
       <RowComponent justify="space-between" styles={styles.inputRow}>
         <View style={styles.inputGroup}>
           <TextComponent text="Giá dịch vụ" />
@@ -306,6 +303,7 @@ const CreateJobScreen = () => {
             keyboardType="numeric"
             value={priceValues[index]}
             onChangeText={value => handlePriceChange(value, index)}
+            placeholderTextColor={colors.grey}
           />
           <View style={styles.errorContainer}>
             {priceErrors[index] ? (
@@ -318,12 +316,11 @@ const CreateJobScreen = () => {
         <View style={styles.inputGroup}>
           <TextComponent text="Sức chứa" />
           <TextInput
+            placeholderTextColor={colors.grey}
             placeholder="Nhập sức chứa..."
             style={[
               styles.inputContainer,
-              priceErrors[index]
-                ? styles.errorInput // Nếu có lỗi, áp dụng màu viền lỗi
-                : styles.defaultBorder, // Nếu không lỗi, hiển thị viền mặc định
+              priceErrors[index] ? styles.errorInput : styles.defaultBorder,
             ]}
             keyboardType="numeric"
             value={capacityValues[index]}
@@ -340,7 +337,7 @@ const CreateJobScreen = () => {
           </View>
         </View>
       </RowComponent>
-     
+
       {(item.name === 'Trông thú' || item.name === 'Huấn luyện') && (
         <>
           <TouchableOpacity
@@ -410,7 +407,7 @@ const CreateJobScreen = () => {
             required
           />
 
-          <TextComponent text="Mô tả trung tâm" type="title" required/>
+          <TextComponent text="Mô tả công việc" type="title" required />
           <InputComponent
             onChange={formik.handleChange('description')}
             value={formik.values.description}
@@ -425,18 +422,17 @@ const CreateJobScreen = () => {
               {formik.errors.description}
             </Text>
           )}
-          <TextComponent text="Loại thú cưng" type="title" required/>
+          <TextComponent text="Loại thú cưng" type="title" required />
           <DropdownPicker
             values={species}
             multible
             onSelect={(selectedScpecies: string | string[]) => {
               setSelectedSpeciesId(selectedScpecies);
               formik.setFieldValue('speciesId', selectedScpecies || null);
-
             }}
             placeholder="Chọn thú"
             formik={formik}
-            validateField='speciesId'
+            validateField="speciesId"
           />
           {formik.errors.speciesId && formik.touched.speciesId && (
             <Text style={globalStyles.errorText}>

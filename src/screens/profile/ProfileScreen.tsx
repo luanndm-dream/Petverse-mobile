@@ -33,7 +33,7 @@ import {STACK_NAVIGATOR_SCREENS} from '@/constants/screens';
 import {managerId} from '@/constants/app';
 import useLoading from '@/hook/useLoading';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { logoutAuth } from '@/redux/reducers';
+import {logoutAuth} from '@/redux/reducers';
 
 interface ReportFeature {
   id: string;
@@ -77,18 +77,18 @@ const ProfileScreen = () => {
       const fetchData = async () => {
         try {
           // Chạy song song 2 API
-          const [petResponse, userResponse] :any = await Promise.all([
+          const [petResponse, userResponse]: any = await Promise.all([
             apiGetPetByUserId(userId),
             apiGetUserByUserId(userId),
           ]);
-  
+
           // Xử lý kết quả trả về từ API pet
           if (petResponse.statusCode === 200) {
             setMyPetData(petResponse?.data?.items);
           } else {
             console.error('Lấy dữ liệu pet thất bại');
           }
-  
+
           // Xử lý kết quả trả về từ API user
           if (userResponse.statusCode === 200) {
             const userData = userResponse.data;
@@ -103,7 +103,7 @@ const ProfileScreen = () => {
           console.error('Lỗi khi fetch data:', error);
         }
       };
-  
+
       // Gọi fetchData
       fetchData();
     }, [userId, refreshFlag]),
@@ -131,52 +131,57 @@ const ProfileScreen = () => {
   const openGalarryHandle = () => {
     // showLoading();
     if (RESULTS.GRANTED) {
-      ImagePicker.openPicker({mediaType: 'photo'}) // Chỉ cho phép chọn ảnh
-      .then(image => {
-        // Kiểm tra nếu file không phải là ảnh
-        if (!image.mime.startsWith('image')) {
-          Toast.show({
-            type: 'error',
-            text1: 'Lỗi',
-            text2: 'Bạn chỉ được phép chọn tệp ảnh làm avatar. Vui lòng chọn file ảnh hợp lệ!',
-          });
-          return; // Ngăn không cho tiếp tục nếu không phải ảnh
-        }
-
-        apiChangeAvatar(userId, image.path)
-          .then((res: any) => {
-            if (res.statusCode === 200) {
-              setRefreshFlag(!refreshFlag);
-              Toast.show({
-                type: 'success',
-                text1: 'Thay đổi ảnh đại diện thành công',
-                text2: 'Petverse chúc bạn thật nhiều sức khoẻ!',
-              });
-            } else {
-              Toast.show({
-                type: 'error',
-                text1: 'Thay đổi ảnh đại diện thất bại',
-                text2: `Xảy ra lỗi khi thay đổi ảnh đại diện: ${res.message}`,
-              });
-            }
-          })
-          .catch(err => {
+      ImagePicker.openPicker({
+        mediaType: 'photo',
+        cropping: true,
+        width: 800,
+        height: 800,
+      }) // Chỉ cho phép chọn ảnh
+        .then(image => {
+          // Kiểm tra nếu file không phải là ảnh
+          if (!image.mime.startsWith('image')) {
             Toast.show({
               type: 'error',
               text1: 'Lỗi',
-              text2: 'Xảy ra lỗi khi kết nối tới server.',
+              text2:
+                'Bạn chỉ được phép chọn tệp ảnh làm avatar. Vui lòng chọn file ảnh hợp lệ!',
             });
+            return; // Ngăn không cho tiếp tục nếu không phải ảnh
+          }
+
+          apiChangeAvatar(userId, image.path)
+            .then((res: any) => {
+              if (res.statusCode === 200) {
+                setRefreshFlag(!refreshFlag);
+                Toast.show({
+                  type: 'success',
+                  text1: 'Thay đổi ảnh đại diện thành công',
+                  text2: 'Petverse chúc bạn thật nhiều sức khoẻ!',
+                });
+              } else {
+                Toast.show({
+                  type: 'error',
+                  text1: 'Thay đổi ảnh đại diện thất bại',
+                  text2: `Xảy ra lỗi khi thay đổi ảnh đại diện: ${res.message}`,
+                });
+              }
+            })
+            .catch(err => {
+              Toast.show({
+                type: 'error',
+                text1: 'Lỗi',
+                text2: 'Xảy ra lỗi khi kết nối tới server.',
+              });
+            });
+        })
+        .catch(error => {
+          Toast.show({
+            type: 'error',
+            text1: 'Huỷ chọn',
+            text2: 'Bạn đã huỷ chọn ảnh.',
           });
-      })
-      .catch(error => {
-        Toast.show({
-          type: 'error',
-          text1: 'Huỷ chọn',
-          text2: 'Bạn đã huỷ chọn ảnh.',
+          console.error('Lỗi khi chọn ảnh:', error);
         });
-        console.error('Lỗi khi chọn ảnh:', error);
-      });
-  
     }
   };
   const onPressItem = (screen: string) => {
@@ -210,14 +215,13 @@ const ProfileScreen = () => {
     }
   };
 
-
   const onLogoutHanble = () => {
     setIsVisible(!isVisible);
   };
   const onAppointmentItemPressHandle = (status: number, title: string) => {
     navigation.navigate(STACK_NAVIGATOR_SCREENS.APPOINTMENTSTATUSSCREEN, {
       status: status,
-      title: title
+      title: title,
     });
   };
   const toggleTooltip = () => {
@@ -319,7 +323,9 @@ const ProfileScreen = () => {
               <TouchableOpacity
                 key={item.id}
                 style={styles.reportItem}
-                onPress={() => onAppointmentItemPressHandle(item.status, item.title)}>
+                onPress={() =>
+                  onAppointmentItemPressHandle(item.status, item.title)
+                }>
                 <View style={styles.iconContainer}>
                   <MaterialCommunityIcons
                     name={item.icon}

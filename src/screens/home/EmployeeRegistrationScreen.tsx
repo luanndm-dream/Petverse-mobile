@@ -39,7 +39,7 @@ import {apiPostApplication} from '@/api/apiApplication';
 import Toast from 'react-native-toast-message';
 import {mediaUpload} from '@/utils/mediaUpload';
 import {STACK_NAVIGATOR_SCREENS} from '@/constants/screens';
-import { alertMessages } from '@/data/alertMessages';
+import {alertMessages} from '@/data/alertMessages';
 
 const EmployeeRegistrationScreen = () => {
   const [isVisibleImage, setIsVisibleImage] = useState(false);
@@ -126,7 +126,11 @@ const EmployeeRegistrationScreen = () => {
   const openGallaryHandle = () => {
     imageModalRef.current?.close();
     if (type === 'avatar') {
-      ImagePicker.openPicker({}).then(image => {
+      ImagePicker.openPicker({
+        cropping: true,
+        width: 800,
+        height: 800,
+      }).then(image => {
         setAvatar(image.path);
         formik.setFieldValue('avatar', image.path);
       });
@@ -136,13 +140,16 @@ const EmployeeRegistrationScreen = () => {
       } else {
         ImagePicker.openPicker({
           mediaType: 'photo',
-          multiple: true
+          multiple: true,
+          cropping: true,
+          width: 800,
+          height: 800,
         }).then(images => {
           if (selectedCertifications.length + images.length <= 4) {
             setSelectedCertifications(prev => [...prev, ...images]);
           } else {
             setAlertContent(alertMessages.maxItemsExceeded(4));
-              setIsAlert(true);
+            setIsAlert(true);
           }
         });
       }
@@ -430,14 +437,13 @@ const EmployeeRegistrationScreen = () => {
               )}
             </TouchableOpacity>
             <RowComponent>
-              <TextComponent text='Tôi đồng ý với '/>
-            <ButtonComponent
-              text="điều khoản và điều kiện"
-              type="link"
-              onPress={() => navigate(STACK_NAVIGATOR_SCREENS.POLICYSCREEN)}
-            />
+              <TextComponent text="Tôi đồng ý với " />
+              <ButtonComponent
+                text="điều khoản và điều kiện"
+                type="link"
+                onPress={() => navigate(STACK_NAVIGATOR_SCREENS.POLICYSCREEN)}
+              />
             </RowComponent>
-            
           </View>
         </SectionComponent>
         {/* )}

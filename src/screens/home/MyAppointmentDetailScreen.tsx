@@ -579,7 +579,7 @@ const MyAppointmentDetailScreen = () => {
             <IconButtonComponent
               name="message-draw"
               size={30}
-              color={colors.dark}
+              color={colors.yellow}
               onPress={() => reviewHandle(appointmentId)}
             />
           )

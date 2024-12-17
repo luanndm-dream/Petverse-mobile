@@ -158,6 +158,9 @@ const AddPetScreen = () => {
         ImagePicker.openPicker({
           multiple: true,
           mediaType: 'photo',
+          cropping: true,
+          width: 800,
+          height: 800,
         }).then((images: any) => {
           setAvatar(images.path);
         });
