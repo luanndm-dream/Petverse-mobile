@@ -204,7 +204,9 @@ const PetAlbumScreen = () => {
         {isEdit && (
           <SectionComponent>
             <TextComponent text="Chỉnh sửa album thú cưng" type="title" />
-            <AddImageComponent onSelected={(val: string | string[]) => selectetPetPhotoHandle(val)} />
+            <AddImageComponent onSelected={(val: string | string[]) => selectetPetPhotoHandle(val)} 
+            // onlyImage={false}
+             />
           </SectionComponent>
         )}
         <FlatList

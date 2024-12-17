@@ -412,7 +412,7 @@ const CreateJobScreen = () => {
             onChange={formik.handleChange('description')}
             value={formik.values.description}
             onBlur={formik.handleBlur('description')}
-            placeholder="Mô tả về trung tâm của bạn"
+            placeholder="Mô tả công việc"
             multiline
             allowClear
             maxLength={500}

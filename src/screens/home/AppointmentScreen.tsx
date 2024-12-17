@@ -52,7 +52,7 @@ import firestore from '@react-native-firebase/firestore';
 import {addAppointmentInBreedingToFirestore} from '@/services/firestoreFunction';
 import {apiGetUserByUserId} from '@/api/apiUser';
 import {apiGetPetCenterServiceByPetServiceId} from '@/api/apiPetCenterService';
-import { appointmentData } from '@/data/appointmentData';
+import {appointmentData} from '@/data/appointmentData';
 
 const AppointmentScreen = () => {
   const route = useRoute<any>();
@@ -189,6 +189,10 @@ const AppointmentScreen = () => {
         ? Yup.string().required('Chọn giờ')
         : Yup.string().notRequired(),
     ),
+    totalPrice: Yup.number()
+      .required('Giá tiền không được để trống')
+      .positive('Giá tiền phải là giá trị dương') // Kiểm tra giá trị dương
+      .integer('Giá tiền phải là số nguyên'),
   });
 
   const formik = useFormik({
@@ -198,6 +202,7 @@ const AppointmentScreen = () => {
       fromTime: '',
       toDate: '',
       toTime: '',
+      totalPrice: calculatedPrice || 0,
     },
     validationSchema: validationSchema,
     onSubmit: values => {
@@ -253,13 +258,15 @@ const AppointmentScreen = () => {
           }
         });
       } else {
-        console.log( userId,
+        console.log(
+          userId,
           selectedPet.id,
           petCenterServiceId,
           calculatedPrice,
           startTime,
           endTime,
-          formattedSchedules);
+          formattedSchedules,
+        );
         apiCreateServiceAppointment(
           userId,
           selectedPet.id,
@@ -315,10 +322,14 @@ const AppointmentScreen = () => {
           `${formik.values.toDate} ${formik.values.toTime}`,
           'DD/MM/YYYY HH:mm',
         );
-        const totalHours = toDateTime.diff(fromDateTime, 'hours');
-        setCalculatedPrice(totalHours * price);
+        const totalMinutes = toDateTime.diff(fromDateTime, 'minutes'); // Tính tổng số phút
+        const totalHours = Math.ceil(totalMinutes / 60);
+        const updatedPrice = totalHours * price;
+        setCalculatedPrice(updatedPrice);
+        formik.setFieldValue('totalPrice', updatedPrice);
       } else {
         setCalculatedPrice(price);
+        formik.setFieldValue('totalPrice', price); // Giá mặc định
       }
     };
     updatePrice();
@@ -352,9 +363,7 @@ const AppointmentScreen = () => {
             color={colors.dark}
             onPress={goBack}
           />
-        }
-
-        >
+        }>
         {isAgree && (
           <View style={styles.warningContainer}>
             <RowComponent justify="space-between">
@@ -548,7 +557,15 @@ const AppointmentScreen = () => {
           )}
           <TextComponent text="Giá tiền: " />
           <TextComponent text={`${formattedPrice} VNĐ`} type="title" />
+          {formik.errors.totalPrice && formik.touched.totalPrice && (
+            <TextComponent
+              text='Lỗi giá tiền'
+              styles={{color: colors.red}}
+            />
+          )}
+          
         </RowComponent>
+        
         <ButtonComponent
           text={
             userData?.balance >= calculatedPrice

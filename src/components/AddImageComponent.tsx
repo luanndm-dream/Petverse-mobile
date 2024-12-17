@@ -58,6 +58,7 @@ const AddImageComponent = (props: Props) => {
         if (camera) {
           ImagePicker.openCamera({
             cropping: true,
+            
             width: 800,
             height: 800,
             compressImageMaxWidth: 800, // Kích thước tối đa 800px
@@ -84,9 +85,10 @@ const AddImageComponent = (props: Props) => {
         } else {
           ImagePicker.openPicker({
             multiple: true,
-            cropping: true,
+            cropping: onlyImage?true: false,
             width: 800,
             height: 800,
+            mediaType: onlyImage ? 'photo' : 'any',
             compressImageMaxWidth: 800,
             compressImageMaxHeight: 800,
           }).then(mediaFiles => {
