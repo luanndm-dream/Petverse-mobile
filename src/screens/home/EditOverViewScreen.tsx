@@ -67,7 +67,7 @@ const EditOverViewScreen = () => {
       haveCamera: false,
       havePhoto: false,
       haveTransport: false,
-      speciesId: null,
+      speciesId: undefined,
     },
     validationSchema: Yup.object().shape({
       description: Yup.string().required('Mô tả không được để trống'),
@@ -77,7 +77,7 @@ const EditOverViewScreen = () => {
     }),
     enableReinitialize: true,
     onSubmit: values => {
-        //console.log(values)
+        console.log(values)
       showLoading();
       apiUpdateJob(
         jobData.id,

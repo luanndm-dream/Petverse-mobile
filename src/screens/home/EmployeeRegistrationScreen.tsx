@@ -351,7 +351,8 @@ const EmployeeRegistrationScreen = () => {
           )}
 
           <TextComponent text="Hồ sơ/chứng nhận" type="title" />
-          <View style={styles.imageContainer}>
+          
+          {/* <View style={styles.imageContainer}>
             <FlatList
               data={
                 selectedCertifications.length < 4
@@ -402,7 +403,7 @@ const EmployeeRegistrationScreen = () => {
                 paddingVertical: 6,
               }}
             />
-          </View>
+          </View> */}
           <TextComponent text="Mô tả" type="title" required />
           <InputComponent
             onChange={formik.handleChange('description')}
@@ -517,11 +518,11 @@ const EmployeeRegistrationScreen = () => {
         isVisible={isAlert}
         onButtonPress={() => {
           setIsAlert(false);
-          setAlertContent(null); // Reset nội dung sau khi đóng
+          setAlertContent(null); 
         }}
         onClose={() => {
           setIsAlert(false);
-          setAlertContent(null); // Reset nội dung sau khi đóng
+          setAlertContent(null); 
         }}
       />
     </>

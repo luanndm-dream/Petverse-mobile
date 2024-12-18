@@ -233,7 +233,6 @@ const CreateJobScreen = () => {
       Object.keys(formik.errors).length === 0
     ) {
       showLoading();
-      // console.log(JSON.stringify(petCenterService, null, 2));
       apiCreateJob(
         petCenterId as never,
         formik.values.description,
@@ -243,7 +242,6 @@ const CreateJobScreen = () => {
         selectedSpeciesId,
         petCenterService,
       ).then((res: any) => {
-        //console.log(res);
         if (res.statusCode === 200) {
           hideLoading();
           Toast.show({
