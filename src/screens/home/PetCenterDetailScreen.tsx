@@ -39,14 +39,14 @@ const OverviewTab = ({petCenterData}: any) => (
           <RowComponent styles={[styles.overviewRow, {marginRight: 18}]}>
             <View style={styles.itemOverview}>
               <MaterialCommunityIcons
-                name="briefcase-check"
+                name="donkey"
                 size={24}
                 color={colors.dark}
               />
             </View>
             <View style={styles.textWrapper}>
-              <TextComponent text={`${petCenterData?.yoe} năm`} type="title" />
-              <TextComponent text="Kinh nghiệm" />
+              <TextComponent text={`${petCenterData?.numPet}`} type="title" />
+              <TextComponent text="Hoàn thành" />
             </View>
           </RowComponent>
           <RowComponent styles={styles.overviewRow}>
@@ -116,7 +116,7 @@ const ServicesTab = ({petCenterData}: any) => {
 
   const roleName = useAppSelector(state => state.auth.roleName);
   const isPetCenter = roleName === 'PetCenter';
-
+  //console.log('petCenterData', petCenterData)
   const handleServicePress = () => {
     // Hiển thị cảnh báo nếu dịch vụ gần quá tải
     if (selectedServiceUsageRate >= 0.5) {
@@ -124,6 +124,7 @@ const ServicesTab = ({petCenterData}: any) => {
     } else {
       // Điều hướng đến màn hình đặt dịch vụ
       navigation.navigate(STACK_NAVIGATOR_SCREENS.APPOINMENTSCREEN, {
+        petCenterId: petCenterData.id,
         petCenterServiceId: selectedService,
         petCenterServiceName: selectedServiceName,
         type: serviceType,
@@ -213,6 +214,7 @@ const ServicesTab = ({petCenterData}: any) => {
         onRightPress={() => {
           // Điều hướng đến đặt dịch vụ nếu người dùng xác nhận
           navigation.navigate(STACK_NAVIGATOR_SCREENS.APPOINMENTSCREEN, {
+            petCenterId: petCenterData.id,
             petCenterServiceId: selectedService,
             petCenterServiceName: selectedServiceName,
             type: serviceType,
@@ -229,7 +231,7 @@ const ServicesTab = ({petCenterData}: any) => {
 };
 
 const ReviewsTab = ({petCenterRate}: any) => {
-  console.log(petCenterRate);
+  //console.log(petCenterRate);
   const serviceColors = [
     '#FFCDD2',
     '#FFF9C4',
@@ -325,7 +327,7 @@ const PetCenterDetailScreen = () => {
       apiGetPetCenterByPetCenterId(petCenterId),
       apiGetPetCenterRateByPetCenterId(petCenterId),
     ]).then(([centerRes, rateRes]: any) => {
-      console.log(centerRes, 'rateRes', rateRes);
+      //console.log(centerRes, 'rateRes', rateRes);
       if (centerRes.statusCode === 200 && rateRes.statusCode === 200) {
         hideLoading();
         setPetCenterData(centerRes.data);

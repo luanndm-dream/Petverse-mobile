@@ -84,7 +84,7 @@ const PetDetailScreen = () => {
         vals.sterilized,
       ).then((res: any) => {
         if (res.statusCode === 200) {
-          console.log(res);
+         // console.log(res);
           setIsEdit(false);
           hideLoading();
           Toast.show({
@@ -101,7 +101,7 @@ const PetDetailScreen = () => {
           });
         }
       });
-      console.log(vals);
+     // console.log(vals);
     },
   });
 

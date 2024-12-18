@@ -54,7 +54,7 @@ const SignUpScreen = () => {
   ) => {
     showLoading();
     apiSignUp(fullname, email, password, phoneNumber).then((res: any) => {
-      console.log(res);
+      // console.log(res);
       if (res.statusCode === 200) {
         hideLoading();
         Toast.show({

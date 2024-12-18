@@ -20,117 +20,105 @@ const PolicyScreen = () => {
         />
       }>
       <SectionComponent>
-        {/* Tiêu đề */}
-        <TextComponent text="QUY TẮC VÀ QUY ĐỊNH DÀNH CHO TRUNG TÂM" type="title" styles={styles.title} />
+        {/* <TextComponent text="QUY TẮC VÀ QUY ĐỊNH CHUNG" type="title" styles={styles.title} /> */}
 
-        {/* Nội dung */}
-        <TextComponent text="1. Xác minh danh tính và thông tin cơ sở" type="subTitle" />
+        {/* 1. Trách nhiệm thông tin */}
+        <TextComponent text="1. Trách nhiệm cung cấp thông tin" type="subTitle" />
         <TextComponent
-          text="• Bạn cam kết cung cấp đầy đủ và chính xác thông tin về trung tâm của mình, bao gồm tên trung tâm, địa chỉ, số điện thoại, email liên hệ và các giấy tờ pháp lý liên quan (giấy phép kinh doanh, giấy chứng nhận dịch vụ thú cưng)."
+          text="• Trung tâm và khách hàng phải cung cấp thông tin đầy đủ, chính xác về trung tâm, dịch vụ, thú cưng và mọi yếu tố liên quan. Bao gồm: tên, địa chỉ, giấy phép pháp lý và lịch sử sức khỏe của thú cưng."
           type="description"
         />
         <TextComponent
-          text="• Đồng ý để hệ thống xác minh thông tin qua các biện pháp cần thiết, bao gồm kiểm tra tính pháp lý và xác thực qua các dịch vụ bên thứ ba."
+          text="• PetVerse chỉ là nền tảng kết nối và không chịu trách nhiệm xác minh thông tin ngoài các biện pháp hỗ trợ cơ bản."
           type="description"
         />
 
+        {/* 2. Trách nhiệm cung cấp dịch vụ */}
         <TextComponent text="2. Trách nhiệm cung cấp dịch vụ" type="subTitle" />
         <TextComponent
-          text="• Cam kết cung cấp các dịch vụ chất lượng cao, tuân thủ mô tả đã công bố trên hệ thống."
+          text="• Trung tâm chịu trách nhiệm hoàn toàn về chất lượng dịch vụ và sự an toàn của thú cưng trong thời gian trung tâm nhận nuôi."
           type="description"
         />
         <TextComponent
-          text="• Đảm bảo an toàn, sức khỏe, và sự thoải mái cho thú cưng trong suốt thời gian sử dụng dịch vụ tại trung tâm."
+          text="• Trung tâm phải kiểm tra tình trạng sức khỏe của thú cưng trước khi nhận và báo cáo ngay cho chủ nuôi nếu phát hiện bất kỳ vấn đề gì."
           type="description"
         />
         <TextComponent
-          text="• Các hành vi thiếu trách nhiệm, ngược đãi thú cưng hoặc cung cấp dịch vụ kém chất lượng đều bị nghiêm cấm và có thể dẫn đến việc loại khỏi hệ thống."
-          type="description"
-        />
-        <TextComponent
-          text="• Đảm bảo đội ngũ nhân viên có chuyên môn, kinh nghiệm và tuân thủ các tiêu chuẩn về chăm sóc thú cưng."
+          text="• Trung tâm chỉ được trễ báo cáo tối đa 1 giờ so với thời gian đã cam kết. Việc vi phạm có thể bị xử lý theo quy định của PetVerse."
           type="description"
         />
 
-        <TextComponent text="3. Thông tin dịch vụ và chính sách minh bạch" type="subTitle" />
+        {/* 3. Thông tin về thú cưng */}
+        <TextComponent text="3. Thông tin và sức khỏe của thú cưng" type="subTitle" />
         <TextComponent
-          text="• Cung cấp thông tin chi tiết về từng dịch vụ: giá cả, thời gian, yêu cầu đặc biệt, và các điều khoản đi kèm."
+          text="• Chủ thú cưng phải cung cấp thông tin chính xác về thú cưng (bao gồm giống, tuổi, tình trạng sức khỏe)."
           type="description"
         />
         <TextComponent
-          text="• Minh bạch về chính sách hoàn hủy dịch vụ để đảm bảo quyền lợi cho cả trung tâm và khách hàng."
-          type="description"
-        />
-
-        <TextComponent text="4. Môi trường chăm sóc thú cưng" type="subTitle" />
-        <TextComponent
-          text="• Đảm bảo môi trường chăm sóc sạch sẽ, thoáng mát, an toàn và phù hợp với từng loại thú cưng."
+          text="• Sau khi lịch hẹn hoàn thành 72 giờ, PetVerse và Trung tâm sẽ không chịu trách nhiệm về bất kỳ sự cố nào liên quan đến thú cưng."
           type="description"
         />
         <TextComponent
-          text="• Chuẩn bị đầy đủ các vật dụng cần thiết như thức ăn, nước uống, chuồng trại, đồ chơi,... theo nhu cầu từng loại thú cưng."
-          type="description"
-        />
-        <TextComponent
-          text="• Kiểm tra kỹ lưỡng để đảm bảo không có vật dụng nguy hiểm hoặc các yếu tố môi trường gây hại cho thú cưng."
+          text="• PetVerse không đảm bảo thành công 100% đối với các dịch vụ phối giống hoặc thụ tinh nhân tạo. Tỷ lệ thành công thông thường là ~90% dựa trên dữ liệu thống kê."
           type="description"
         />
 
-        <TextComponent text="5. Giao tiếp và báo cáo tình trạng thú cưng" type="subTitle" />
+        {/* 4. Giới hạn trách nhiệm */}
+        <TextComponent text="4. Giới hạn trách nhiệm của PetVerse" type="subTitle" />
         <TextComponent
-          text="• Duy trì liên lạc và cập nhật thường xuyên với chủ thú cưng về tình trạng sức khỏe, hành vi, hoặc bất kỳ sự cố nào xảy ra trong thời gian thú cưng ở trung tâm."
+          text="• PetVerse là nền tảng kết nối trung tâm dịch vụ và khách hàng, không tham gia trực tiếp vào giao dịch và không chịu trách nhiệm pháp lý về chất lượng dịch vụ, các thỏa thuận, hoặc sự cố phát sinh trong quá trình thực hiện dịch vụ."
           type="description"
         />
         <TextComponent
-          text="• Thực hiện báo cáo định kỳ hoặc theo yêu cầu của hệ thống để đảm bảo tính minh bạch và đáng tin cậy."
-          type="description"
-        />
-
-        <TextComponent text="6. Đảm bảo tuân thủ pháp luật và quy định địa phương" type="subTitle" />
-        <TextComponent
-          text="• Tuân thủ mọi quy định pháp luật liên quan đến dịch vụ chăm sóc thú cưng và hoạt động của trung tâm."
+          text="• Mọi tranh chấp giữa Trung tâm và khách hàng phải được giải quyết giữa hai bên. PetVerse chỉ cung cấp thông tin hỗ trợ nếu cần."
           type="description"
         />
         <TextComponent
-          text="• Đảm bảo không có tiền án hoặc vi phạm pháp luật liên quan đến bạo hành động vật hoặc các hoạt động trái phép."
+          text="• PetVerse không chịu trách nhiệm trong các trường hợp: thông tin sai lệch từ các bên liên quan, sự cố sức khỏe phát sinh không báo trước, hoặc các vấn đề nằm ngoài quyền kiểm soát của nền tảng."
           type="description"
         />
 
-        <TextComponent text="7. Hệ thống đánh giá và phản hồi" type="subTitle" />
+        {/* 5. Cam kết của Trung tâm */}
+        <TextComponent text="5. Cam kết của Trung tâm" type="subTitle" />
         <TextComponent
-          text="• Đồng ý nhận đánh giá từ khách hàng và cam kết cải thiện dịch vụ dựa trên các phản hồi."
+          text="• Trung tâm chịu trách nhiệm về giống và quy trình thụ tinh nhân tạo nếu cung cấp dịch vụ phối giống. Trung tâm đảm bảo quy trình này được thực hiện đúng tiêu chuẩn kỹ thuật và an toàn."
           type="description"
         />
         <TextComponent
-          text="• Hiểu rằng đánh giá tiêu cực liên tục có thể dẫn đến việc bị tạm ngưng hoặc loại khỏi hệ thống."
-          type="description"
-        />
-
-        <TextComponent text="8. Hậu quả của việc vi phạm quy tắc" type="subTitle" />
-        <TextComponent
-          text="• Bất kỳ hành vi vi phạm nào đối với quy tắc và quy định này có thể dẫn đến việc cảnh cáo, tạm ngưng tài khoản hoặc cấm vĩnh viễn khỏi hệ thống."
+          text="• Trung tâm phải đảm bảo môi trường sạch sẽ, an toàn, và phù hợp với từng loại thú cưng."
           type="description"
         />
         <TextComponent
-          text="• Trong trường hợp vi phạm nghiêm trọng, PetVerse có quyền yêu cầu bồi thường thiệt hại hoặc tiến hành các thủ tục pháp lý."
+          text="• Trung tâm không được thực hiện các hành vi thiếu trách nhiệm hoặc gây tổn hại đến thú cưng dưới bất kỳ hình thức nào."
           type="description"
         />
 
-        <TextComponent text="9. Cam kết điều khoản và điều kiện" type="subTitle" />
+        {/* 6. Khiếu nại và giải quyết tranh chấp */}
+        <TextComponent text="6. Khiếu nại và giải quyết tranh chấp" type="subTitle" />
         <TextComponent
-          text="• Đọc, hiểu và tuân thủ tất cả các điều khoản, điều kiện và chính sách của PetVerse liên quan đến việc sử dụng nền tảng, quản lý thông tin, và cung cấp dịch vụ."
+          text="• Mọi khiếu nại từ khách hàng hoặc trung tâm cần được gửi đến bộ phận hỗ trợ của PetVerse trong vòng 72 giờ kể từ khi hoàn thành lịch hẹn."
+          type="description"
+        />
+        <TextComponent
+          text="• PetVerse sẽ hỗ trợ giải quyết tranh chấp trên tinh thần trung lập và chỉ cung cấp thông tin cần thiết để các bên tự giải quyết."
           type="description"
         />
 
-        <TextComponent text="10. Trách nhiệm của Petverse" type="subTitle" />
+        {/* 7. Hậu quả vi phạm */}
+        <TextComponent text="7. Hậu quả của việc vi phạm" type="subTitle" />
         <TextComponent
-          text="• Petverse sẽ không chịu trách nhiệm trong trường hợp cả PetCenter và khách hàng bỏ qua cảnh báo của hệ thống ở các chức năng có đưa ra cảnh báo."
+          text="• Trung tâm hoặc khách hàng vi phạm điều khoản sẽ bị cảnh cáo, tạm ngưng hoạt động hoặc loại bỏ vĩnh viễn khỏi hệ thống."
+          type="description"
+        />
+        <TextComponent
+          text="• PetVerse có quyền áp dụng các biện pháp xử lý thích hợp và tiến hành thủ tục pháp lý nếu phát hiện vi phạm nghiêm trọng."
           type="description"
         />
 
-        <TextComponent text="CAM KẾT CỦA TRUNG TÂM" type="title" styles={styles.commitmentTitle} />
+        {/* 8. Cam kết của các bên */}
+        <TextComponent text="8. Cam kết của các bên" type="subTitle" />
         <TextComponent
-          text="Tôi cam kết tuân thủ tất cả các quy tắc và quy định nêu trên khi đăng ký và cung cấp dịch vụ chăm sóc thú cưng thông qua PetVerse. Tôi hiểu rằng mọi vi phạm có thể dẫn đến hậu quả pháp lý hoặc loại khỏi hệ thống."
+          text="• Khi sử dụng dịch vụ của PetVerse, cả Trung tâm và khách hàng cam kết đọc, hiểu và tuân thủ đầy đủ các điều khoản và chính sách này."
           type="description"
         />
       </SectionComponent>
@@ -148,11 +136,10 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: colors.primary,
   },
-  commitmentTitle: {
-    marginTop: 24,
-    textAlign: 'center',
-    fontSize: 18,
-    fontWeight: '700',
-    color: colors.red,
+  subTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.dark,
+    marginTop: 12,
   },
 });

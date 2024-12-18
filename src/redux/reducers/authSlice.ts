@@ -53,7 +53,7 @@ const authSlice = createSlice({
           ? action.payload.petCenterId
           : state.petCenterId;
     },
-    logoutAuth: (state) => {
+    logoutAuth: state => {
       state.accessToken = undefined;
       state.refreshToken = undefined;
       state.refreshTokenExpiryTime = undefined;

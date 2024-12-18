@@ -4,6 +4,7 @@ export async function apiGetPetByUserId(
   userId: string,
   speciesId?: number,
   IncludeSterilized?: boolean,
+  Gender?: number
 ) {
   const url = `Pet/${userId}`;
 
@@ -13,6 +14,7 @@ export async function apiGetPetByUserId(
         params: {
           SpeciesId: speciesId,
           IncludeSterilized: IncludeSterilized,
+          Gender:Gender
         },
       }
     : {};
@@ -22,13 +24,17 @@ export async function apiGetPetByUserId(
 
 export async function apiGetPetSpecies() {
   const url = `Species`;
-
-  return protectedAxios.get(url);
+  const params = {
+    PageSize: 1000
+  }
+  return protectedAxios.get(url,{params});
 }
 export async function apiGetPetBreed(speciesId: number) {
   const url = `Species/${speciesId}/Breed`;
-
-  return protectedAxios.get(url);
+  const params = {
+    PageSize: 1000
+  }
+  return protectedAxios.get(url,{params});
 }
 export async function apiCreatePet(
   userId: string,

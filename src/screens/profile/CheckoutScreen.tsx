@@ -21,7 +21,7 @@ const CheckoutScreen = () => {
   const failUrl = 'http://112.213.87.177:3000/fail-transaction';
 
   const handleNavigationStateChange = (navState: any) => {
-    console.log(navState);
+    //console.log(navState);
 
     // Kiểm tra nếu URL là trang thành công
     if (navState.url.startsWith(successUrl)) {

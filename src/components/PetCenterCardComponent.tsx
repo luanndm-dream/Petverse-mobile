@@ -44,8 +44,8 @@ const PetCenterCardComponent: React.FC<Props> = ({ item, onPress, serviceColors,
         <TextComponent text={item.address} numOfLine={2} type="description" styles={styles.addressText} />
         <View style={styles.detailsContainer}>
           <View style={styles.experienceContainer}>
-            <TextComponent text="Kinh nghiệm: " styles={styles.labelText} />
-            <TextComponent text={`${item.yoe} năm`} styles={styles.valueText} />
+            <TextComponent text="Pet hoàn thành: " styles={styles.labelText} />
+            <TextComponent text={`${item.numPet}`} styles={styles.valueText} />
           </View>
           <View style={styles.petsContainer}>
             <Pet size={16} color={colors.primary} variant="Bold" />

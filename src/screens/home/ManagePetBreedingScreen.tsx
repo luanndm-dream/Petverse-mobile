@@ -176,7 +176,7 @@ const ManagePetBreedingScreen = () => {
   };
 
   const handleToggleStatus = (id: number, isDisable: boolean) => {
-    console.log(isDisable)
+    //console.log(isDisable)
     showLoading()
     apiUpdateBreedCenterAvailability(id, !isDisable).then((res: any) => {
       if(res.statusCode === 200){

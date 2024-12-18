@@ -69,7 +69,7 @@ const UpdateTrackingScreen = () => {
       showLoading()
       apiCreateSchedule(scheduleId, photos, videos).then((res: any)=>{
         hideLoading();
-        console.log('res create tracking', res)
+      //  console.log('res create tracking', res)
         if (res.statusCode === 200) {
           hideLoading();
           Toast.show({

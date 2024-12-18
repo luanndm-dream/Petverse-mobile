@@ -92,7 +92,7 @@ const AddImageComponent = (props: Props) => {
             compressImageMaxWidth: 800,
             compressImageMaxHeight: 800,
           }).then(mediaFiles => {
-            console.log(mediaFiles)
+            // console.log(mediaFiles)
             const validMedia = mediaFiles.filter((media: any) => {
               // Kiểm tra loại file
               if (onlyImage && !media.mime.startsWith('image')) {
@@ -102,7 +102,7 @@ const AddImageComponent = (props: Props) => {
                 return false;
               }
               if (media.mime.startsWith('video') && media.duration > 20000) {
-                console.log('isAlert:', isAlert, 'alertContent:', alertContent);
+                // console.log('isAlert:', isAlert, 'alertContent:', alertContent);
                 setAlertContent(alertMessages.videoTooLong);
                 setIsAlert(true);
                 return false;

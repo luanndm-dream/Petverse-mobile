@@ -171,6 +171,7 @@ const AddPetScreen = () => {
       }
     }
   };
+ 
   useEffect(() => {
     showLoading();
     apiGetPetBreed(selectedPetTypeId).then((res: any) => {
@@ -183,7 +184,14 @@ const AddPetScreen = () => {
             description: item?.description,
           });
         });
-
+  
+        // Sort so that "Khác" appears at the end
+        items.sort((a, b) => {
+          if (a.label === 'Khác') return 1; // Move "Khác" to the end
+          if (b.label === 'Khác') return -1; // Move "Khác" to the end
+          return a.label.localeCompare(b.label); // Alphabetical sort for others
+        });
+  
         setSubPetType(items);
         hideLoading();
       }

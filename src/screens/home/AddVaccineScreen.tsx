@@ -56,7 +56,7 @@ const AddVaccineScreen = () => {
     }),
     onSubmit: values => {
         showLoading()
-        console.log(vaccineId)
+        // console.log(vaccineId)
       apiCreatePetVaccinated(
         petId,
         values.vaccineName,

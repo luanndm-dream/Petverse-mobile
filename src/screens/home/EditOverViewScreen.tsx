@@ -51,7 +51,7 @@ const EditOverViewScreen = () => {
   useFocusEffect(
     useCallback(() => {
       apiGetJobByPetCenterId(petCenterId as never).then((res: any) => {
-        console.log(res);
+        //console.log(res);
         if (res.statusCode === 200) {
           setJobData(res.data);
         } else {
@@ -77,7 +77,7 @@ const EditOverViewScreen = () => {
     }),
     enableReinitialize: true,
     onSubmit: values => {
-        console.log(values)
+        //console.log(values)
       showLoading();
       apiUpdateJob(
         jobData.id,

@@ -204,9 +204,9 @@ const CreateJobScreen = () => {
       hasTransport: Yup.boolean()
         .oneOf(
           [true, false],
-          'Có phương tiện di chuyển/nhận ship phải được chọn',
+          'Có hỗ trợ vận chuyển phải được chọn',
         )
-        .required('Bắt buộc phải chọn phương tiện di chuyển/nhận ship'),
+        .required('Bắt buộc phải chọn hỗ trợ vận chuyển'),
       speciesId: Yup.array()
         .min(1, 'Ít nhất phải chọn một loại vật nuôi')
         .required('Bắt buộc phải chọn ít nhất một loại vật nuôi'),
@@ -214,9 +214,9 @@ const CreateJobScreen = () => {
     onSubmit: val => {
       const allPricesValid = validateAllPrices();
       if (allPricesValid) {
-        console.log('Form submitted successfully with:', val, priceValues);
+        //console.log('Form submitted successfully with:', val, priceValues);
       } else {
-        console.log('Vui lòng điền giá cho tất cả các dịch vụ trước khi gửi.');
+        //console.log('Vui lòng điền giá cho tất cả các dịch vụ trước khi gửi.');
       }
     },
   });
@@ -243,7 +243,7 @@ const CreateJobScreen = () => {
         selectedSpeciesId,
         petCenterService,
       ).then((res: any) => {
-        console.log(res);
+        //console.log(res);
         if (res.statusCode === 200) {
           hideLoading();
           Toast.show({
@@ -495,7 +495,7 @@ const CreateJobScreen = () => {
           )}
 
           <TextComponent
-            text="Có phương tiện di chuyển/nhận ship?"
+            text="Có hỗ trợ vận chuyển?"
             type="title"
           />
           <RowComponent justify="space-between" styles={styles.checkboxRow}>

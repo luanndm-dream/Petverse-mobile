@@ -43,7 +43,7 @@ const PetCenterServiceScreen = () => {
   }, []);
 
   const onPressItemHandle = (item: any) => {
-    console.log(item)
+   // console.log(item)
 
     navigation.navigate(STACK_NAVIGATOR_SCREENS.PETCENTERDETAILSCREEN, {
       petCenterId: item.id,

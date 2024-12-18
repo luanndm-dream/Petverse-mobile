@@ -53,12 +53,13 @@ import {addAppointmentInBreedingToFirestore} from '@/services/firestoreFunction'
 import {apiGetUserByUserId} from '@/api/apiUser';
 import {apiGetPetCenterServiceByPetServiceId} from '@/api/apiPetCenterService';
 import {appointmentData} from '@/data/appointmentData';
+import { pushNotification } from '@/services/notifications';
 
 const AppointmentScreen = () => {
   const route = useRoute<any>();
   const navigation = useNavigation<any>();
   const {showLoading, hideLoading} = useLoading();
-  const {petCenterServiceId, petCenterServiceName, type, price, speciesId} =
+  const {petCenterId,petCenterServiceId, petCenterServiceName, type, price, speciesId} =
     route.params;
   const {goBack, navigate} = useCustomNavigation();
   const userId = useAppSelector(state => state.auth.userId);
@@ -100,7 +101,7 @@ const AppointmentScreen = () => {
         if (res.statusCode === 200) {
           setScheduleData(res.data.schedule);
         } else {
-          console.log('Không tìm thấy schdule cho service này');
+          // console.log('Không tìm thấy schdule cho service này');
         }
       },
     );
@@ -109,8 +110,8 @@ const AppointmentScreen = () => {
   useFocusEffect(
     useCallback(() => {
       if (petCenterServiceName.includes('phối') && speciesId) {
-        console.log('speciesId:', speciesId);
-        apiGetPetByUserId(userId, speciesId, false).then((res: any) => {
+        // console.log('speciesId:', speciesId);
+        apiGetPetByUserId(userId, speciesId, false, 2).then((res: any) => {
           console.log('Filtered API Response:', res);
           if (res.statusCode === 200) {
             hideLoading();
@@ -122,7 +123,7 @@ const AppointmentScreen = () => {
         });
       } else {
         apiGetPetByUserId(userId).then((res: any) => {
-          console.log('Unfiltered API Response:', res);
+          //console.log('Unfiltered API Response:', res);
           if (res.statusCode === 200) {
             hideLoading();
             setMyPet(res.data.items); // Không lọc
@@ -134,8 +135,8 @@ const AppointmentScreen = () => {
       }
     }, [userId, speciesId, petCenterServiceName]),
   );
-  console.log('speciesId:', speciesId);
-  console.log('Calling API with speciesId:', speciesId ? true : false);
+  //console.log('speciesId:', speciesId);
+  // console.log('Calling API with speciesId:', speciesId ? true : false);
 
   const formattedSchedules = scheduleData.map((item: any) => ({
     time: moment(item.time, 'HH:mm').format('HH:mm'),
@@ -223,7 +224,6 @@ const AppointmentScreen = () => {
       }
 
       showLoading();
-      console.log(petCenterServiceName);
       if (petCenterServiceName.includes('phối')) {
         apiCreateBreedAppointment(
           userId,
@@ -234,6 +234,14 @@ const AppointmentScreen = () => {
           endTime,
         ).then((res: any) => {
           if (res.statusCode === 200) {
+            pushNotification([petCenterId],{
+            title: 'Có lịch hẹn mới',
+            message: petCenterServiceName,
+            appointmentId: res.data.id,
+            sender: userId,
+            status: 2,
+            // reportId: res.data.id
+            })
             if (isAgree) {
               addAppointmentInBreedingToFirestore(
                 res.data.id,
@@ -258,15 +266,15 @@ const AppointmentScreen = () => {
           }
         });
       } else {
-        console.log(
-          userId,
-          selectedPet.id,
-          petCenterServiceId,
-          calculatedPrice,
-          startTime,
-          endTime,
-          formattedSchedules,
-        );
+        // console.log(
+        //   userId,
+        //   selectedPet.id,
+        //   petCenterServiceId,
+        //   calculatedPrice,
+        //   startTime,
+        //   endTime,
+        //   formattedSchedules,
+        // );
         apiCreateServiceAppointment(
           userId,
           selectedPet.id,
@@ -278,6 +286,14 @@ const AppointmentScreen = () => {
         ).then((res: any) => {
           if (res.statusCode === 200) {
             hideLoading();
+            pushNotification([petCenterId],{
+              title: 'Có lịch hẹn mới',
+              message: petCenterServiceName,
+              appointmentId: res.data.id,
+              sender: userId,
+              status: 2,
+              // reportId: res.data.id
+              })
             Toast.show({
               type: 'success',
               text1: 'Đặt lịch dịch vụ thành công',

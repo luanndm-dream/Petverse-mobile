@@ -45,7 +45,7 @@ const BreedDetailScreen = () => {
   const [breedCenterData, setBreedCenterData] = useState<any>();
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  console.log(breedCenterData)
+  // console.log('breedCenterData',breedCenterData )
 
   useEffect(() => {
     showLoading();
@@ -54,7 +54,7 @@ const BreedDetailScreen = () => {
         hideLoading();
         setBreedCenterData(res.data);
       } else {
-        console.log('get center breed thất bại');
+        // console.log('get center breed thất bại');
       }
     });
   }, []);
@@ -65,7 +65,7 @@ const BreedDetailScreen = () => {
         hideLoading()
         dispatch(addBreedHistory(res.data.breedAppointemnts))
       }else{
-        console.log('get lich su dat phoi giong that bai')
+        // console.log('get lich su dat phoi giong that bai')
         hideLoading()
       }
     })
@@ -139,6 +139,7 @@ const BreedDetailScreen = () => {
   );
 
   const onPressBreedHandle = (
+    petCenterId: string  ,
     breedName: string,
     breedId: string,
     type: number,
@@ -147,6 +148,7 @@ const BreedDetailScreen = () => {
   ) => {
     // if()
     navigation.navigate(STACK_NAVIGATOR_SCREENS.APPOINMENTSCREEN, {
+      petCenterId: petCenterId,
       petCenterServiceId: breedId,
       petCenterServiceName: `phối ${breedName}`,
       type: 0,
@@ -258,6 +260,7 @@ const BreedDetailScreen = () => {
           type="primary"
           onPress={() =>
             onPressBreedHandle(
+              breedCenterData.petCenterId,
               breedCenterData.name,
               breedCenterData.id,
               1,

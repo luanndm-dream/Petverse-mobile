@@ -30,7 +30,7 @@ const ReportApplicationDetail = () => {
   const route = useRoute<any>();
   const {reportId} = route.params;
   const [reportData, setReportData] = useState<ReportData | null>(null);
-  console.log(reportData);
+  //console.log(reportData);
   useEffect(() => {
     showLoading();
     apiGetReportByReportId(reportId).then((res: any) => {
@@ -96,7 +96,7 @@ const ReportApplicationDetail = () => {
       );
     }
   };
-  console.log(reportData);
+ // console.log(reportData);
   return (
     <Container
       title="Chi tiết báo cáo"

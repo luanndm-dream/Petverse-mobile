@@ -48,7 +48,7 @@ const PlaceForPetScreen = () => {
         hideLoading();
       });
   }, []);
-  console.log(placesData);
+ // console.log(placesData);
   const handleFilter = (speciesId: any) => {
     setSelectedSpecies(speciesId);
     if (speciesId === null) {

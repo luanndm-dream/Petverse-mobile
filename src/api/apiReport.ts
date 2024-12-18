@@ -25,7 +25,7 @@ export async function apiCreateReport(
     });
   }
 
-  console.log(videos)
+  // console.log(videos)
   return protectedAxios.post(url, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',

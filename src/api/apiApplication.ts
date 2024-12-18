@@ -19,7 +19,7 @@ export async function apiPostApplication(
   formData.append('Image', image);
   formData.append('Description', description.toString());
   petServiceIds.forEach(id => {
-    console.log(id); // Kiểm tra giá trị của id
+    // console.log(id); // Kiểm tra giá trị của id
     formData.append('PetServiceIds', id.toString());
   });
   if (certifications) {
@@ -28,7 +28,7 @@ export async function apiPostApplication(
     });
   }
 
-  console.log('formData', formData)
+  // console.log('formData', formData)
   return protectedAxios.post(url, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',

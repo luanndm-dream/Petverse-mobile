@@ -18,7 +18,7 @@ const EditPetScreen = () => {
         apiGetPetByPetId(petId).then((res:any) => {
             if(res.statusCode === 200){
                 hideLoading()
-                console.log(res)
+               // console.log(res)
             }else{
                 hideLoading()
                 console.log('lấy dữ liệu pet thất bại')

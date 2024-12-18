@@ -176,7 +176,7 @@ const LeaderBoardComponent = () => {
               index === centers.length - 1
                 ? () => {
                     anim.value = 1;
-                    console.log('Finished', index);
+                    // console.log('Finished', index);
                   }
                 : null
             }

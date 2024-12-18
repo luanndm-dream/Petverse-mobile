@@ -1,5 +1,17 @@
 import firestore from '@react-native-firebase/firestore';
 
+const removeUndefinedFields = (obj: any) => {
+  const cleanedObj: any = {};
+  Object.keys(obj).forEach(key => {
+    if (obj[key] !== undefined) {
+      cleanedObj[key] = obj[key];
+    }
+  });
+  return cleanedObj;
+};
+
+
+
 interface NotificationData {
   title: string;
   sender: string;
@@ -15,7 +27,6 @@ export const pushNotification = async (
   data: NotificationData
 ) => {
   try {
-    // Sắp xếp danh sách participantIds để đảm bảo thứ tự thống nhất
     const sortedParticipantIds = participantIds.sort();
 
     // Tạo một đối tượng `participantsStatus` với `isRead: false`
@@ -25,11 +36,11 @@ export const pushNotification = async (
     }, {});
 
     // Chuẩn bị dữ liệu cho thông báo
-    const notificationData = {
+    const notificationData = removeUndefinedFields({
       ...data,
       participants: participantsStatus,
       timestamp: firestore.FieldValue.serverTimestamp(),
-    };
+    });
 
     // Thêm thông báo mới vào collection 'notifications'
     await firestore().collection('notifications').add(notificationData);

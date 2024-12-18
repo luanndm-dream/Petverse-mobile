@@ -300,14 +300,18 @@ const ProfileScreen = () => {
               />
               <TextComponent text="Thú cưng" />
             </View>
-            <View style={styles.overviewItem}>
+            {/* <View style={styles.overviewItem}>
               <TextComponent
-                text={myPetCenterData?.rate ? myPetCenterData?.rate : '0'}
+                text={
+                  myPetCenterData?.rate
+                    ? parseFloat(myPetCenterData.rate).toFixed(1)
+                    : '0'
+                }
                 type="title"
                 size={24}
               />
               <TextComponent text="Đánh giá" />
-            </View>
+            </View> */}
             <View style={styles.overviewItem}>
               <TextComponent
                 text={priceFormater(userData?.balance)}

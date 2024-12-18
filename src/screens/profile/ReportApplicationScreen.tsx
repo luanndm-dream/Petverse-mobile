@@ -13,8 +13,8 @@ import {useCustomNavigation} from '@/utils/navigation';
 import {useAppSelector} from '@/redux';
 import {apiGetMyReportById} from '@/api/apiReport';
 import useLoading from '@/hook/useLoading';
-import { useNavigation } from '@react-navigation/native';
-import { STACK_NAVIGATOR_SCREENS } from '@/constants/screens';
+import {useNavigation} from '@react-navigation/native';
+import {STACK_NAVIGATOR_SCREENS} from '@/constants/screens';
 
 const {width} = Dimensions.get('window');
 
@@ -35,9 +35,9 @@ const STATUS_LABELS: Record<number, string> = {
 };
 
 const STATUS_COLORS: Record<number, string> = {
-  0: colors.yellow, 
-  1: colors.green, 
-  2: colors.red, 
+  0: colors.yellow,
+  1: colors.green,
+  2: colors.red,
 };
 
 const ReportApplicationScreen = () => {
@@ -52,7 +52,8 @@ const ReportApplicationScreen = () => {
 
   useEffect(() => {
     showLoading();
-    apiGetMyReportById(id as never, roleName).then((res: any) => {
+    apiGetMyReportById(id as never, roleName as never).then((res: any) => {
+      // console.log(id, roleName)
       if (res.statusCode === 200) {
         setReportData(res.data.items);
         hideLoading();
@@ -64,26 +65,26 @@ const ReportApplicationScreen = () => {
   }, [id, roleName]);
 
   const onPressItem = (item: ReportItem) => {
-    navigation.navigate(STACK_NAVIGATOR_SCREENS.REPORTAPPLICATIONDETAIL,{
-      reportId: item.id
+    navigation.navigate(STACK_NAVIGATOR_SCREENS.REPORTAPPLICATIONDETAIL, {
+      reportId: item.id,
     });
   };
 
-  const renderItem = ({ item }: { item: ReportItem }) => {
+  const renderItem = ({item}: {item: ReportItem}) => {
     const statusColor = STATUS_COLORS[item.status];
     const statusLabel = STATUS_LABELS[item.status];
-  
+
     const isVideo =
       item.reportImages &&
       item.reportImages.length > 0 &&
       item.reportImages[0].url.includes('.mp4');
-  
+
     const thumbnail = isVideo
       ? require('../../assets/images/BannerVideo.png')
       : item.reportImages && item.reportImages.length > 0
-      ? { uri: item.reportImages[0].url }
+      ? {uri: item.reportImages[0].url}
       : require('../../assets/images/DefaultAvatar.jpg');
-  
+
     return (
       <TouchableOpacity
         style={styles.card}
@@ -94,9 +95,12 @@ const ReportApplicationScreen = () => {
             <Image source={thumbnail} style={styles.image} />
           </View>
           <View style={styles.headerInfo}>
-            <TextComponent text={item.title} type="title" styles={styles.title} />
-            <View
-              style={[styles.statusBadge, { backgroundColor: statusColor }]}>
+            <TextComponent
+              text={item.title}
+              type="title"
+              styles={styles.title}
+            />
+            <View style={[styles.statusBadge, {backgroundColor: statusColor}]}>
               <TextComponent text={statusLabel} styles={styles.statusText} />
             </View>
           </View>
@@ -117,12 +121,7 @@ const ReportApplicationScreen = () => {
 
   const renderEmptyComponent = () => (
     <View style={styles.emptyContainer}>
-     
-      <TextComponent
-        text="Không có báo cáo nào"
-        type="title"
-        // styles={styles.emptyText}
-      />
+      <TextComponent text="Không có báo cáo nào" />
     </View>
   );
 
@@ -137,14 +136,19 @@ const ReportApplicationScreen = () => {
           onPress={goBack}
         />
       }>
-      <FlatList
-        data={reportData}
-        renderItem={renderItem}
-        keyExtractor={item => item.id.toString()}
-        contentContainerStyle={styles.list}
-        showsVerticalScrollIndicator={false}
-        ListEmptyComponent={renderEmptyComponent()}
-      />
+      <View style={{flex: 1}}>
+        <FlatList
+          data={reportData}
+          renderItem={renderItem}
+          keyExtractor={item => item.id.toString()}
+          contentContainerStyle={[
+            styles.list,
+            reportData.length === 0 && {flex: 1},
+          ]}
+          showsVerticalScrollIndicator={false}
+          ListEmptyComponent={renderEmptyComponent()}
+        />
+      </View>
     </Container>
   );
 };
@@ -156,10 +160,9 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 50,
+    flex: 1, // Chiếm toàn bộ chiều cao màn hình
+    justifyContent: 'center', // Canh giữa theo chiều dọc
+    alignItems: 'center', // Canh giữa theo chiều ngang
   },
   emptyImage: {
     width: 200,

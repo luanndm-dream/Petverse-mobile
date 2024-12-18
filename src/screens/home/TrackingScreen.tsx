@@ -46,7 +46,7 @@ const TrackingScreen = () => {
   const [selectedTrackings, setSelectedTrackings] = useState<any[]>([]);
   const [activeSlide, setActiveSlide] = useState(0);
   const [selectedScheduleId, setSelectedScheduleId] = useState();
-  console.log(appointmentData);
+
   useFocusEffect(
     useCallback(() => {
       showLoading();
@@ -140,11 +140,12 @@ const TrackingScreen = () => {
             pagingEnabled
             showsHorizontalScrollIndicator={false}
             renderItem={({item}) => {
+              // console.log('iten', item)
               const isVideo = item.type === 1;
               return (
                 <View style={styles.mediaWrapper}>
                   <Text style={styles.dateText}>
-                    {item.date || 'Không xác định'}
+                    {item?.uploadedAt || 'Không xác định'}
                   </Text>
                   {/* Hiển thị ngày */}
                   {isVideo ? (
@@ -248,13 +249,13 @@ const TrackingScreen = () => {
   };
 
   const handleReportAction = (scheduleId: number) => {
-    console.log(scheduleId);
+    // console.log(scheduleId);
     if (roleName === 'PetCenter') {
       navigation.navigate(STACK_NAVIGATOR_SCREENS.UPDATETRACKINGSCREEN, {
         scheduleId: scheduleId,
       });
     } else if (roleName === 'Customer') {
-      console.log('Report báo cáo cho khung giờ này');
+      //console.log('Report báo cáo cho khung giờ này');
       // Thực hiện hành động report báo cáo cho Customer
     }
   };

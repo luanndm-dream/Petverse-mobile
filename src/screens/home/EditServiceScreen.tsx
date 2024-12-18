@@ -99,7 +99,7 @@ const EditServiceScreen = () => {
         .required(),
     }),
     onSubmit: async values => {
-      console.log('Values on Submit:', values);
+      //console.log('Values on Submit:', values);
       showLoading();
       try {
         const res: any = await apiUpdatePetCenterService(
@@ -237,9 +237,8 @@ const EditServiceScreen = () => {
                 : ''}
             </Text>
           )}
-
           <TextComponent
-            text={serviceData.type === 0 ? 'Giá (theo giờ)' : 'Giá (theo case)'}
+            text={serviceData.type === 1 ? 'Giá (theo giờ)' : 'Giá (theo case)'}
             required
             type="title"
           />

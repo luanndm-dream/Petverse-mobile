@@ -17,7 +17,7 @@ export async function apiCreateSchedule(scheduleId: string, Photos?: any[], Vide
             formData.append('Videos', mediaUpload(video))
         })
     }
-    console.log(formData)
+    // console.log(formData)
     return protectedAxios.post(url, formData,  {
         headers: {
           'Content-Type': 'multipart/form-data',

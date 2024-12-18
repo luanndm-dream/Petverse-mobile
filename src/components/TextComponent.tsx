@@ -33,7 +33,7 @@ const TextComponent = (props: Props) => {
       fontFamily = fontFamilies.regular;
       break;
       case 'subTitle':
-      fontSize = sizes.subTitle || sizes.text; // Nếu không có `sizes.subTitle`, dùng `sizes.text`
+      fontSize = sizes.subTitle || sizes.text;
       fontFamily = fontFamilies.medium;
       break;
     default:

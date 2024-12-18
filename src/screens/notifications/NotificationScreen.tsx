@@ -31,6 +31,8 @@ const NotificationItem = ({item, userId, onPress}: any) => {
         return '#FF9500'; // Warmer orange
       case 2:
         return colors.primary;
+      case 3:
+        return colors.green;
       default:
         return colors.grey4;
     }
@@ -148,9 +150,15 @@ const NotificationScreen = () => {
 
   const handleNotificationPress = (notification: any) => {
     markNotificationAsRead(notification, id as never);
-    navigation.navigate(STACK_NAVIGATOR_SCREENS.REPORTAPPLICATIONDETAIL, {
-      reportId: notification.reportId,
-    });
+    //console.log('notification', notification)
+    if(notification.title.includes('lịch hẹn')){
+      navigation.navigate(STACK_NAVIGATOR_SCREENS.MYAPPOINTMENTSCREEN)
+    }
+    else{
+      navigation.navigate(STACK_NAVIGATOR_SCREENS.REPORTAPPLICATIONDETAIL, {
+        reportId: notification.reportId,
+      });
+    }
   };
 
   const getUnreadCount = () => {

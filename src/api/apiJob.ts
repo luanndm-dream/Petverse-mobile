@@ -47,7 +47,7 @@ export async function apiUpdateJob(
     haveTransport,
     speciesIds
   }
-  console.log('dataSend', dataSend)
+  // console.log('dataSend', dataSend)
   return protectedAxios.put(url, dataSend)
 
 }

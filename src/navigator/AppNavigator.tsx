@@ -13,7 +13,7 @@ const AppNavigator = () => {
   const dispatch = useAppDispatch();
   useEffect(() => {
     checkLogin();
-    console.log(auth.accessToken);
+    // console.log(auth.accessToken);
     const timeout = setTimeout(() => {
       // setIsShowSplash(false);
     }, 1500);

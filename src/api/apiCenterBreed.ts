@@ -68,6 +68,6 @@ export async function apiUpdateBreedCenterAvailability(
   };
 
 
-  console.log('Sending data to API:', dataSend);
+  // console.log('Sending data to API:', dataSend);
   return protectedAxios.put(url, dataSend);
 }

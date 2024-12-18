@@ -43,7 +43,7 @@ const ChangePasswordScreen = () => {
         values.currentPassword,
         values.confirmPassword,
       ).then((res: any) => {
-        console.log(values, userId, res);
+       // console.log(values, userId, res);
         if (res.statusCode === 200) {
           hideLoading();
           Toast.show({

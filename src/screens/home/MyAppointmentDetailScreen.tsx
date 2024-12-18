@@ -23,6 +23,7 @@ import useLoading from '@/hook/useLoading';
 import Toast from 'react-native-toast-message';
 import firestore from '@react-native-firebase/firestore';
 import {priceFormater} from '@/utils/priceFormater';
+import { pushNotification } from '@/services/notifications';
 
 const MyAppointmentDetailScreen = () => {
   const userId = useAppSelector(state => state.auth.userId);
@@ -43,7 +44,7 @@ const MyAppointmentDetailScreen = () => {
     try {
       const snapshot = await firestore().collection('inbreeding').get();
       const documentIds = snapshot.docs.map(doc => doc.id); // Lấy tất cả ID của document
-      console.log('Document IDs:', documentIds);
+      //console.log('Document IDs:', documentIds);
       return documentIds;
     } catch (error) {
       console.error('Error fetching document IDs:', error);
@@ -138,7 +139,7 @@ const MyAppointmentDetailScreen = () => {
           rightTitle: 'Xác nhận',
           onLeftPress: () => setIsVisible(false),
           onRightPress: () => {
-            console.log('Huỷ || Từ chối lịch hẹn');
+            //console.log('Huỷ || Từ chối lịch hẹn');
             onRejectHandle();
           },
           reason: (
@@ -179,12 +180,13 @@ const MyAppointmentDetailScreen = () => {
       if (res.statusCode === 200) {
         hideLoading();
         setAppointmentData(res.data);
+        
       } else {
         hideLoading();
       }
     });
   }, []);
-
+  //console.log(appointmentData)
   const onAcceptHandle = () => {
     if (isInBreeding) {
       // Hiển thị Popup cảnh báo nếu là lịch cận huyết
@@ -192,14 +194,22 @@ const MyAppointmentDetailScreen = () => {
     } else {
       // Thực hiện nhận lịch nếu không phải cận huyết
       processAcceptAppointment();
+     
     }
   };
 
   const processAcceptAppointment = () => {
     showLoading();
     apiUpdateAppointmentByAppointmentId(appointmentId, 1).then((res: any) => {
-      console.log(res);
       if (res.statusCode === 200) {
+        pushNotification([appointmentData.userId],{
+          title: 'Thông báo lịch hẹn',
+          message: 'Lịch hẹn của bạn đã được xác nhận.',
+          appointmentId: appointmentData.id,
+          sender: appointmentData.petCenterId,
+          status: 2,
+          // reportId: res.data.id
+          })
         Toast.show({
           type: 'success',
           text1: 'Nhận lịch thành công',
@@ -230,7 +240,7 @@ const MyAppointmentDetailScreen = () => {
       }
     });
   };
-  console.log(appointmentData);
+  //console.log(appointmentData);
 
   const openPopup = (action: string) => {
     setPopupAction(action);
@@ -241,6 +251,14 @@ const MyAppointmentDetailScreen = () => {
     apiUpdateAppointmentByAppointmentId(appointmentId, 3, cancelReason).then(
       (res: any) => {
         if (res.statusCode === 200) {
+          pushNotification([appointmentData.userId],{
+            title: 'Thông báo lịch hẹn',
+            message: 'Lịch hẹn của bạn đã bị từ chối.',
+            appointmentId: appointmentData.id,
+            sender: appointmentData.petCenterId,
+            status: 1,
+            // reportId: res.data.id
+            })
           hideLoading();
           setIsVisible(false);
           Toast.show({
@@ -265,6 +283,14 @@ const MyAppointmentDetailScreen = () => {
     showLoading();
     apiUpdateAppointmentByAppointmentId(appointmentId, 2).then((res: any) => {
       if (res.statusCode === 200) {
+        pushNotification([appointmentData.userId],{
+          title: 'Thông báo lịch hẹn',
+          message: 'Lịch hẹn của bạn đã được hoàn thành.',
+          appointmentId: appointmentData.id,
+          sender: appointmentData.petCenterId,
+          status: 3,
+          // reportId: res.data.id
+          })
         Toast.show({
           type: 'success',
           text1: 'Hoàn thành lịch thành công',
@@ -297,7 +323,7 @@ const MyAppointmentDetailScreen = () => {
   };
 
   const onReportHandle = () => {
-    console.log('report');
+   // console.log('report');
     navigation.navigate(STACK_NAVIGATOR_SCREENS.REPORTSCREEN, {
       appointmentId,
       petCenterId,
@@ -320,7 +346,7 @@ const MyAppointmentDetailScreen = () => {
   const reviewHandle = (appointmentId: string) => {
     navigation.navigate(STACK_NAVIGATOR_SCREENS.REVIEWSCREEN, {
       appointmentId,
-    });
+    })
   };
 
   const getStatusText = (status: number): string => {

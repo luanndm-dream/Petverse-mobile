@@ -45,7 +45,7 @@ const ReportScreen = () => {
     validationSchema,
     onSubmit: vals => {
       showLoading();
-      apiCreateReport(appointmentId, 'Report', vals.reason, photos, videos).then((res: any) => {
+      apiCreateReport(appointmentId, 'Báo cáo dịch vụ', vals.reason, photos, videos).then((res: any) => {
         console.log('res', res);
         if (res.statusCode === 200) {
           hideLoading();
@@ -78,7 +78,7 @@ const ReportScreen = () => {
     const photos: any[] = [];
     const videos: any[] = [];
     
-    console.log('mediaPath',mediaPath)
+   // console.log('mediaPath',mediaPath)
 
     mediaPath.forEach((path: any) => {
       if (path.endsWith('.mp4')) {

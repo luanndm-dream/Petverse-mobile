@@ -111,7 +111,7 @@ const ChatDetailScreen = () => {
   const pickMedia = () => {
     ImagePicker.openPicker({
       mediaType: 'any',
-      cropping: true,
+      // cropping: true,
       width: 800,
       height: 800,
       compressImageMaxWidth: 800, // Kích thước tối đa 800px

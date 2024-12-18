@@ -89,7 +89,7 @@ const ListCenterScreen = () => {
 
     fetchData();
   }, []);
-
+console.log(petCenter)
   useEffect(() => {
     const newFilteredData = petCenter.filter((item: any) => {
       const matchesSearch = item.name

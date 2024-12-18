@@ -61,8 +61,6 @@ const LoginScreen = () => {
             hideLoading();
             return;
           }
-
-          // Xử lý đăng nhập thành công
           dispatch(addAuth(res.data));
           await AsyncStorage.setItem(
             'auth',
