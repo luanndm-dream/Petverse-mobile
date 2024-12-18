@@ -31,11 +31,13 @@ const stagger = 300;
 function Place({center, index, onFinish, anim, highestRate}: PlaceProps) {
   const stylez = useAnimatedStyle(() => {
     const backgroundColor =
-      center.averageRate === highestRate
-        ? '#FFC300'
-        : center.averageRate >= highestRate - 1
-        ? '#4A90E2'
-        : colors.grey4;
+    center.averageRate === highestRate
+      ? '#FFC300' // Màu vàng cho Top 1
+      : center.averageRate >= highestRate - 0.5
+      ? '#4AAEE2' // Màu xanh dương nhạt cho Top 2
+      : center.averageRate >= highestRate - 1
+      ? '#9987eb' // Màu xanh da trời cho Top 3
+      : colors.grey4; // Màu xám cho các trung tâm khác
 
     return {
       height: interpolate(
