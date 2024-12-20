@@ -352,7 +352,7 @@ const EmployeeRegistrationScreen = () => {
 
           <TextComponent text="Hồ sơ/chứng nhận" type="title" />
           
-          {/* <View style={styles.imageContainer}>
+          <View style={styles.imageContainer}>
             <FlatList
               data={
                 selectedCertifications.length < 4
@@ -403,7 +403,7 @@ const EmployeeRegistrationScreen = () => {
                 paddingVertical: 6,
               }}
             />
-          </View> */}
+          </View>
           <TextComponent text="Mô tả" type="title" required />
           <InputComponent
             onChange={formik.handleChange('description')}
